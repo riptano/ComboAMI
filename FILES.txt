@@ -1,0 +1,89 @@
+This describes what all the files in this repository do and how they
+are installed on the AMI.  You only need to care about this if you're
+going to hack on the AMI configuration scripts.
+
+
+## .presetup/pre_1.sh
+
+There is no need to execute this file, this just shows what was
+installed and in what order.  This file is the precursor for .run.sh
+since it installs git and pulls down the scripts for everything else.
+
+
+## .presetup/pre_2.sh
+There is no need to execute this file, this just shows what was
+installed and in what order.  To sum up the actions: sun-java6-sdk,
+libjna, and brisk were installed, the init.d script was written to
+disk, the git repository holding this code was cloned, and the
+history was cleaned before cloning the machine.
+
+
+## ds0_updater.py
+Updates the AMI scripts before continuing.
+
+
+## ds1_launcher.py
+Actually starts all the AMI scripts from this point.
+
+
+## ds2_configure.py
+This file shows how information about the system is pulled from EC2
+and delivered to the reflector and the information it gets back
+pointing to the seed list. cassandra.yaml, cassandra-env.sh, and
+opscenterd.conf are edited in precise places as well before Cassandra
+is launched through the init.d script.
+
+
+## ds3_after_init.py
+Starts OpsCenter after the Cassandra cluster has been initialized.
+Also in charge of sending email reports about the cluster's startup
+status.
+
+
+## ds4_motd.py
+Holds the command prompt from booting until Brisk is
+initiated. Once Brisk is up, a quick summary of the nodes is
+displayed using 'nodetool ring'. A quick summary of commands is then
+printed on the screen for new users.
+
+
+## reflector.php
+The reflector is used to keep track of which IPs are in the cluster
+of Brisk that is being initiated. The reflector receives the internal
+IP address, the public dns, the reservation id, and the clustername
+to keep track of the clusters' seeds. This data is saved to a SQLite
+database. If another request to the php file is sent after 5 minutes
+of inactivity, the database is cleared and started fresh to keep the
+list of IPs as fresh as possible to avoid conflicts and keep your
+privacy.
+
+There is no reason to use your own reflector since your list of IPs
+only remains on our server for a lifetime of roughly 5 minutes after
+your cluster has finished spinning up. However, reflector.php is
+included for use in-house for an even more anonymous setup.
+
+
+## FILES.txt
+This file which gives a file description for each of the scripts.
+
+
+## SWITCHES.txt
+A file explaining all AMI options.
+
+
+## conf.py
+The AMI file that holds all AMI attributes.
+
+
+## logger.py
+The AMI process logging tool.
+
+
+## tokentool.py
+Needed for token calculations.
+
+
+## ami.log
+This is a dynamic file that is created during every boot of the
+node. It gives quick printouts to show some parameters that were
+chosen during execution and any errors during the startup process.

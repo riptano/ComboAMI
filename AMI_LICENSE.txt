@@ -1,0 +1,29 @@
+PLEASE READ CAREFULLY:  THIS SOFTWARE LICENSE AGREEMENT (“AGREEMENT”) IS A 
+LEGAL AND BINDING AGREEMENT BETWEEN YOU AND/OR YOUR ORGANIZATION (“LICENSEE”), 
+AND DATASTAX, INC. (“DATASTAX”) WITH RESPECT TO THIS AMI IMAGE MADE AVAILABLE 
+BY DATASTAX (THE “AMI IMAGE”). 
+
+BY USE OF THIS AMI, LICENSEE AGREES TO ALL TERMS AND CONDITIONS OF THIS 
+AGREEMENT.
+
+The AMI Image is comprised principally of third party elements (collectively 
+and each, the “Third Party Software”). Licensee acknowledges that DataStax has 
+no proprietary interest in the Third Party Software, and as such, cannot grant 
+you a license to use such Third Party Software. A listing of such Third Party 
+Software is available upon written request from DataStax.  Your rights in the 
+Third Party Software are governed by and subject to the terms and conditions 
+set forth in the applicable third party licenses set forth with such listing. 
+By installing or using such Third Party Software, you acknowledge and agree to 
+fully comply with such terms and conditions. 
+
+IN ADDITION TO ANY DISCLAIMERS SET FORTH IN SUCH THIRD PARTY TERMS AND 
+CONDITIONS, DATASTAX MAKES NO WARRANTIES, EXPRESS OR IMPLIED, WITH RESPECT TO 
+THE AMI IMAGE, AND DATASTAX HEREBY EXPRESSLY DISCLAIMS ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INTERFERENCE, ACCURACY 
+OF DATA, AND NON-INFRINGEMENT.
+
+UNLESS PROVIDED PURSUANT TO A SEPARATE WRITTEN AGREEMENT, DATASTAX IS NOT 
+OBLIGATED TO PROVIDE SUPPORT SERVICES FOR THE AMI IMAGE OR ANY THIRD PARTY 
+SOFTWARE. 
+
