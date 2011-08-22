@@ -18,7 +18,7 @@ git config --global color.diff auto
 git config --global color.status auto
 git clone git://github.com/riptano/ComboAMI.git datastax_ami
 cd datastax_ami
-git checkout $(head -n 1 .presetup/VERSION)
+git checkout $(head -n 1 presetup/VERSION)
 
 history -c
 sudo python presetup/pre_2.py && sudo chown -R ubuntu:ubuntu . && rm -rf ~/.bash_history && history -c
