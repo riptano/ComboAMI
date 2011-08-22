@@ -78,7 +78,7 @@ def getAddresses():
 
         # DEV OPTIONS
         # Dev switch
-        parser.add_option("-d", "--dev", action="store_true", dest="dev")
+        parser.add_option("-y", "--dev", action="store_true", dest="dev")
         # Developmental option that allows for a smoke test
         parser.add_option("-u", "--smokeurl", action="store", type="string", dest="smokeurl")
         # Developmental option that allows for a smoke test
