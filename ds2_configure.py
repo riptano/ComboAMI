@@ -119,7 +119,7 @@ def getAddresses():
         except:
             logger.error('One of the options was not set correctly. Please verify your settings')
             print userdata
-        if options.dev:
+        if options and options.dev:
             global isDEV
             isDEV = True
             conf.setConfig("AMI", "IsDev", True)
