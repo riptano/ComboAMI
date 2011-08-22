@@ -78,7 +78,7 @@ def getAddresses():
 
         # DEV OPTIONS
         # Dev switch
-        parser.add_option("-y", "--dev", action="store_true", dest="dev", default=False)
+        parser.add_option("-y", "--dev", action="store_true", dest="dev")
         # Developmental option that allows for a smoke test
         parser.add_option("-u", "--smokeurl", action="store", type="string", dest="smokeurl")
         # Developmental option that allows for a smoke test
@@ -133,7 +133,7 @@ def getAddresses():
                 logger.warn('Both -u and -f have to be set together in order for smoke tests to run.')
 
         conf.setConfig("AMI", "Type", "Cassandra")
-        if options.deployment:
+        if options and options.deployment:
             options.deployment = options.deployment.lower()
 
             # Setup the repositories
@@ -167,13 +167,13 @@ def getAddresses():
             logger.exe('sudo rm -rf /var/lib/cassandra/*')
             logger.exe('sudo service brisk stop')
 
-        if options.email:
+        if options and options.email:
             logger.info('Setting up diagnostic email using: ' + options.email)
             conf.setConfig("AMI", "Email", options.email)
-        if options.clustername:
+        if options and options.clustername:
             logger.info('Using cluster name: ' + options.clustername)
             clustername = options.clustername
-        if (options.paidopscenter or options.opscenter) and int(launchindex) == 0:
+        if options and (options.paidopscenter or options.opscenter) and int(launchindex) == 0:
             if options.paidopscenter:
                 userpass = options.paidopscenter
             else:
@@ -206,7 +206,7 @@ def getAddresses():
 
             else:
                 logger.error('Not installing OpsCenter. Credentials were not in the correct format. (user:password)')
-        if options.cfsreplication:
+        if options and options.cfsreplication:
             logger.info('Using cfsreplication factor: ' + options.cfsreplication)
             with open('/etc/default/brisk', 'r') as f:
                 briskDefault = f.read()
@@ -215,7 +215,7 @@ def getAddresses():
             
             with open('/etc/default/brisk', 'w') as f:
                 f.write(briskDefault)
-        if options.vanillanodes:
+        if options and options.vanillanodes:
             logger.info('Using vanilla nodes: ' + options.vanillanodes)
             options.vanillanodes = int(options.vanillanodes)
             if int(launchindex) >= options.vanillanodes:
@@ -240,7 +240,7 @@ def getAddresses():
                 with open('/etc/default/brisk', 'w') as f:
                     f.write(briskDefault)
 
-        if options.thisisvanilla:
+        if options and options.thisisvanilla:
             if conf.getConfig("AMI", "Type") == "Brisk":
                 with open('/etc/default/brisk', 'r') as f:
                     briskDefault = f.read()
@@ -250,7 +250,7 @@ def getAddresses():
                 with open('/etc/default/brisk', 'w') as f:
                     f.write(briskDefault)
 
-        if options.clustersize:
+        if options and options.clustersize:
             logger.info('Using cluster size: ' + options.clustersize)
             conf.setConfig("Cassandra", "ClusterSize", options.clustersize)
         # if options.reflector:
