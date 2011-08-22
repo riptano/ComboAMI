@@ -36,6 +36,8 @@ Options
         Default: 08x
 
     -e <smtpAddress>:<port>:<email>:<password> (or --email)
+        Sends emails to and from this address for easier
+        error collecting
         Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
 
 ##OpsCenter Support
