@@ -122,7 +122,7 @@ Support Links:
         http://www.datastax.com/ami
 
     Cassandra client libraries:
-        http://www.datastax.com/support/clients
+        http://www.datastax.com/docs/clients
 
     For quick support, visit:
         IRC: #datastax-brisk channel on irc.freenode.net
