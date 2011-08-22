@@ -1,11 +1,11 @@
 Summary
 =======
-DataStax's Amazon Machine Image is the quickest way to get a Brisk
-cluster up and running on EC2.
+DataStax's Amazon Machine Image is the quickest way to get a Cassandra
+or DataStax' Brisk cluster up and running on EC2.
 
 Search for AMIs by using the term: 
 
-    datastax_brisk_cluster_ami
+    datastax_clustering_ami
 
 
 Quickstart
@@ -20,85 +20,106 @@ Data field set to
 Options
 =======
 
-    --clustersize <size> (or -s <size>)
-      Used by the configuration script to evenly space the Brisk node
-      tokens so each machine gets an equal share of data.  If omitted,
-      nodes will receive random tokens.
+##AMI Command Switches
 
-    --vanillanodes <size> (or -v <size>)
-      Used by the configuration script to assign the first N nodes to be
-      non-task tracker Brisk nodes.
+    -n <name> (or --clustername)
+        The name of the Cassandra cluster
+        Note: Spaces are not allowed
+        REQUIRED for safety
 
-    --cfsreplication <size> (or -c <size>)
-      Sets the cfsreplication factor at startup.
+    -s <#> (or --clustersize) 
+        Cluster size
+        REQUIRED for a balanced, high-performing ring
 
-    --opscenter <user>:<pass> (or -o <user>:<pass>)
-      Installs OpsCenter using the provided username and password recieved
-      during OpsCenter registration.
-      
-      Visit http://www.datastax.com/opscenter for a free registration.
+    -d <version> (or --deployment)
+        Options are: 07x, 08x, or brisk.
+        Default: 08x
 
-    --paidopscenter <user>:<pass> (or -p <user>:<pass>)
-      Installs OpsCenter using the provided username and password recieved
-      during OpsCenter registration for paying customers.
+    -e <smtpAddress>:<port>:<email>:<password> (or --email)
+        Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
 
-    --clustername <name> (or -n <name>)
-      Assigns the cluster with a chosen cluster name.
+##OpsCenter Support
+
+    -o <user>:<pass> (or --opscenter)
+        Provide username and password provided during 
+        the FREE OpsCenter registration
+
+    -p <user>:<pass> (or --paidopscenter)
+        Provide username and password provided during 
+        the PAID OpsCenter registration
+
+##Brisk Specific
+
+    -v <#> (or --vanillanodes)
+        Number of vanilla nodes that only run Cassandra
+        -s is REQUIRED in order to use this option
+        Default: 0
+
+    -c <#> (--cfsreplication)
+        The CFS replication factor
+        At least these many non-vanilla nodes REQUIRED
+        Default: 0
+
+##Growing the Cluster
+    
+    -t <token> (or --token)
+        Forces this token on the node 
+
+    -z "<seed>,<seed>" (or --seeds)
+        Allows a single node to join a cluster
+        Note: Spaces are not allowed
+
+    -w 1 (or --thisisvanilla)
+        Setting the option with 1 forces the joining 
+        node to be a vanilla Cassandra node
+        Note: Optional and only for Brisk.
+
+
+Ports Needed
+============
+
+    Public Facing:
+        Cassandra:
+            9160: Cassandra client port
+            7199: Cassandra JMX port, (8080 in 07x)
+        Brisk Specific:
+            8012: Hadoop Job Tracker client port
+            50030: Hadoop Job Tracker website port
+            50060: Hadoop Task Tracker website port
+        OpsCenter:
+            8888: OpsCenter website port
+    Internal:
+        Cassandra:
+            7000: Cassandra intra-node port
+        OpsCenter:
+            1024+: OpsCenter intra-node monitoring ports
 
 
 Step-by-step
 ============
 
-Visit http://www.datastax.com/docs/0.8/brisk/install_brisk_ami for
+Visit http://www.datastax.com/ami for
 full installation instructions.
 
 
 Post-install
 ============
 
-To stop Brisk, simply run
+To stop the service, simply run
 
-    ps auwx | grep brisk
+    sudo service <cassandra | brisk> stop
 
-and kill the associated PID without
+To start the service again, simply run
 
-    sudo kill <PID>
-
-To start Brisk again, simply run
-
-    sudo ~/brisk/bin/brisk cassandra -t
-
-for a Brisk node, or
-
-    sudo ~/brisk/bin/brisk cassandra
-
-for a vanilla Cassandra node.
-
-Important note on VM restarts
------------------------------
-
-EC2 is an unusual environment because a VM will get a different IP if
-it reboots.  If you reboot all of your machines, they will contact the
-reflector again and reconfigure themselves to be able to talk to each
-other again, but if you reboot a single one, it won't be able to rejoin
-the others without manual intervention (set the seed in cassandra.yaml
-to one of the other nodes).
-
-Adding nodes to the cluster
----------------------------
-
-Adding nodes must currently be done manually (that is, you can create
-extra nodes with the same clustername, but you'll have to edit
-token, bootstrap setting, and seed manually to get them to join
-the existing cluster).  See http://wiki.apache.org/cassandra/Operations
-for details.
+    sudo service <cassandra | brisk> start
 
 
 Implementation details
 ======================
 
 See FILES.txt for a description of how the scripts here configure the
-AMI for Brisk.
+AMI.
+
 
 Branching details
 =================

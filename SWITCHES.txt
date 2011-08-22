@@ -11,6 +11,7 @@ AMI Command Switches:
 
     -d <version> (or --deployment)
         Options are: 07x, 08x, or brisk.
+        Default: 08x
 
     -e <smtpAddress>:<port>:<email>:<password> (or --email)
         Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
@@ -30,10 +31,12 @@ Brisk Specific:
     -v <#> (or --vanillanodes)
         Number of vanilla nodes that only run Cassandra
         -s is REQUIRED in order to use this option
+        Default: 0
 
     -c <#> (--cfsreplication)
         The CFS replication factor
         At least these many non-vanilla nodes REQUIRED
+        Default: 0
 
 Growing the Cluster:
     
