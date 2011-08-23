@@ -590,6 +590,27 @@ def mountRAID():
 
         logger.info("Mounted Raid.\n")
 
+def syncClocks():
+    # Confirm that NTP is installed
+    logger.exe('sudo apt-get -y install ntp')
+    
+    with open('/etc/ntp.conf', 'r') as f:
+            ntpConf = f.read()
+
+    # Create a list of ntp server pools
+    serverList = ""
+    for i in range(0, 4):
+        serverList += "server " + str(i) + ".north-america.pool.ntp.org\n"
+
+    # Overwrite the single ubuntu ntp server with the server pools
+    ntpConf = ntpConf.replace('server ntp.ubuntu.com', serverList)
+
+    with open('/etc/ntp.conf', 'w') as f:
+        f.write(ntpConf)
+
+    # Restart the service
+    logger.exe('sudo service ntp restart')
+
 def additionalConfigurations():
 
     # ========= To be implemented by init.d script =========
@@ -617,6 +638,7 @@ constructEnv()
 
 mountRAID()
 
+syncClocks()
 additionalConfigurations()
 additionalDevConfigurations()
 
