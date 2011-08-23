@@ -24,8 +24,8 @@ def pipe(command1, command2):
     return output
 
 # Setup Repositories
-exe('sudo add-apt-repository "deb http://archive.canonical.com/ lucid partner"')
-exe('sudo add-apt-repository "deb http://debian.riptano.com/maverick maverick main"')
+pipe('echo "deb http://archive.canonical.com/ lucid partner"', 'sudo tee -a /etc/apt/sources.list.d/java.sources.list')
+pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 exe('sudo apt-get -y update')
 exe('sudo apt-get -y upgrade')
 time.sleep(5)
