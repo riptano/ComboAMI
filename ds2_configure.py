@@ -561,15 +561,8 @@ def mountRAID():
             # Configure fstab and mount the new formatted device
             mntPoint = '/mnt'
             logger.pipe("echo '" + partitions[0] + "\t" + mntPoint + "\txfs\tdefaults,nobootwait,noatime\t0\t0'", 'sudo tee -a /etc/fstab')
-            logger.exe('sudo mkdir ' + mntPoint)
+            logger.exe('sudo mkdir ' + mntPoint, False)
             logger.exe('sudo mount -a')
-            
-            # Delete old data if present
-            logger.exe('sudo rm -rf ' + mntPoint + '/cassandra')
-            logger.exe('sudo rm -rf /var/lib/cassandra')
-            logger.exe('sudo rm -rf /var/log/cassandra')
-
-            # Create cassandra directory
             logger.exe('sudo mkdir -p ' + mntPoint + '/cassandra')
             logger.exe('sudo chown -R cassandra:cassandra ' + mntPoint + '/cassandra')
         
@@ -589,18 +582,37 @@ def mountRAID():
         # Remove the old cassandra folders
         subprocess.Popen("sudo rm -rf /var/log/cassandra/*", shell=True)
         subprocess.Popen("sudo rm -rf /var/lib/cassandra/*", shell=True)
+        logger.exe('sudo chown -R cassandra:cassandra /var/lib/cassandra')
+        logger.exe('sudo chown -R cassandra:cassandra /var/log/cassandra')
 
         # Never create raid array again
         conf.setConfig("AMI", "RAIDCreated", True)
 
         logger.info("Mounted Raid.\n")
 
+def syncClocks():
+    # Confirm that NTP is installed
+    logger.exe('sudo apt-get -y install ntp')
+    
+    with open('/etc/ntp.conf', 'r') as f:
+            ntpConf = f.read()
+
+    # Create a list of ntp server pools
+    serverList = ""
+    for i in range(0, 4):
+        serverList += "server " + str(i) + ".north-america.pool.ntp.org\n"
+
+    # Overwrite the single ubuntu ntp server with the server pools
+    ntpConf = ntpConf.replace('server ntp.ubuntu.com', serverList)
+
+    with open('/etc/ntp.conf', 'w') as f:
+        f.write(ntpConf)
+
+    # Restart the service
+    logger.exe('sudo service ntp restart')
+
 def additionalConfigurations():
-
-    # ========= To be implemented by init.d script =========
-
-    # Set limits
-    logger.pipe('echo 1', 'sudo tee /proc/sys/vm/overcommit_memory')
+    pass
 
 def additionalDevConfigurations():
     if isDEV:
@@ -622,6 +634,7 @@ constructEnv()
 
 mountRAID()
 
+syncClocks()
 additionalConfigurations()
 additionalDevConfigurations()
 
