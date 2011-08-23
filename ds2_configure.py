@@ -477,7 +477,7 @@ def mountRAID():
         logger.info('Unformatted devices: ' + str(devices))
         
         # Check if there are enough drives to start a RAID set
-        if len(devices) > 1:
+        if len(devices) > 2:
             # Make sure the devices are umounted, then run fdisk on each device
             logger.info('Clear "invalid flag 0x0000 of partition table 4" by issuing a write, then running fdisk on each device...')
             formatCommands = """echo 'n
@@ -548,7 +548,7 @@ def mountRAID():
             logger.exe('sudo umount ' + devices[0])
             logger.pipe("echo 'w'", 'sudo fdisk -c -u ' + devices[0])
             logger.pipe(formatCommands, 'sudo fdisk -c -u ' + devices[0])
-        
+            
             # Create a list of partitions to RAID
             logger.exe('sudo fdisk -l')
             partitions = glob.glob("/dev/sd*[0-9]")
