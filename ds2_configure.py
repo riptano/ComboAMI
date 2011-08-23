@@ -612,6 +612,9 @@ def syncClocks():
     logger.exe('sudo service ntp restart')
 
 def additionalConfigurations():
+
+    # Make sure that the sun-java6-jdk source stays permanently 
+    logger.pipe('echo "deb http://archive.canonical.com/ lucid partner"', 'sudo tee -a /etc/apt/sources.list.d/java.sources.list')
     pass
 
 def additionalDevConfigurations():
