@@ -565,7 +565,7 @@ def mountRAID():
             logger.exe('sudo mount -a')
             
             # Delete old data if present
-            logger.exe('sudo rm -rf ' + raidMnt + '/cassandra')
+            logger.exe('sudo rm -rf ' + mntPoint + '/cassandra')
             logger.exe('sudo rm -rf /var/lib/cassandra')
             logger.exe('sudo rm -rf /var/log/cassandra')
 
