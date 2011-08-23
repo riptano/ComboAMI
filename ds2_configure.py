@@ -384,7 +384,11 @@ def constructYaml():
     
     # Set rpc_address
     yaml = yaml.replace('rpc_address: localhost', 'rpc_address: 0.0.0.0')
-    
+
+    # Uses the EC2Snitch
+    if options and options.deployment and (options.deployment == "07x" or options.deployment == "08x"):
+        yaml = yaml.replace('endpoint_snitch: org.apache.cassandra.locator.SimpleSnitch', 'endpoint_snitch: org.apache.cassandra.locator.Ec2Snitch')
+            
     # Set cluster_name to reservationid
     global clustername
     clustername = clustername.strip("'").strip('"')
