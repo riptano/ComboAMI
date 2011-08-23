@@ -576,12 +576,15 @@ def mountRAID():
         else:
             yaml = yaml.replace('/var/lib/cassandra/data', mntPoint + '/cassandra/data')
             yaml = yaml.replace('/var/lib/cassandra/saved_caches', mntPoint + '/cassandra/saved_caches')
+            yaml = yaml.replace('/var/lib/cassandra/commitlog', mntPoint + '/cassandra/commitlog')
         with open(confPath + 'cassandra.yaml', 'w') as f:
             f.write(yaml)
         
         # Remove the old cassandra folders
         subprocess.Popen("sudo rm -rf /var/log/cassandra/*", shell=True)
         subprocess.Popen("sudo rm -rf /var/lib/cassandra/*", shell=True)
+        logger.exe('sudo chown -R cassandra:cassandra /var/lib/cassandra')
+        logger.exe('sudo chown -R cassandra:cassandra /var/log/cassandra')
 
         # Never create raid array again
         conf.setConfig("AMI", "RAIDCreated", True)
