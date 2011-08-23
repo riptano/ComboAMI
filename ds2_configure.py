@@ -561,7 +561,7 @@ def mountRAID():
             # Configure fstab and mount the new formatted device
             mntPoint = '/mnt'
             logger.pipe("echo '" + partitions[0] + "\t" + mntPoint + "\txfs\tdefaults,nobootwait,noatime\t0\t0'", 'sudo tee -a /etc/fstab')
-            logger.exe('sudo mkdir ' + mntPoint)
+            logger.exe('sudo mkdir ' + mntPoint, False)
             logger.exe('sudo mount -a')
             logger.exe('sudo mkdir -p ' + mntPoint + '/cassandra')
             logger.exe('sudo chown -R cassandra:cassandra ' + mntPoint + '/cassandra')
