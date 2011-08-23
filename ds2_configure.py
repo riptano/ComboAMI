@@ -612,11 +612,7 @@ def syncClocks():
     logger.exe('sudo service ntp restart')
 
 def additionalConfigurations():
-
-    # ========= To be implemented by init.d script =========
-
-    # Set limits
-    logger.pipe('echo 1', 'sudo tee /proc/sys/vm/overcommit_memory')
+    pass
 
 def additionalDevConfigurations():
     if isDEV:
