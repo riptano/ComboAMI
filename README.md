@@ -69,6 +69,7 @@ Options
 
     -z "<seed>,<seed>" (or --seeds)
         Allows a single node to join a cluster
+        Note: Seeds must be in the same region
         Note: Spaces are not allowed
 
     -w 1 (or --thisisvanilla)
