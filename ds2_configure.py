@@ -563,13 +563,6 @@ def mountRAID():
             logger.pipe("echo '" + partitions[0] + "\t" + mntPoint + "\txfs\tdefaults,nobootwait,noatime\t0\t0'", 'sudo tee -a /etc/fstab')
             logger.exe('sudo mkdir ' + mntPoint)
             logger.exe('sudo mount -a')
-            
-            # Delete old data if present
-            logger.exe('sudo rm -rf ' + mntPoint + '/cassandra')
-            logger.exe('sudo rm -rf /var/lib/cassandra')
-            logger.exe('sudo rm -rf /var/log/cassandra')
-
-            # Create cassandra directory
             logger.exe('sudo mkdir -p ' + mntPoint + '/cassandra')
             logger.exe('sudo chown -R cassandra:cassandra ' + mntPoint + '/cassandra')
         
