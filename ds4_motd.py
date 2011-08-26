@@ -43,7 +43,11 @@ while True:
     time.sleep(5)
 
 print """Waiting for nodetool...
-(The cluster is now in it's finalization phase. This should only take a moment.)
+The cluster is now in it's finalization phase. This should only take a moment...
+
+Note: You can also use CTRL+C to view the logs if desired:
+    AMI log: ~/datastax_ami/ami.log
+    Cassandra log: /var/log/cassandra/system.log
 """
 
 retcode = 0
