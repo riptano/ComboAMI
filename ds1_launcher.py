@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import os, subprocess, shlex, time
+import os, subprocess, shlex
 import logger
 import conf
 
@@ -36,6 +36,5 @@ if conf.getConfig("AMI", "Type") == "Cassandra" or conf.getConfig("AMI", "Type")
     logger.exe('sudo service cassandra restart')
 
 elif conf.getConfig("AMI", "Type") == "Brisk":
-    time.sleep(15)
     logger.info('Starting Brisk...')
     logger.exe('sudo service brisk restart')
