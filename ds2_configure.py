@@ -207,29 +207,37 @@ def getAddresses():
             else:
                 logger.error('Not installing OpsCenter. Credentials were not in the correct format. (user:password)')
         if options and options.cfsreplication:
-            logger.info('Using cfsreplication factor: ' + options.cfsreplication)
-            with open('/etc/default/brisk', 'r') as f:
-                briskDefault = f.read()
-
-            briskDefault = briskDefault.replace("#CFS_REPLICATION_FACTOR=1", "CFS_REPLICATION_FACTOR=" + options.cfsreplication)
-            
-            with open('/etc/default/brisk', 'w') as f:
-                f.write(briskDefault)
-        if options and options.vanillanodes:
-            logger.info('Using vanilla nodes: ' + options.vanillanodes)
-            options.vanillanodes = int(options.vanillanodes)
-            if int(launchindex) >= options.vanillanodes:
+            if conf.getConfig("AMI", "Type") == "Brisk":
+                logger.info('Using cfsreplication factor: ' + options.cfsreplication)
                 with open('/etc/default/brisk', 'r') as f:
                     briskDefault = f.read()
 
-                briskDefault = briskDefault.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
+                briskDefault = briskDefault.replace("#CFS_REPLICATION_FACTOR=1", "CFS_REPLICATION_FACTOR=" + options.cfsreplication)
                 
                 with open('/etc/default/brisk', 'w') as f:
                     f.write(briskDefault)
-            if not options.clustersize:
-                logger.error('Vanilla option was set without Cluster Size.')
-                logger.error('Continuing as a collection of 1-node clusters.')
-                sys.exit(1)
+            else:
+                logger.error('CFS replication can only be set in Brisk installs. Please use the deployment switch: -d brisk, if you wish to run brisk.')
+                logger.error('Continuing as Cassandra 0.8.')
+        if options and options.vanillanodes:
+            if conf.getConfig("AMI", "Type") == "Brisk":
+                logger.info('Using vanilla nodes: ' + options.vanillanodes)
+                options.vanillanodes = int(options.vanillanodes)
+                if int(launchindex) >= options.vanillanodes:
+                    with open('/etc/default/brisk', 'r') as f:
+                        briskDefault = f.read()
+
+                    briskDefault = briskDefault.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
+                    
+                    with open('/etc/default/brisk', 'w') as f:
+                        f.write(briskDefault)
+                if not options.clustersize:
+                    logger.error('Vanilla option was set without Cluster Size.')
+                    logger.error('Continuing as a collection of 1-node clusters.')
+                    sys.exit(1)
+            else:
+                logger.error('Vanilla nodes can only be set in Brisk installs. Please use the deployment switch: -d brisk, if you wish to run brisk.')
+                logger.error('Continuing as Cassandra 0.8.')
         else:
             if conf.getConfig("AMI", "Type") == "Brisk":
                 with open('/etc/default/brisk', 'r') as f:
@@ -621,6 +629,7 @@ def additionalConfigurations():
     # Make sure that the sun-java6-jdk source stays permanently 
     logger.pipe('echo "deb http://archive.canonical.com/ lucid partner"', 'sudo tee -a /etc/apt/sources.list.d/java.sources.list')
     logger.exe('sudo apt-get update')
+    logger.exe('sudo swapoff --all')
     pass
 
 def additionalDevConfigurations():

@@ -31,7 +31,7 @@ logger.info( "Printing AMI Type" )
 logger.info( conf.getConfig("AMI", "Type") )
 
 # Actually start the application
-if conf.getConfig("AMI", "Type") == "Cassandra" or conf.getConfig("AMI", "Type") == "":
+if conf.getConfig("AMI", "Type") == "Cassandra" or conf.getConfig("AMI", "Type") == "False":
     logger.info('Starting Cassandra...')
     logger.exe('sudo service cassandra restart')
 
