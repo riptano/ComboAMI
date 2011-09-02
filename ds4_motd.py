@@ -31,7 +31,7 @@ try:
     if p:
         userdata = userdata.replace(p.group(2), '****')
 
-    p = re.search('(-e\s*\w*:\w*:\w*:)(\w*)', userdata)
+    p = re.search('(-e\s*.*:.*:.*:)(\S*)', userdata)
     if p:
         userdata = userdata.replace(p.group(2), '****')
 
