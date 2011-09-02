@@ -24,13 +24,16 @@ try:
 
     # Remove passwords from printing
     p = re.search('(-o\s*\w*:)(\w*)', userdata)
-    userdata = userdata.replace(p.group(2), '****')
+    if p.groups():
+        userdata = userdata.replace(p.group(2), '****')
 
     p = re.search('(-p\s*\w*:)(\w*)', userdata)
-    userdata = userdata.replace(p.group(2), '****')
+    if p.groups():
+        userdata = userdata.replace(p.group(2), '****')
 
     p = re.search('(-e\s*\w*:\w*:\w*:)(\w*)', userdata)
-    userdata = userdata.replace(p.group(2), '****')
+    if p.groups():
+        userdata = userdata.replace(p.group(2), '****')
 
     print
     print "Cluster started with these options:"
