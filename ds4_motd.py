@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import shlex, subprocess, time, urllib2, os
+import shlex, subprocess, time, urllib2, os, re
 import conf
 
 nodetoolStatement = "nodetool -h localhost ring"
@@ -21,6 +21,17 @@ try:
     req = urllib2.Request('http://instance-data/latest/user-data/')
     global userdata
     userdata = urllib2.urlopen(req).read()
+
+    # Remove passwords from printing
+    p = re.search('(-o\s*\w*:)(\w*)', userdata)
+    userdata = userdata.replace(p.group(2), '****')
+
+    p = re.search('(-p\s*\w*:)(\w*)', userdata)
+    userdata = userdata.replace(p.group(2), '****')
+
+    p = re.search('(-e\s*\w*:\w*:\w*:)(\w*)', userdata)
+    userdata = userdata.replace(p.group(2), '****')
+
     print
     print "Cluster started with these options:"
     print userdata
