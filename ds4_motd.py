@@ -24,15 +24,15 @@ try:
 
     # Remove passwords from printing
     p = re.search('(-o\s*\w*:)(\w*)', userdata)
-    if p.groups():
+    if p:
         userdata = userdata.replace(p.group(2), '****')
 
     p = re.search('(-p\s*\w*:)(\w*)', userdata)
-    if p.groups():
+    if p:
         userdata = userdata.replace(p.group(2), '****')
 
     p = re.search('(-e\s*\w*:\w*:\w*:)(\w*)', userdata)
-    if p.groups():
+    if p:
         userdata = userdata.replace(p.group(2), '****')
 
     print
