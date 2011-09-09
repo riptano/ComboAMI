@@ -41,12 +41,7 @@ if internalip != conf.getConfig("AMI", "LeadingSeed"):
     while True:
         nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
         if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
-            if not stoppedErrorMsg:
-                if waitingforstatus:
-                    time.sleep(15)
-                stoppedErrorMsg = True
-            else:
-                break
+            break
 
 
 # Actually start the application
