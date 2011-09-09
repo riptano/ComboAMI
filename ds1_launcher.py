@@ -28,22 +28,22 @@ logger.info("AMI Type: " + conf.getConfig("AMI", "Type"))
 
 
 # Wait for the seed node to come online
-logger.info("Waiting for seed node to come online...")
 req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
 internalip = urllib2.urlopen(req).read()
 
 if internalip != conf.getConfig("AMI", "LeadingSeed"):
+    logger.info("Waiting for seed node to come online...")
     nodetoolStatement = "nodetool -h " + conf.getConfig("AMI", "LeadingSeed") + " ring"
     logger.info(nodetoolStatement)
     stoppedErrorMsg = False
     while True:
         nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
         if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
+            logger.info("Seed node now online!")
             break
         time.sleep(5)
         logger.info("Retrying seed node...")
 
-logger.info("Seed node now online!")
 
 logger.info('Starting a background process to start OpsCenter after a given delay...')
 subprocess.Popen(shlex.split('sudo -u ubuntu python ds3_after_init.py &'))
