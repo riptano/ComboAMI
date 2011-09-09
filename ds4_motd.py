@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import shlex, subprocess, time, urllib2, os
+import shlex, subprocess, time, urllib2, os, re
 import conf
 
 nodetoolStatement = "nodetool -h localhost ring"
@@ -21,6 +21,20 @@ try:
     req = urllib2.Request('http://instance-data/latest/user-data/')
     global userdata
     userdata = urllib2.urlopen(req).read()
+
+    # Remove passwords from printing
+    p = re.search('(-o\s*\w*:)(\w*)', userdata)
+    if p:
+        userdata = userdata.replace(p.group(2), '****')
+
+    p = re.search('(-p\s*\w*:)(\w*)', userdata)
+    if p:
+        userdata = userdata.replace(p.group(2), '****')
+
+    p = re.search('(-e\s*.*:.*:.*:)(\S*)', userdata)
+    if p:
+        userdata = userdata.replace(p.group(2), '****')
+
     print
     print "Cluster started with these options:"
     print userdata
@@ -59,7 +73,7 @@ while True:
 stoppedErrorMsg = False
 while True:
     nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
-    if (nodetoolOut.find("Error") == -1 and nodetoolOut.find("error") and len(nodetoolOut) > 0):
+    if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
         if not stoppedErrorMsg:
             if waitingforstatus:
                 time.sleep(15)
@@ -71,9 +85,10 @@ startTime = time.time()
 while True:
     if nodetoolOut.count("Up") == int(conf.getConfig("Cassandra", "ClusterSize")):
         break
-    if time.time() - startTime > 10:
+    if time.time() - startTime > 15:
         break
 
+nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
 print nodetoolOut
 
 opscenterIP = None
