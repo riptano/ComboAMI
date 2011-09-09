@@ -328,6 +328,8 @@ def getAddresses():
     
     conf.setConfig("AMI", "CurrentStatus", "Complete!")
 
+    conf.setConfig("AMI", "LeadingSeed", seedList[-1])
+
     if options and options.vanillanodes and not options.clustersize:
         sys.exit(0)
 

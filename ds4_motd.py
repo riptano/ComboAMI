@@ -73,7 +73,7 @@ while True:
 stoppedErrorMsg = False
 while True:
     nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
-    if (nodetoolOut.find("Error") == -1 and nodetoolOut.find("error") and len(nodetoolOut) > 0):
+    if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
         if not stoppedErrorMsg:
             if waitingforstatus:
                 time.sleep(15)
@@ -85,7 +85,7 @@ startTime = time.time()
 while True:
     if nodetoolOut.count("Up") == int(conf.getConfig("Cassandra", "ClusterSize")):
         break
-    if time.time() - startTime > 10:
+    if time.time() - startTime > 15:
         break
 
 print nodetoolOut

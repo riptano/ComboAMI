@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import os, subprocess, shlex
+import os, subprocess, shlex, urllib2
 import logger
 import conf
 
@@ -29,6 +29,25 @@ subprocess.Popen(shlex.split('sudo -u ubuntu python ds3_after_init.py &'))
 
 logger.info( "Printing AMI Type" )
 logger.info( conf.getConfig("AMI", "Type") )
+
+
+# Wait for the seed node to come online
+req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
+internalip = urllib2.urlopen(req).read()
+
+if internalip != conf.getConfig("AMI", "LeadingSeed"):
+    nodetoolStatement = "nodetool -h " + conf.getConfig("AMI", "LeadingSeed") + " ring"
+    stoppedErrorMsg = False
+    while True:
+        nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+        if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
+            if not stoppedErrorMsg:
+                if waitingforstatus:
+                    time.sleep(15)
+                stoppedErrorMsg = True
+            else:
+                break
+
 
 # Actually start the application
 if conf.getConfig("AMI", "Type") == "Cassandra" or conf.getConfig("AMI", "Type") == "False":
