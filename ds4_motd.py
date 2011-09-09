@@ -85,7 +85,7 @@ startTime = time.time()
 while True:
     if nodetoolOut.count("Up") == int(conf.getConfig("Cassandra", "ClusterSize")):
         break
-    if time.time() - startTime > 10:
+    if time.time() - startTime > 15:
         break
 
 nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
