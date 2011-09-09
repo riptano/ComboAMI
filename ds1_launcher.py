@@ -32,16 +32,20 @@ logger.info( conf.getConfig("AMI", "Type") )
 
 
 # Wait for the seed node to come online
+logger.info("Waiting for seed node to come online")
 req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
 internalip = urllib2.urlopen(req).read()
 
 if internalip != conf.getConfig("AMI", "LeadingSeed"):
     nodetoolStatement = "nodetool -h " + conf.getConfig("AMI", "LeadingSeed") + " ring"
+    logger.info(nodetoolStatement)
     stoppedErrorMsg = False
     while True:
         nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+        logger.info(nodetoolOut)
         if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
             break
+        time.sleep(5)
 
 
 # Actually start the application
