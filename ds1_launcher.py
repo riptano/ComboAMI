@@ -19,6 +19,9 @@ if os.path.isfile('ds2_configure.py'):
 # Create /raid0
 logger.exe('sudo mount -a')
 
+# Disable swap
+logger.exe('sudo swapoff --all')
+
 # Change permission back to being ubuntu's and cassandra's
 logger.exe('sudo chown -hR ubuntu:ubuntu /home/ubuntu')
 logger.exe('sudo chown -hR cassandra:cassandra /raid0/cassandra', False)
