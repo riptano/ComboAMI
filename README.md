@@ -81,21 +81,21 @@ Options
 Ports Needed
 ============
 
-    Public Facing:
+    Internal:
         Cassandra:
-            9160: Cassandra client port
+            7000: Cassandra intra-node port
             7199: Cassandra JMX port, (8080 in 07x)
+            9160: Cassandra client port
         Brisk Specific:
             8012: Hadoop Job Tracker client port
+        OpsCenter:
+            1024+: OpsCenter intra-node monitoring ports
+    Public Facing:
+        Brisk Specific:
             50030: Hadoop Job Tracker website port
             50060: Hadoop Task Tracker website port
         OpsCenter:
             8888: OpsCenter website port
-    Internal:
-        Cassandra:
-            7000: Cassandra intra-node port
-        OpsCenter:
-            1024+: OpsCenter intra-node monitoring ports
 
 
 Step-by-step
