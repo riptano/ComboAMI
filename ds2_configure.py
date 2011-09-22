@@ -393,7 +393,8 @@ def constructYaml():
     yaml = p.sub('listen_address: ' + internalip + '\n\n#', yaml)
     
     # Set rpc_address
-    yaml = yaml.replace('rpc_address: localhost', 'rpc_address: 0.0.0.0')
+    p = re.compile('rpc_address:.*\s*#')
+    yaml = p.sub('rpc_address: ' + internalip + '\n\n#', yaml)
 
     # Uses the EC2Snitch
     if options and options.deployment and (options.deployment == "07x" or options.deployment == "08x"):
