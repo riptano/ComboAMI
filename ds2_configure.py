@@ -546,6 +546,7 @@ def mountRAID():
         
             logger.info('Showing RAID0 details:')
             logger.exe('cat /proc/mdstat')
+            logger.exe('echo "15000" > /proc/sys/dev/raid/speed_limit_min')
             logger.exe('sudo mdadm --detail /dev/md0')
 
         else:
