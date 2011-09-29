@@ -79,7 +79,7 @@ Options
 
 ##Advanced Cassandra settings
 
-    -p <partitioner> (or --partitioner)
+    -b <partitioner> (or --partitioner)
         Allows users to change partitioners
 
 Ports Needed
