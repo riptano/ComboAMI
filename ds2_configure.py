@@ -84,7 +84,9 @@ def getAddresses():
         # Developmental option that allows for a smoke test
         parser.add_option("-f", "--smokefile", action="store", type="string", dest="smokefile")
         
-        # b g h i j k l q r w x y z
+        # g h i j k l q r w x y z
+        # Option that allows partitioners to be changed
+        parser.add_option("-b", "--partitioner", action="store", type="string", dest="partitioner")
         # Option that allows for declaring this seed a vanilla node (in Brisk)
         parser.add_option("-w", "--thisisvanilla", action="store", type="string", dest="thisisvanilla")
         # Option that allows for seeds to be declared by the user
@@ -398,6 +400,11 @@ def constructYaml():
     # Uses the EC2Snitch
     if options and options.deployment and (options.deployment == "07x" or options.deployment == "08x"):
         yaml = yaml.replace('endpoint_snitch: org.apache.cassandra.locator.SimpleSnitch', 'endpoint_snitch: org.apache.cassandra.locator.Ec2Snitch')
+
+    # Set partitioner, if provided
+    if options and options.partitioner:
+        p = re.compile('partitioner:.*')
+        yaml = p.sub('partitioner: ' + options.partitioner, yaml)
             
     # Set cluster_name to reservationid
     global clustername
