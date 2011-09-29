@@ -77,6 +77,10 @@ Options
         node to be a vanilla Cassandra node
         Note: Optional and only for Brisk.
 
+##Advanced Cassandra settings
+
+    -p <partitioner> (or --partitioner)
+        Allows users to change partitioners
 
 Ports Needed
 ============
