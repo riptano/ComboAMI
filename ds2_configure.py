@@ -284,7 +284,12 @@ def getAddresses():
         stayinloop = False
     else:
         stayinloop = True
+    timeIntoLoop = time.time()
     while stayinloop:
+        if time.time() - timeIntoLoop > 10 * 60:
+            logger.error('EC2 must have not started the cluster correctly. Aborting the clustering of this reservation. Please try again.')
+            return
+
         logger.info('Reflector loop...')
         defaultReflector = 'http://reflector.datastax.com/brisk-reflector-10-04.php'
         if options and options.vanillanodes and int(options.vanillanodes) != int(options.clustersize):
@@ -323,7 +328,7 @@ def getAddresses():
                 if options and options.clustersize:
                     time.sleep(2 + random.randint(0, int(options.clustersize) / 4 + 1))
                 else:
-                    time.sleep(2 + random.randint(0, 5))
+                    time.sleep(2 + random.randint(0, 8))
         except:
             traceback.print_exc(file=sys.stdout)
             time.sleep(2 + random.randint(0, 5))
