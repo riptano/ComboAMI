@@ -406,10 +406,13 @@ def constructYaml():
         if options and options.clustersize:
             if options.vanillanodes:
                 if launchindex < options.vanillanodes:
+                    print 1
                     token = tokens[0][launchindex]
                 else:
+                    print 2
                     token = tokens[1][launchindex - options.vanillanodes]
             else:
+                print 3
                 token = tokens[0][launchindex]
 
             p = re.compile( 'initial_token:(\s)*#')
