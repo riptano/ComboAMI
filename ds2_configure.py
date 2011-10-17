@@ -119,32 +119,27 @@ def getAddresses():
             print userdata
 
         conf.setConfig("AMI", "Type", "Community")
-        if options and options.version:
-            options.version = options.version.lower()
+        if options.username and options.password:
+            repo_url = "http://deb.opsc.datastax.com/"
 
-            # Authenticate DSE
-            if options.version == 'dse':
-                if options.username and options.password:
-                    repo_url = "http://deb.opsc.datastax.com/"
+            # Configure HTTP authentication
+            password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+            password_mgr.add_password(None, repo_url, options.username, option.password)
+            handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+            opener = urllib2.build_opener(handler)
 
-                    # Configure HTTP authentication
-                    password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-                    password_mgr.add_password(None, repo_url, options.username, option.password)
-                    handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-                    opener = urllib2.build_opener(handler)
-
-                    # Try reading from the authenticated connection
-                    try:
-                        opener.open(repo_url)
-                        conf.setConfig("AMI", "Type", "Enterprise")
-                        global confPath
-                        confPath = os.path.expanduser("/etc/dse/cassandra/")
-                    except Exception as inst:
-                        # Print error message if failed
-                        if "401" in str(inst):
-                            logger.warn('Authentication failed. Continuing with DataStax Community.')
-                else:
-                    logger.warn('Both username and password are required to use DataStax Enterprise. Continuing with DataStax Community.')
+            # Try reading from the authenticated connection
+            try:
+                opener.open(repo_url)
+                conf.setConfig("AMI", "Type", "Enterprise")
+                global confPath
+                confPath = os.path.expanduser("/etc/dse/cassandra/")
+            except Exception as inst:
+                # Print error message if failed
+                if "401" in str(inst):
+                    logger.warn('Authentication failed. Continuing with DataStax Community.')
+        else:
+            logger.warn('Both username and password are required to use DataStax Enterprise. Continuing with DataStax Community.')
             
         # Add repos
         if conf.getConfig("AMI", "Type") == "Enterprise":
