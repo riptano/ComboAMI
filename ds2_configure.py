@@ -414,7 +414,7 @@ def constructYaml():
             else:
                 print 3
                 token = tokens[0][launchindex]
-
+            print 'initial_token: ' + str(token) + "\n\n#"
             p = re.compile( 'initial_token:(\s)*#')
             yaml = p.sub( 'initial_token: ' + str(token) + "\n\n#", yaml)
     
