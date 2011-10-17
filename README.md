@@ -1,7 +1,7 @@
 Summary
 =======
-DataStax's Amazon Machine Image is the quickest way to get a Cassandra
-or DataStax' Brisk cluster up and running on EC2.
+DataStax's Amazon Machine Image is the quickest way to get a DataStax
+Community or DataStax Enterprise cluster up and running on EC2.
 
 Search for AMIs by using the term: 
 
@@ -32,7 +32,7 @@ Options
         REQUIRED for a balanced, high-performing ring
 
     -d <version> (or --deployment)
-        Options are: 07x, 08x, or brisk.
+        Options are: 07x, 08x, or dse.
         Default: 08x
 
     -e <smtpAddress>:<port>:<email>:<password> (or --email)
@@ -50,7 +50,7 @@ Options
         Provide username and password provided during 
         the PAID OpsCenter registration
 
-##Brisk Specific
+##DataStax Enterprise Specific
 
     -v <#> (or --vanillanodes)
         Number of vanilla nodes that only run Cassandra
@@ -75,7 +75,7 @@ Options
     -w 1 (or --thisisvanilla)
         Setting the option with 1 forces the joining 
         node to be a vanilla Cassandra node
-        Note: Optional and only for Brisk.
+        Note: Optional and only for DataStax Enterprise.
 
 ##Advanced Cassandra settings
 
@@ -90,12 +90,12 @@ Ports Needed
             7000: Cassandra intra-node port
             7199: Cassandra JMX port, (8080 in 07x)
             9160: Cassandra client port
-        Brisk Specific:
+        DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
         OpsCenter:
             1024+: OpsCenter intra-node monitoring ports
     Public Facing:
-        Brisk Specific:
+        DataStax Enterprise Specific:
             50030: Hadoop Job Tracker website port
             50060: Hadoop Task Tracker website port
         OpsCenter:
@@ -114,11 +114,11 @@ Post-install
 
 To stop the service, simply run
 
-    sudo service <cassandra | brisk> stop
+    sudo service <cassandra | dse> stop
 
 To start the service again, simply run
 
-    sudo service <cassandra | brisk> start
+    sudo service <cassandra | dse> start
 
 
 Implementation details

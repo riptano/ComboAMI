@@ -13,7 +13,7 @@ since it installs git and pulls down the scripts for everything else.
 ## .presetup/pre_2.sh
 There is no need to execute this file, this just shows what was
 installed and in what order.  To sum up the actions: sun-java6-sdk,
-libjna, and brisk were installed, the init.d script was written to
+libjna, and DSE/C were installed, the init.d script was written to
 disk, the git repository holding this code was cloned, and the
 history was cleaned before cloning the machine.
 
@@ -41,15 +41,15 @@ status.
 
 
 ## ds4_motd.py
-Holds the command prompt from booting until Brisk is
-initiated. Once Brisk is up, a quick summary of the nodes is
+Holds the command prompt from booting until DSE/C is
+initiated. Once DSE/C is up, a quick summary of the nodes is
 displayed using 'nodetool ring'. A quick summary of commands is then
 printed on the screen for new users.
 
 
 ## reflector.php
 The reflector is used to keep track of which IPs are in the cluster
-of Brisk that is being initiated. The reflector receives the internal
+of DSE/C that is being initiated. The reflector receives the internal
 IP address, the public dns, the reservation id, and the clustername
 to keep track of the clusters' seeds. This data is saved to a SQLite
 database. If another request to the php file is sent after 5 minutes

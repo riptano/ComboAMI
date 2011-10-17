@@ -105,8 +105,8 @@ print """
 Nodetool: nodetool -h localhost ring
 Cli: cassandra-cli -h localhost"""
 
-if conf.getConfig("AMI", "Type") == "Brisk":
-    print "Hive: brisk hive"
+if conf.getConfig("AMI", "Type") == "Enterprise":
+    print "Hive: dse hive"
     print
     print "Sample Hive Demo:"
     print "    http://www.datastax.com/docs/0.8/brisk/brisk_demo"
@@ -116,14 +116,14 @@ if opscenterIP and opscenterInstalled:
     print "    Please wait 60 seconds if this is the cluster's first start..."
 
 substring = "Version: "
-if conf.getConfig("AMI", "Type") == "Cassandra":
+if conf.getConfig("AMI", "Type") == "Community":
     versionInfo = subprocess.Popen(shlex.split("dpkg -s cassandra"), stdout=subprocess.PIPE).stdout.read()
     versionInfo = versionInfo[versionInfo.find(substring) + len(substring) : versionInfo.find("\n", versionInfo.find(substring))].strip()
-    versionInfo = "Cassandra version " + versionInfo
-if conf.getConfig("AMI", "Type") == "Brisk":
-    versionInfo = subprocess.Popen(shlex.split("dpkg -s brisk"), stdout=subprocess.PIPE).stdout.read()
+    versionInfo = "DataStax Community version " + versionInfo
+if conf.getConfig("AMI", "Type") == "Enterprise":
+    versionInfo = subprocess.Popen(shlex.split("dpkg -s dse-full"), stdout=subprocess.PIPE).stdout.read()
     versionInfo = versionInfo[versionInfo.find(substring) + len(substring) : versionInfo.find("\n", versionInfo.find(substring))].strip()
-    versionInfo = "Brisk version " + versionInfo
+    versionInfo = "DataStax Enterprise version " + versionInfo
 
 print """
 
@@ -147,8 +147,8 @@ Support Links:
         IRC: #datastax-brisk channel on irc.freenode.net
 
 ---------------------------------
-DataStax AMI for Apache Cassandra
-and DataStax' Brisk(TM)
+DataStax AMI for DataStax Community
+and DataStax' Enterprise
 AMI version """ + str(version) + """
 """ + versionInfo + """
 

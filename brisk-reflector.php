@@ -7,7 +7,7 @@ $internalip = $_GET["internalip"];
 $externaldns = $_GET["externaldns"];
 $secondDCstart = $_GET["secondDCstart"];
 
-$dbname='db-brisk';
+$dbname='db-dsec';
 $seedtable ="seeds";
 $statstable ="stats";
 

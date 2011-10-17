@@ -11,8 +11,6 @@ import conf
 confPath = os.path.expanduser("/etc/cassandra/")
 opsConfPath = os.path.expanduser("/etc/opscenter/")
 
-isDEV = False
-
 opscenterseed = 0
 
 internalip = 0
@@ -76,43 +74,41 @@ def getAddresses():
         # Setup parser
         parser = OptionParser()
 
-        # DEV OPTIONS
-        # Dev switch
-        parser.add_option("-y", "--dev", action="store_true", dest="dev")
-        # Developmental option that allows for a smoke test
-        parser.add_option("-u", "--smokeurl", action="store", type="string", dest="smokeurl")
-        # Developmental option that allows for a smoke test
-        parser.add_option("-f", "--smokefile", action="store", type="string", dest="smokefile")
+        # Development options
+        # Option that specifies the cluster's name
+        parser.add_option("-d", "--dev", action="store", type="string", dest="dev")
         
-        # g h i j k l q r w x y
-        # Option that allows partitioners to be changed
-        parser.add_option("-b", "--partitioner", action="store", type="string", dest="partitioner")
-        # Option that allows for declaring this seed a vanilla node (in Brisk)
-        parser.add_option("-w", "--thisisvanilla", action="store", type="string", dest="thisisvanilla")
-        # Option that allows for seeds to be declared by the user
-        parser.add_option("-z", "--seeds", action="store", type="string", dest="seeds")
-        # Option that allows for a token to be declared by the user
-        parser.add_option("-t", "--token", action="store", type="string", dest="token")
-        # Option that allows for a choice startup of Cassandra nodes
-        parser.add_option("-d", "--deployment", action="store", type="string", dest="deployment")
+        # Letters available: ...
+        # Option that specifies the cluster's name
+        parser.add_option("-c", "--clustername", action="store", type="string", dest="clustername")
+        # Option that specifies how the ring will be divided
+        parser.add_option("-n", "--totalnodes", action="store", type="string", dest="clustersize")
+        # Option that allows for a choice between DSE and DSC
+        parser.add_option("-v", "--version", action="store", type="string", dest="version")
+        # Option that specifies how the number of Cassandra nodes
+        parser.add_option("-r", "--realtimenodes", action="store", type="string", dest="vanillanodes")
+        # Option that specifies the CassandraFS replication factor
+        parser.add_option("-f", "--cfsreplicationfactor", action="store", type="string", dest="cfsreplication")
+        # Option that specifies the username
+        parser.add_option("-u", "--username", action="store", type="string", dest="username")
+        # Option that specifies the password
+        parser.add_option("-p", "--password", action="store", type="string", dest="password")
         # Option that allows for an emailed report of the startup diagnostics
         parser.add_option("-e", "--email", action="store", type="string", dest="email")
-        # Option that specifies how the ring will be divided
-        parser.add_option("-n", "--clustername", action="store", type="string", dest="clustername")
-        # Option that specifies the user:pass for a paid version of OpsCenter
-        parser.add_option("-p", "--paidopscenter", action="store", type="string", dest="paidopscenter")
-        # Option that specifies the user:pass for a free version of OpsCenter
+        # Option that specifies the installation of OpsCenter on the first node
         parser.add_option("-o", "--opscenter", action="store", type="string", dest="opscenter")
-        # Option that specifies how the ring will be divided
-        parser.add_option("-c", "--cfsreplication", action="store", type="string", dest="cfsreplication")
-        # Option that specifies how the ring will be divided
-        parser.add_option("-v", "--vanillanodes", action="store", type="string", dest="vanillanodes")
-        # Option that specifies how the ring will be divided
-        parser.add_option("-s", "--clustersize", action="store", type="string", dest="clustersize")
+        # Option that allows partitioners to be changed
+        parser.add_option("-p", "--partitioner", action="store", type="string", dest="partitioner")
+
+        # Option that allows for a token to be declared by the user
+        parser.add_option("-t", "--token", action="store", type="string", dest="token")
+        # Option that allows for seeds to be declared by the user
+        parser.add_option("-s", "--seeds", action="store", type="string", dest="seeds")
+        # Option that allows for declaring this seed a vanilla node (in DSE)
+        parser.add_option("-a", "--analyticsnode", action="store", type="string", dest="thisisvanilla")
+
         # # Option that specifies an alternative reflector.php
         # parser.add_option("-r", "--reflector", action="store", type="string", dest="reflector")
-        # Developmental option that allows for a non-interactive instance on EBS instances
-        parser.add_option("-m", "--manual", action="store_true", dest="manual")
         
         # Grab provided reflector through provided userdata
         global options
@@ -121,53 +117,60 @@ def getAddresses():
         except:
             logger.error('One of the options was not set correctly. Please verify your settings')
             print userdata
-        if options and options.dev:
-            global isDEV
-            isDEV = True
-            conf.setConfig("AMI", "IsDev", True)
-        if isDEV:
-            if options.smokeurl and options.smokefile:
-                logger.info('Retrieving smoke testing tarball: ' + options.smokeurl)
-                logger.info('Executing smoke testing file: ' + options.smokefile)
-                conf.setConfig("AMI", "SmokeURL", options.smokeurl)
-                conf.setConfig("AMI", "SmokeFile", options.smokefile)
-            elif options.smokeurl or options.smokefile:
-                logger.warn('Both -u and -f have to be set together in order for smoke tests to run.')
 
-        conf.setConfig("AMI", "Type", "Cassandra")
-        if options and options.deployment:
-            options.deployment = options.deployment.lower()
+        conf.setConfig("AMI", "Type", "Community")
+        if options and options.version:
+            options.version = options.version.lower()
 
-            # Setup the repositories
-            if options.deployment == "07x":
-                logger.pipe('echo "deb http://www.apache.org/dist/cassandra/debian 07x main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-            elif options.deployment == "08x":
-                logger.pipe('echo "deb http://www.apache.org/dist/cassandra/debian 08x main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-            elif options.deployment == "brisk":
-                logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-                conf.setConfig("AMI", "Type", "Brisk")
-                global confPath
-                confPath = os.path.expanduser("/etc/brisk/cassandra/")
-            else:
-                logger.warn('Unable to parse Deployment Type. Defaulting to 0.8.x.')
-                logger.pipe('echo "deb http://www.apache.org/dist/cassandra/debian 08x main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+            # Authenticate DSE
+            if options.version == 'dse':
+                if options.username and options.password:
+                    repo_url = "http://deb.opsc.datastax.com/"
+
+                    # Configure HTTP authentication
+                    password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+                    password_mgr.add_password(None, repo_url, options.username, option.password)
+                    handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+                    opener = urllib2.build_opener(handler)
+
+                    # Try reading from the authenticated connection
+                    try:
+                        opener.open(repo_url)
+                        conf.setConfig("AMI", "Type", "Enterprise")
+                        global confPath
+                        confPath = os.path.expanduser("/etc/dse/cassandra/")
+                    except Exception as inst:
+                        # Print error message if failed
+                        if "401" in str(inst):
+                            logger.warn('Authentication failed. Continuing with DataStax Community.')
+                else:
+                    logger.warn('Both username and password are required to use DataStax Enterprise. Continuing with DataStax Community.')
+            
+        # Add repos
+        if conf.getConfig("AMI", "Type") == "Enterprise":
+            logger.pipe('echo "deb http://' + options.user + ':' + options.password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         else:
-            logger.info('Installing the latest version of Cassandra.')
-            logger.pipe('echo "deb http://www.apache.org/dist/cassandra/debian 08x main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+            logger.pipe('echo "deb http://deb.opsc.datastax.com/free unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+
+        logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+
+        # TODO: Remove this line
+        logger.pipe('echo "deb ' + options.dev + ' maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 
         # Perform the install
         logger.exe('sudo apt-get update')
         time.sleep(5)
         logger.info('Performing deployment install...')
-        if conf.getConfig("AMI", "Type") == "Cassandra":
+        if conf.getConfig("AMI", "Type") == "Community":
             logger.exe('sudo apt-get install -y cassandra')
             logger.exe('sudo rm -rf /var/lib/cassandra/*')
             logger.exe('sudo service cassandra stop')
-        elif conf.getConfig("AMI", "Type") == "Brisk":
-            logger.exe('sudo apt-get install -y brisk-full')
-            logger.exe('sudo apt-get install -y brisk-demos')
+        elif conf.getConfig("AMI", "Type") == "Enterprise":
+            logger.exe('sudo apt-get install -y dse-full')
+            logger.exe('sudo apt-get install -y dse-demos')
             logger.exe('sudo rm -rf /var/lib/cassandra/*')
-            logger.exe('sudo service brisk stop')
+            logger.exe('sudo service dse stop')
 
         if options and options.email:
             logger.info('Setting up diagnostic email using: ' + options.email)
@@ -175,90 +178,65 @@ def getAddresses():
         if options and options.clustername:
             logger.info('Using cluster name: ' + options.clustername)
             clustername = options.clustername
-        if options and (options.paidopscenter or options.opscenter) and int(launchindex) == 0:
-            if options.paidopscenter:
-                userpass = options.paidopscenter
-            else:
-                userpass = options.opscenter
-
-            if len(userpass.split(':')) == 2:
-                if options.deployment and options.deployment == "06x":
-                    logger.error('OpsCenter is not compatible with Cassandra 0.6.x and will not be installed.')
-                else:
-                    if not conf.getConfig("OpsCenter", "DNS"):
-                        logger.info('Installing OpsCenter...')
-                        user = userpass.split(':')[0]
-                        password = userpass.split(':')[1]
-                        logger.info('Using username: ' + user)
-                        logger.info('Using password: ' + password)
-
-                        if options.paidopscenter:
-                            logger.pipe('echo "deb http://' + user + ':' + password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-                        else:
-                            logger.pipe('echo "deb http://' + user + ':' + password + '@deb.opsc.datastax.com/free unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-
-                        logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-                        logger.exe('sudo apt-get update')
-                        
-                        if options.paidopscenter:
-                            logger.exe('sudo apt-get -y install opscenter')
-                        else:
-                            logger.exe('sudo apt-get -y install opscenter-free')
-                        logger.exe('sudo service opscenterd stop')
-
-            else:
-                logger.error('Not installing OpsCenter. Credentials were not in the correct format. (user:password)')
+        if options and options.opscenter and int(launchindex) == 0:
+            if not conf.getConfig("OpsCenter", "DNS"):
+                logger.info('Installing OpsCenter...')
+                if conf.getConfig("AMI", "Type") == "Community":
+                    logger.exe('sudo apt-get -y install opscenter')
+                elif conf.getConfig("AMI", "Type") == "Enterprise":
+                    logger.exe('sudo apt-get -y install opscenter-free')
+                logger.exe('sudo service opscenterd stop')
         if options and options.cfsreplication:
-            if conf.getConfig("AMI", "Type") == "Brisk":
+            if conf.getConfig("AMI", "Type") == "Enterprise":
                 logger.info('Using cfsreplication factor: ' + options.cfsreplication)
-                with open('/etc/default/brisk', 'r') as f:
-                    briskDefault = f.read()
+                with open('/etc/default/dse', 'r') as f:
+                    dseDefault = f.read()
 
-                briskDefault = briskDefault.replace("#CFS_REPLICATION_FACTOR=1", "CFS_REPLICATION_FACTOR=" + options.cfsreplication)
+                dseDefault = dseDefault.replace("#CFS_REPLICATION_FACTOR=1", "CFS_REPLICATION_FACTOR=" + options.cfsreplication)
                 
-                with open('/etc/default/brisk', 'w') as f:
-                    f.write(briskDefault)
+                with open('/etc/default/dse', 'w') as f:
+                    f.write(dseDefault)
             else:
-                logger.error('CFS replication can only be set in Brisk installs. Please use the deployment switch: -d brisk, if you wish to run brisk.')
+                logger.error('CFS replication can only be set in DataStax Enterprise installs. Please refer to SWITCHES.txt if you wish to run DataStax Enterprise.')
                 logger.error('Continuing as Cassandra 0.8.')
         if options and options.vanillanodes:
-            if conf.getConfig("AMI", "Type") == "Brisk":
+            if conf.getConfig("AMI", "Type") == "Enterprise":
                 logger.info('Using vanilla nodes: ' + options.vanillanodes)
                 options.vanillanodes = int(options.vanillanodes)
                 if int(launchindex) >= options.vanillanodes:
-                    with open('/etc/default/brisk', 'r') as f:
-                        briskDefault = f.read()
+                    with open('/etc/default/dse', 'r') as f:
+                        dseDefault = f.read()
 
-                    briskDefault = briskDefault.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
+                    dseDefault = dseDefault.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
                     
-                    with open('/etc/default/brisk', 'w') as f:
-                        f.write(briskDefault)
+                    with open('/etc/default/dse', 'w') as f:
+                        f.write(dseDefault)
                 if not options.clustersize:
                     logger.error('Vanilla option was set without Cluster Size.')
                     logger.error('Continuing as a collection of 1-node clusters.')
                     sys.exit(1)
             else:
-                logger.error('Vanilla nodes can only be set in Brisk installs. Please use the deployment switch: -d brisk, if you wish to run brisk.')
+                logger.error('Vanilla nodes can only be set in DataStax Enterprise installs. Please refer to SWITCHES.txt if you wish to run DataStax Enterprise.')
                 logger.error('Continuing as Cassandra 0.8.')
         else:
-            if conf.getConfig("AMI", "Type") == "Brisk":
-                with open('/etc/default/brisk', 'r') as f:
-                    briskDefault = f.read()
+            if conf.getConfig("AMI", "Type") == "Enterprise":
+                with open('/etc/default/dse', 'r') as f:
+                    dseDefault = f.read()
 
-                briskDefault = briskDefault.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
+                dseDefault = dseDefault.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
                 
-                with open('/etc/default/brisk', 'w') as f:
-                    f.write(briskDefault)
+                with open('/etc/default/dse', 'w') as f:
+                    f.write(dseDefault)
 
-        if options and options.thisisvanilla:
-            if conf.getConfig("AMI", "Type") == "Brisk":
-                with open('/etc/default/brisk', 'r') as f:
-                    briskDefault = f.read()
+        if options and options.analyticsnode:
+            if conf.getConfig("AMI", "Type") == "Enterprise":
+                with open('/etc/default/dse', 'r') as f:
+                    dseDefault = f.read()
 
-                briskDefault = briskDefault.replace("HADOOP_ENABLED=1", "HADOOP_ENABLED=0")
+                dseDefault = dseDefault.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
                 
-                with open('/etc/default/brisk', 'w') as f:
-                    f.write(briskDefault)
+                with open('/etc/default/dse', 'w') as f:
+                    f.write(dseDefault)
 
         if options and options.clustersize:
             logger.info('Using cluster size: ' + options.clustersize)
@@ -266,15 +244,13 @@ def getAddresses():
         # if options.reflector:
         #     logger.info('Using reflector: ' + options.reflector)
         
-    # Currently always set to true packaging
-    if not isDEV or (options and options.manual):
-        # Remove script files
-        logger.exe('sudo rm ds2_configure.py')
-        logger.info('Using manual option. Deleting ds2_configure.py now. This AMI will never change any configs nor start brisk after this first run.')
+    # Remove script files
+    logger.exe('sudo rm ds2_configure.py')
+    logger.info('Deleting ds2_configure.py now. This AMI will never change any configs after this first run.')
     
     global opscenterseed
 
-    # Brisk DC splitting
+    # DSE DC splitting
     global seedList
     if options and options.seeds:
         seedList = options.seeds.strip("'").strip('"').replace(' ', '')
@@ -308,7 +284,7 @@ def getAddresses():
             conf.setConfig("AMI", "CurrentStatus", status)
             
             if options and options.vanillanodes and not options.clustersize:
-                logger.error('-v only works with -s also set. Starting up nodes with NO configurations.')
+                logger.error('-r only works with -n also set. Starting up nodes with NO configurations.')
                 stayinloop = False
                 break
             if int(r[0]) == expectedResponses:
@@ -340,7 +316,7 @@ def getAddresses():
     if options and options.vanillanodes and not options.clustersize:
         sys.exit(0)
 
-    if options and (options.paidopscenter or options.opscenter):
+    if options and options.opscenter:
         conf.setConfig("OpsCenter", "DNS", opscenterDNS)
     
     if userdata:
@@ -376,24 +352,15 @@ def constructYaml():
     # Create the seed list
     global seedList
     
-    # Set seeds
-    if options and options.deployment and options.deployment == "07x":
-        # Create the seed list
-        seedsYaml = '     - ' + seedList[0] + '\n'
-        
-        # Set seeds for 0.7
-        p = re.compile('seeds:(\s*-.*)*\s*#')
-        yaml = p.sub('seeds:\n' + seedsYaml + '\n\n#', yaml)
-    else:
-        # Create the seed list
-        seedsYaml = ''
-        for ip in seedList:
-            seedsYaml += ip + ','
-        seedsYaml = seedsYaml[:-1]
+    # Create the seed list
+    seedsYaml = ''
+    for ip in seedList:
+        seedsYaml += ip + ','
+    seedsYaml = seedsYaml[:-1]
 
-        # Set seeds for 0.8
-        p = re.compile('seeds:.*')
-        yaml = p.sub('seeds: "' + seedsYaml + '"', yaml)
+    # Set seeds for 0.8
+    p = re.compile('seeds:.*')
+    yaml = p.sub('seeds: "' + seedsYaml + '"', yaml)
 
     # Set listen_address
     p = re.compile('listen_address:.*\s*#')
@@ -404,13 +371,18 @@ def constructYaml():
     yaml = p.sub('rpc_address: ' + internalip + '\n\n#', yaml)
 
     # Uses the EC2Snitch
-    if options and options.deployment and (options.deployment == "07x" or options.deployment == "08x"):
+    if not conf.getConfig("AMI", "Type") == "Enterprise":
         yaml = yaml.replace('endpoint_snitch: org.apache.cassandra.locator.SimpleSnitch', 'endpoint_snitch: org.apache.cassandra.locator.Ec2Snitch')
 
     # Set partitioner, if provided
     if options and options.partitioner:
         p = re.compile('partitioner:.*')
-        yaml = p.sub('partitioner: ' + options.partitioner, yaml)
+        if options.partitioner == 'rop':
+            yaml = p.sub('partitioner: org.apache.cassandra.dht.RandomPartitioner', yaml)
+        if options.partitioner == 'bop':
+            yaml = p.sub('partitioner: org.apache.cassandra.dht.ByteOrderedPartitioner', yaml)
+        if options.partitioner == 'opp':
+            yaml = p.sub('partitioner: org.apache.cassandra.dht.OrderPreservingPartitioner', yaml)
             
     # Set cluster_name to reservationid
     global clustername
@@ -447,10 +419,7 @@ def constructOpscenterConf():
             opsConf = f.read()
         
         # Configure OpsCenter
-        if options and options.deployment and options.deployment == "07x":
-            opsConf = opsConf.replace('port = 7199', 'port = 8080')
-        else:
-            opsConf = opsConf.replace('port = 8080', 'port = 7199')
+        opsConf = opsConf.replace('port = 8080', 'port = 7199')
         opsConf = opsConf.replace('interface = 127.0.0.1', 'interface = 0.0.0.0')
         opsConf = opsConf.replace('seed_hosts = localhost', 'seed_hosts = ' + opscenterseed)
         
@@ -643,13 +612,6 @@ def syncClocks():
 def additionalConfigurations():
     pass
 
-def additionalDevConfigurations():
-    if isDEV:
-        logger.exe('sudo rm -rf /raid0/cassandra')
-        logger.exe('sudo rm -rf /var/lib/cassandra')
-        logger.exe('sudo rm -rf /var/log/cassandra')
-        logger.exe('ls -al')
-
 
 
 
@@ -665,6 +627,5 @@ mountRAID()
 
 syncClocks()
 additionalConfigurations()
-additionalDevConfigurations()
 
-logger.info(".configurebrisk.py completed!\n")
+logger.info("ds2_configure.py completed!\n")

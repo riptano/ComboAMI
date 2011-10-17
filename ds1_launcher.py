@@ -7,7 +7,7 @@ import conf
 
 # Begin configuration this is only run once in Public Packages
 if os.path.isfile('ds2_configure.py'):
-    # Configure brisk variables
+    # Configure DataStax variables
     logger.exe('python ds2_configure.py', False)
 
     # Set ulimit hard limits
@@ -53,10 +53,10 @@ subprocess.Popen(shlex.split('sudo -u ubuntu python ds3_after_init.py &'))
 
 
 # Actually start the application
-if conf.getConfig("AMI", "Type") == "Cassandra" or conf.getConfig("AMI", "Type") == "False":
-    logger.info('Starting Cassandra...')
+if conf.getConfig("AMI", "Type") == "Community" or conf.getConfig("AMI", "Type") == "False":
+    logger.info('Starting DataStax Community...')
     logger.exe('sudo service cassandra restart')
 
-elif conf.getConfig("AMI", "Type") == "Brisk":
-    logger.info('Starting Brisk...')
-    logger.exe('sudo service brisk restart')
+elif conf.getConfig("AMI", "Type") == "Enterprise":
+    logger.info('Starting DataStax Enterprise...')
+    logger.exe('sudo service dse restart')

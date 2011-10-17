@@ -10,7 +10,7 @@ AMI Command Switches:
         REQUIRED for a balanced, high-performing ring
 
     -d <version> (or --deployment)
-        Options are: 07x, 08x, or brisk.
+        Options are: 07x, 08x, or dse.
         Default: 08x
 
     -e <smtpAddress>:<port>:<email>:<password> (or --email)
@@ -28,7 +28,7 @@ OpsCenter Support:
         Provide username and password provided during 
         the PAID OpsCenter registration
 
-Brisk Specific:
+DataStax Enterprise Specific:
 
     -v <#> (or --vanillanodes)
         Number of vanilla nodes that only run Cassandra
@@ -52,7 +52,7 @@ Growing the Cluster:
     -w 1 (or --thisisvanilla)
         Setting the option with 1 forces the joining 
         node to be a vanilla Cassandra node
-        Note: Optional and only for Brisk.
+        Note: Optional and only for DataStax Enterprise.
 
 
 Ports Needed:
@@ -60,7 +60,7 @@ Ports Needed:
         Cassandra:
             9160: Cassandra client port
             7199: Cassandra JMX port, (8080 in 07x)
-        Brisk Specific:
+        DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
             50030: Hadoop Job Tracker website port
             50060: Hadoop Task Tracker website port
