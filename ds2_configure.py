@@ -183,9 +183,9 @@ def getAddresses():
             if not conf.getConfig("OpsCenter", "DNS"):
                 logger.info('Installing OpsCenter...')
                 if conf.getConfig("AMI", "Type") == "Community":
-                    logger.exe('sudo apt-get -y install opscenter')
-                elif conf.getConfig("AMI", "Type") == "Enterprise":
                     logger.exe('sudo apt-get -y install opscenter-free')
+                elif conf.getConfig("AMI", "Type") == "Enterprise":
+                    logger.exe('sudo apt-get -y install opscenter')
                 logger.exe('sudo service opscenterd stop')
         if options and options.cfsreplication:
             if conf.getConfig("AMI", "Type") == "Enterprise":
