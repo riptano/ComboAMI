@@ -124,7 +124,7 @@ def getAddresses():
 
             # Configure HTTP authentication
             password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-            password_mgr.add_password(None, repo_url, options.username, option.password)
+            password_mgr.add_password(None, repo_url, options.username, options.password)
             handler = urllib2.HTTPBasicAuthHandler(password_mgr)
             opener = urllib2.build_opener(handler)
 
