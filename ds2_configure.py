@@ -105,7 +105,7 @@ def getAddresses():
         # Option that allows for seeds to be declared by the user
         parser.add_option("-s", "--seeds", action="store", type="string", dest="seeds")
         # Option that allows for declaring this seed a vanilla node (in DSE)
-        parser.add_option("-a", "--analyticsnode", action="store", type="string", dest="thisisvanilla")
+        parser.add_option("-a", "--analyticsnode", action="store", type="string", dest="analyticsnode")
 
         # # Option that specifies an alternative reflector.php
         # parser.add_option("-r", "--reflector", action="store", type="string", dest="reflector")
