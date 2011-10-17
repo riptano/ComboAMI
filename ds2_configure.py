@@ -143,7 +143,7 @@ def getAddresses():
             
         # Add repos
         if conf.getConfig("AMI", "Type") == "Enterprise":
-            logger.pipe('echo "deb http://' + options.user + ':' + options.password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+            logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         else:
             logger.pipe('echo "deb http://deb.opsc.datastax.com/free unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 
