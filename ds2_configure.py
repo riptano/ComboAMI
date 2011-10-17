@@ -172,8 +172,8 @@ def getAddresses():
             logger.exe('sudo service dse stop')
 
         # Remove the presaved information from startup
-        logger.exe('sudo rm /var/lib/cassandra /var/lib/cassandra')
-        logger.exe('sudo rm /var/log/cassandra /var/log/cassandra')
+        logger.exe('sudo rm -rf /var/lib/cassandra')
+        logger.exe('sudo rm -rf /var/log/cassandra')
         logger.exe('sudo mkdir -p /var/lib/cassandra')
         logger.exe('sudo mkdir -p /var/log/cassandra')
         logger.exe('sudo chown -R cassandra:cassandra /var/lib/cassandra')
