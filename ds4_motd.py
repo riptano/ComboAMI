@@ -139,8 +139,8 @@ Support Links:
         IRC: #datastax-brisk channel on irc.freenode.net
 
 ---------------------------------
-DataStax AMI for DataStax Community
-and DataStax' Enterprise
+DataStax AMI for DataStax Enterprise
+and DataStax Community
 AMI version """ + str(version) + """
 """ + versionInfo + """
 
