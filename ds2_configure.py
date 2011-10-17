@@ -92,7 +92,7 @@ def getAddresses():
         # Option that specifies the username
         parser.add_option("-u", "--username", action="store", type="string", dest="username")
         # Option that specifies the password
-        parser.add_option("-p", "--password", action="store", type="string", dest="password")
+        parser.add_option("-w", "--password", action="store", type="string", dest="password")
         # Option that allows for an emailed report of the startup diagnostics
         parser.add_option("-e", "--email", action="store", type="string", dest="email")
         # Option that specifies the installation of OpsCenter on the first node
