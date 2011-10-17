@@ -156,7 +156,8 @@ def getAddresses():
         logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 
         # TODO: Remove this line
-        logger.pipe('echo "deb ' + options.dev + ' maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        logger.pipe('echo "deb ' + options.dev.split(',')[0] + ' maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        logger.pipe('curl -s ' + options.dev.split(',')[1], 'sudo apt-key add -')
 
         # Perform the install
         logger.exe('sudo apt-get update')
