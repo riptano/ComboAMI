@@ -1,11 +1,6 @@
-# Using this AMI: ami-08f40561 (Instance)
-# ubuntu-maverick-10.10-amd64-server-20101225
+# Using this AMI: ami-08f40561 (Instance) NEWER: 1933fe70
+# ubuntu-maverick-10.10-amd64-server-20101225 NEWER: 20111001
 ### Script provided by DataStax.
-
-
-sudo apt-get update && sudo apt-get -y dist-upgrade
-
-# RESTART
 
 gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
 gpg --export --armor 2B5C1B00 | sudo apt-key add -

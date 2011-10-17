@@ -84,7 +84,7 @@ def getAddresses():
         # Developmental option that allows for a smoke test
         parser.add_option("-f", "--smokefile", action="store", type="string", dest="smokefile")
         
-        # g h i j k l q r w x y z
+        # g h i j k l q r w x y
         # Option that allows partitioners to be changed
         parser.add_option("-b", "--partitioner", action="store", type="string", dest="partitioner")
         # Option that allows for declaring this seed a vanilla node (in Brisk)
