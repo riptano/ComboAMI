@@ -142,10 +142,10 @@ def getAddresses():
             logger.warn('Both username and password are required to use DataStax Enterprise. Continuing with DataStax Community.')
             
         # Add repos
-        if conf.getConfig("AMI", "Type") == "Enterprise":
-            logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-        else:
-            logger.pipe('echo "deb http://deb.opsc.datastax.com/free unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        # if conf.getConfig("AMI", "Type") == "Enterprise":
+        #     logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        # else:
+        #     logger.pipe('echo "deb http://deb.opsc.datastax.com/free unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 
         logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
