@@ -9,8 +9,7 @@ fi
 
 gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
 gpg --export --armor 2B5C1B00 | sudo apt-key add -
-gpg --keyserver keyserver.ubuntu.com --recv-keys F758CE318D77295D
-gpg --export --armor F758CE318D77295D | sudo apt-key add -
+wget -O - http://installer.datastax.com/downloads/ubuntuarchive.repo_key | sudo apt-key add -
 wget -O - http://opscenter.datastax.com/debian/repo_key | sudo apt-key add -
 wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 
