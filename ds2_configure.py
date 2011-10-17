@@ -370,12 +370,12 @@ def constructYaml():
     yaml = p.sub('seeds: "' + seedsYaml + '"', yaml)
 
     # Set listen_address
-    p = re.compile('listen_address:.*\s*#')
-    yaml = p.sub('listen_address: ' + internalip + '\n\n#', yaml)
+    p = re.compile('listen_address:.*')
+    yaml = p.sub('listen_address: ' + internalip, yaml)
     
     # Set rpc_address
-    p = re.compile('rpc_address:.*\s*#')
-    yaml = p.sub('rpc_address: ' + internalip + '\n\n#', yaml)
+    p = re.compile('rpc_address:.*')
+    yaml = p.sub('rpc_address: ' + internalip, yaml)
 
     # Uses the EC2Snitch
     if not conf.getConfig("AMI", "Type") == "Enterprise":
