@@ -142,10 +142,10 @@ def getAddresses():
             logger.warn('Both username and password are required to use DataStax Enterprise. Continuing with DataStax Community.')
             
         # Add repos
-        # if conf.getConfig("AMI", "Type") == "Enterprise":
-        #     logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-        # else:
-        #     logger.pipe('echo "deb http://deb.opsc.datastax.com/free unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        if conf.getConfig("AMI", "Type") == "Enterprise":
+            logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        else:
+            logger.pipe('echo "deb http://deb.opsc.datastax.com/free unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 
         logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
@@ -153,9 +153,9 @@ def getAddresses():
         logger.pipe('curl -s http://opscenter.datastax.com/debian/repo_key', 'sudo apt-key add -')
         logger.pipe('curl -s http://debian.datastax.com/debian/repo_key', 'sudo apt-key add -')
 
-        # TODO: Remove this line
-        logger.pipe('echo "deb ' + options.dev.split(',')[0] + ' maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-        logger.pipe('curl -s ' + options.dev.split(',')[1], 'sudo apt-key add -')
+        if options.dev:
+            logger.pipe('echo "deb ' + options.dev.split(',')[0] + ' maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+            logger.pipe('curl -s ' + options.dev.split(',')[1], 'sudo apt-key add -')
 
         # Perform the install
         logger.exe('sudo apt-get update')
