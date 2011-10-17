@@ -398,7 +398,7 @@ def constructYaml():
     
     if options and options.token:
         logger.info('Using predefined token: ' + options.token)
-        p = re.compile( 'initial_token:(\s)*')
+        p = re.compile( 'initial_token:.*')
         yaml = p.sub( 'initial_token: ' + options.token, yaml)
     else:
         # Construct token for an equally split ring
@@ -415,7 +415,7 @@ def constructYaml():
                 print 3
                 token = tokens[0][launchindex]
                 
-            p = re.compile( 'initial_token:(\s)*')
+            p = re.compile( 'initial_token:.*')
             yaml = p.sub( 'initial_token: ' + str(token), yaml)
     
     with open(confPath + 'cassandra.yaml', 'w') as f:
