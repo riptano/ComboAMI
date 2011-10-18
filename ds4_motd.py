@@ -94,8 +94,8 @@ except:
     pass
 
 print """
-Nodetool: nodetool -h localhost ring
-Cli: cassandra-cli -h localhost"""
+Nodetool: nodetool -h `hostname` ring
+Cli: cassandra-cli -h `hostname`"""
 
 if conf.getConfig("AMI", "Type") == "Enterprise":
     print "Hive: dse hive"
