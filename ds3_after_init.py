@@ -41,9 +41,9 @@ def checkAndLaunchOpsCenter():
 
 def setupDemos():
     logger.exe('cassandra-cli -h `hostname` -f /usr/share/dse-demos/portfolio_manager/scripts/PortfolioDemo_load.txt')
-    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Stocks.json %s/cassandra/data/PortfolioDemo/Stocks-h-1-Data.db' % conf.setConfig("AMI", "MountDirectory", mntPoint))
-    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Portfolios.json %s/cassandra/data/PortfolioDemo/Portfolios-h-1-Data.db' % conf.setConfig("AMI", "MountDirectory", mntPoint))
-    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/StockHist.json %s/cassandra/data/PortfolioDemo/StockHist-h-1-Data.db' % conf.setConfig("AMI", "MountDirectory", mntPoint))
+    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Stocks.json %s/cassandra/data/PortfolioDemo/Stocks-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
+    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Portfolios.json %s/cassandra/data/PortfolioDemo/Portfolios-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
+    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/StockHist.json %s/cassandra/data/PortfolioDemo/StockHist-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
     logger.exe('nodetool -h `hostname` refresh PortfolioDemo Stocks')
 
 def emailReport(subject, message):
