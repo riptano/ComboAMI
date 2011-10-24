@@ -95,11 +95,12 @@ except:
 
 print """
 Nodetool: nodetool -h `hostname` ring
-Cli: cassandra-cli -h `hostname`"""
+Cli: cassandra-cli -h `hostname`
+CQL Shell: datastax-cqlsh/cqlsh `hostname`"""
 
 if conf.getConfig("AMI", "Type") == "Enterprise":
     print "Hive: dse hive (on Analytic nodes)"
-    
+
 if opscenterIP and opscenterInstalled:
     print "Opscenter: http://" + opscenterIP + ":8888/"
     print "    Please wait 60 seconds if this is the cluster's first start..."
