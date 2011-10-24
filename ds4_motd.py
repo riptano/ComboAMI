@@ -99,10 +99,7 @@ Cli: cassandra-cli -h `hostname`"""
 
 if conf.getConfig("AMI", "Type") == "Enterprise":
     print "Hive: dse hive (on Analytic nodes)"
-    print
-    print "Sample Hive Demo:"
-    print "    http://www.datastax.com/docs/0.8/brisk/brisk_demo"
-
+    
 if opscenterIP and opscenterInstalled:
     print "Opscenter: http://" + opscenterIP + ":8888/"
     print "    Please wait 60 seconds if this is the cluster's first start..."
@@ -125,9 +122,6 @@ For first time users, refer to ~/datastax_ami/SWITCHES.txt.
 Support Links:
     Cassandra:
         http://www.datastax.com/docs
-
-    Brisk:
-        http://www.datastax.com/docs/brisk
 
     AMI:
         http://www.datastax.com/ami
