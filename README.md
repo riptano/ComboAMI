@@ -86,7 +86,6 @@ Ports Needed
     Public Facing:
         Cassandra:
             9160: Cassandra client port
-            7199: Cassandra JMX port
         DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
             50030: Hadoop Job Tracker website port
