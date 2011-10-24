@@ -14,93 +14,92 @@ Quickstart
 Launch the number of instances desired in your cluster with the User
 Data field set to
 
-    -s <number of instances being started>
+    -n <number of instances being started>
 
 
 Options
 =======
 
-##AMI Command Switches
+##Basic AMI Switches:
 
-    -n <name> (or --clustername)
+    -c <name> (or --clustername)
         The name of the Cassandra cluster
         Note: Spaces are not allowed
         REQUIRED for safety
 
-    -s <#> (or --clustersize) 
+    -n <#> (or --totalnodes) 
         Cluster size
         REQUIRED for a balanced, high-performing ring
 
-    -d <version> (or --deployment)
-        Options are: 07x, 08x, or dse.
-        Default: 08x
+##DataStax Enterprise Specific:
+
+    -u <#> (or --username)
+        The username provided during DSE registration
+        -p is REQUIRED in order to use this option
+        REQUIRED for a DSE installation
+
+    -p <#> (or --password)
+        The password provided during DSE registration
+        -u is REQUIRED in order to use this option
+        REQUIRED for a DSE installation
+
+    -r <#> (or --realtimenodes)
+        Number of vanilla nodes that only run Cassandra
+        -n is REQUIRED in order to use this option
+        Default: 0
+
+    -f <#> (--cfsreplicationfactor)
+        The CFS replication factor
+        At least these many non-vanilla nodes REQUIRED
+        Default: 0
+
+##Growing the Cluster:
+    
+    -t <token> (or --token)
+        Forces this token on the node 
+
+    -z "<seed>,<seed>..." (or --seeds)
+        Allows a single node to join a cluster
+        Note: Spaces are not allowed
+
+    -a 1 (or --analyticsnode)
+        Setting the option with 1 forces the joining 
+        node to be an Analytics node
+        Note: Optional and only for DataStax Enterprise.
+
+##Advanced:
 
     -e <smtpAddress>:<port>:<email>:<password> (or --email)
         Sends emails to and from this address for easier
         error collecting
         Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
 
-##OpsCenter Support
+    -p [rop | bop | opp] (or --partitioner)
+        Configures the partitioner for the cluster
+        Choices: RandomPartitioner, ByteOrderedPartitioner, or
+        OrderPreservingPartitioner (deprecated)
 
-    -o <user>:<pass> (or --opscenter)
-        Provide username and password provided during 
-        the FREE OpsCenter registration
-
-    -p <user>:<pass> (or --paidopscenter)
-        Provide username and password provided during 
-        the PAID OpsCenter registration
-
-##DataStax Enterprise Specific
-
-    -v <#> (or --vanillanodes)
-        Number of vanilla nodes that only run Cassandra
-        -s is REQUIRED in order to use this option
-        Default: 0
-
-    -c <#> (--cfsreplication)
-        The CFS replication factor
-        At least these many non-vanilla nodes REQUIRED
-        Default: 0
-
-##Growing the Cluster
-    
-    -t <token> (or --token)
-        Forces this token on the node 
-
-    -z "<seed>,<seed>" (or --seeds)
-        Allows a single node to join a cluster
-        Note: Seeds must be in the same region
-        Note: Spaces are not allowed
-
-    -w 1 (or --thisisvanilla)
-        Setting the option with 1 forces the joining 
-        node to be a vanilla Cassandra node
-        Note: Optional and only for DataStax Enterprise.
-
-##Advanced Cassandra settings
-
-    -b <partitioner> (or --partitioner)
-        Allows users to change partitioners
 
 Ports Needed
 ============
 
-    Internal:
+    Public Facing:
         Cassandra:
-            7000: Cassandra intra-node port
-            7199: Cassandra JMX port, (8080 in 07x)
             9160: Cassandra client port
+            7199: Cassandra JMX port
         DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
-        OpsCenter:
-            1024+: OpsCenter intra-node monitoring ports
-    Public Facing:
-        DataStax Enterprise Specific:
             50030: Hadoop Job Tracker website port
             50060: Hadoop Task Tracker website port
         OpsCenter:
             8888: OpsCenter website port
-
+    Internal:
+        Cassandra:
+            7000: Cassandra intra-node port
+            61621: OpsCenter agent port
+            61622: OpsCenter agent port
+        OpsCenter:
+            61619-61622: OpsCenter intra-node monitoring ports
 
 Step-by-step
 ============
