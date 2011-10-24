@@ -25,7 +25,7 @@ def exe(command, log=True):
     if not log or (len(read[0]) == 0 and len(read[1]) == 0):
         appendLog('[EXEC] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command)
     
-    return process
+    return read
 
 def pipe(command1, command2, log=True):
     # Helper function to execute piping commands and print traces of the commands and output for debugging/logging purposes
