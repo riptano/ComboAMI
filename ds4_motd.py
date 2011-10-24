@@ -109,7 +109,7 @@ if opscenterIP and opscenterInstalled:
 
 substring = "Version: "
 if conf.getConfig("AMI", "Type") == "Community":
-    versionInfo = subprocess.Popen(shlex.split("dpkg -s cassandra"), stdout=subprocess.PIPE).stdout.read()
+    versionInfo = subprocess.Popen(shlex.split("dpkg -s apache-cassandra1"), stdout=subprocess.PIPE).stdout.read()
     versionInfo = versionInfo[versionInfo.find(substring) + len(substring) : versionInfo.find("\n", versionInfo.find(substring))].strip()
     versionInfo = "DataStax Community version " + versionInfo
 if conf.getConfig("AMI", "Type") == "Enterprise":
