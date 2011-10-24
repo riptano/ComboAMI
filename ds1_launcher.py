@@ -10,7 +10,9 @@ if os.path.isfile('ds2_configure.py'):
     # Configure DataStax variables
     read = logger.exe('python ds2_configure.py', False)
     if len(read[1]) > 0:
-        logger.error(read[1])
+        # TODO: later
+        # logger.error(read[1])
+        pass
 
     # Set ulimit hard limits
     logger.pipe('echo "* soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
