@@ -6,7 +6,7 @@ going to hack on the AMI configuration scripts.
 ## .presetup/pre_1.sh
 
 There is no need to execute this file, this just shows what was
-installed and in what order.  This file is the precursor for .run.sh
+installed and in what order.  This file is the precursor for pre_2.sh
 since it installs git and pulls down the scripts for everything else.
 
 
