@@ -83,8 +83,6 @@ def getAddresses():
         parser.add_option("-c", "--clustername", action="store", type="string", dest="clustername")
         # Option that specifies how the ring will be divided
         parser.add_option("-n", "--totalnodes", action="store", type="string", dest="clustersize")
-        # Option that allows for a choice between DSE and DSC
-        parser.add_option("-v", "--version", action="store", type="string", dest="version")
         # Option that specifies how the number of Cassandra nodes
         parser.add_option("-r", "--realtimenodes", action="store", type="string", dest="vanillanodes")
         # Option that specifies the CassandraFS replication factor

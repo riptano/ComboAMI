@@ -98,7 +98,7 @@ Nodetool: nodetool -h `hostname` ring
 Cli: cassandra-cli -h `hostname`"""
 
 if conf.getConfig("AMI", "Type") == "Enterprise":
-    print "Hive: dse hive"
+    print "Hive: dse hive (on Analytic nodes)"
     print
     print "Sample Hive Demo:"
     print "    http://www.datastax.com/docs/0.8/brisk/brisk_demo"
