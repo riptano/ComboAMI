@@ -33,12 +33,12 @@ Options
 
 ##DataStax Enterprise Specific:
 
-    -u <#> (or --username)
+    -u <user> (or --username)
         The username provided during DSE registration
         -p is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
-    -p <#> (or --password)
+    -p <pass> (or --password)
         The password provided during DSE registration
         -u is REQUIRED in order to use this option
         REQUIRED for a DSE installation
