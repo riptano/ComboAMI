@@ -617,6 +617,11 @@ def syncClocks():
     # Restart the service
     logger.exe('sudo service ntp restart')
 
+def installCQLsh():
+    logger.exe('wget http://downloads.datastax.com/community/datastax-cqlsh.tar.gz')
+    logger.exe('tar xf datastax-cqlsh.tar.gz')
+    logger.exe('rm datastax-cqlsh.tar.gz')
+
 def additionalConfigurations():
     pass
 
@@ -634,6 +639,7 @@ constructEnv()
 mountRAID()
 
 syncClocks()
+installCQLsh()
 additionalConfigurations()
 
 logger.info("ds2_configure.py completed!\n")
