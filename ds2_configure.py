@@ -138,7 +138,7 @@ def getAddresses():
                 # Print error message if failed
                 if "401" in str(inst):
                     logger.warn('Authentication failed. Continuing with DataStax Community.')
-        else:
+        elif options.username or options.password:
             logger.warn('Both username and password are required to use DataStax Enterprise. Continuing with DataStax Community.')
             
         # Add repos
