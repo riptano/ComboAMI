@@ -99,7 +99,7 @@ Ports Needed
             61621: OpsCenter agent port
             61622: OpsCenter agent port
         OpsCenter:
-            61619-61622: OpsCenter intra-node monitoring ports
+            61620: OpsCenter intra-node monitoring ports
 
 Step-by-step
 ============
