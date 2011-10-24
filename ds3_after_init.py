@@ -39,6 +39,13 @@ def checkAndLaunchOpsCenter():
         logger.exe('sudo service opscenterd restart')
         conf.setConfig("AMI", "CompletedFirstBoot", True)
 
+def setupDemos():
+    logger.exe('cassandra-cli -h `hostname` -f /usr/share/dse-demos/portfolio_manager/scripts/PortfolioDemo_load.txt')
+    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Stocks.json %s/cassandra/data/PortfolioDemo/Stocks-h-1-Data.db' % conf.setConfig("AMI", "MountDirectory", mntPoint))
+    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Portfolios.json %s/cassandra/data/PortfolioDemo/Portfolios-h-1-Data.db' % conf.setConfig("AMI", "MountDirectory", mntPoint))
+    logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/StockHist.json %s/cassandra/data/PortfolioDemo/StockHist-h-1-Data.db' % conf.setConfig("AMI", "MountDirectory", mntPoint))
+    logger.exe('nodetool -h `hostname` refresh PortfolioDemo Stocks')
+
 def emailReport(subject, message):
     msg = MIMEMultipart()
     msg['Subject'] = subject
@@ -87,7 +94,7 @@ def smokeTest():
 
 
 
-print '[INFO] Waiting 60 seconds to restart opscenter and possibly send emails...'
+print '[INFO] Waiting 60 seconds to restart opscenter, setup demos, and possibly send emails...'
 time.sleep(60)
 req = urllib2.Request('http://instance-data/latest/meta-data/reservation-id')
 reservationid = urllib2.urlopen(req).read()
@@ -123,6 +130,7 @@ if conf.getConfig("AMI", "Email"):
         print "[ERROR] No emails will be sent. Error during parsing."
 
 checkAndLaunchOpsCenter()
+setupDemos()
 
 if username and password:
     with open('ami.log', 'r') as f:

@@ -459,7 +459,7 @@ def constructEnv():
     
 def mountRAID():
     # Only create raid0 once. Mount all times in init.d script.
-    if not conf.getConfig("AMI", "RAIDCreated"):
+    if not conf.getConfig("AMI", "RAIDAttempted"):
 
         # Remove EC2 default /mnt from fstab
         fstab = ''
@@ -513,15 +513,15 @@ def mountRAID():
             partionList = partionList.strip()
         
             logger.info('Creating the RAID0 set:')
-            time.sleep(5)
+            time.sleep(10)
             logger.pipe('yes', 'sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList, False)
             logger.pipe('echo DEVICE ' + partionList, 'sudo tee /etc/mdadm/mdadm.conf')
             logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
-            time.sleep(5)
+            time.sleep(10)
             logger.exe('blockdev --setra 65536 /dev/md0')
 
             logger.info('Formatting the RAID0 set:')
-            time.sleep(5)
+            time.sleep(10)
             logger.exe('sudo mkfs.xfs -f /dev/md0')
             
             # Configure fstab and mount the new RAID0 device
@@ -591,7 +591,8 @@ def mountRAID():
         logger.exe('sudo chown -R cassandra:cassandra /var/log/cassandra')
 
         # Never create raid array again
-        conf.setConfig("AMI", "RAIDCreated", True)
+        conf.setConfig("AMI", "RAIDAttempted", True)
+        conf.setConfig("AMI", "MountDirectory", mntPoint)
 
         logger.info("Mounted Raid.\n")
 
