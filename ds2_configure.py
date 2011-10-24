@@ -96,7 +96,7 @@ def getAddresses():
         # Option that allows for an emailed report of the startup diagnostics
         parser.add_option("-e", "--email", action="store", type="string", dest="email")
         # Option that specifies the installation of OpsCenter on the first node
-        parser.add_option("-o", "--opscenter", action="store", type="string", dest="opscenter")
+        # parser.add_option("-o", "--opscenter", action="store", type="string", dest="opscenter")
         # Option that allows partitioners to be changed
         parser.add_option("-p", "--partitioner", action="store", type="string", dest="partitioner")
 
@@ -143,9 +143,9 @@ def getAddresses():
             
         # Add repos
         if conf.getConfig("AMI", "Type") == "Enterprise":
-            logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@deb.opsc.datastax.com/ unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+            logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@debian.datastax.com/enterprise unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         else:
-            logger.pipe('echo "deb http://deb.opsc.datastax.com/free unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+            logger.pipe('echo "deb http://debian.datastax.com/community unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 
         logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
@@ -162,12 +162,12 @@ def getAddresses():
         time.sleep(5)
         logger.info('Performing deployment install...')
         if conf.getConfig("AMI", "Type") == "Community":
-            logger.exe('sudo apt-get install -y cassandra')
+            logger.exe('sudo apt-get install -y apache-cassandra1')
             logger.exe('sudo rm -rf /var/lib/cassandra/*')
             logger.exe('sudo service cassandra stop')
+            logger.exe('sudo apt-get install -y dsc-demos')
         elif conf.getConfig("AMI", "Type") == "Enterprise":
             logger.exe('sudo apt-get install -y dse-full')
-            logger.exe('sudo apt-get install -y dse-demos')
             logger.exe('sudo rm -rf /var/lib/cassandra/*')
             logger.exe('sudo service dse stop')
 
@@ -185,7 +185,7 @@ def getAddresses():
         if options and options.clustername:
             logger.info('Using cluster name: ' + options.clustername)
             clustername = options.clustername
-        if options and options.opscenter and int(launchindex) == 0:
+        if int(launchindex) == 0:
             if not conf.getConfig("OpsCenter", "DNS"):
                 logger.info('Installing OpsCenter...')
                 if conf.getConfig("AMI", "Type") == "Community":
@@ -323,8 +323,7 @@ def getAddresses():
     if options and options.vanillanodes and not options.clustersize:
         sys.exit(0)
 
-    if options and options.opscenter:
-        conf.setConfig("OpsCenter", "DNS", opscenterDNS)
+    conf.setConfig("OpsCenter", "DNS", opscenterDNS)
     
     if userdata:
         logger.info("Started with user data set to:")
