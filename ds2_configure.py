@@ -620,6 +620,7 @@ def syncClocks():
 def installCQLsh():
     logger.exe('wget http://downloads.datastax.com/community/datastax-cqlsh.tar.gz', False)
     logger.exe('tar xf datastax-cqlsh.tar.gz')
+    logger.exe('chown ubuntu:ubuntu datastax-cqlsh')
     logger.exe('rm datastax-cqlsh.tar.gz')
     logger.exe('mv datastax-cqlsh ../')
 
