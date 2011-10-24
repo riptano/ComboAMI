@@ -272,7 +272,7 @@ def getAddresses():
             return
 
         logger.info('Reflector loop...')
-        defaultReflector = 'http://reflector2.datastax.com/brisk-reflector-10-04.php'
+        defaultReflector = 'http://reflector2.datastax.com/reflector.php'
         if options and options.vanillanodes and int(options.vanillanodes) != int(options.clustersize):
             req = urllib2.Request(defaultReflector + '?indexid=' + str(launchindex) + '&reservationid=' + reservationid + '&internalip=' + internalip + '&externaldns=' + publichostname + '&secondDCstart=' + str(options.vanillanodes))
             expectedResponses = 2

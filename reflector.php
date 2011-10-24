@@ -41,7 +41,7 @@ function setupDB(){
   
   # Remove records older than 5 minutes.
   $stmt = "DELETE FROM $seedtable
-              WHERE $seedtable.created_at < strftime('%s','now') - 300;";
+              WHERE $seedtable.created_at < strftime('%s','now') - 600;";
   $db->exec($stmt);  
 }
 
