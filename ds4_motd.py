@@ -143,13 +143,13 @@ Support Links:
     For quick support, visit:
         IRC: #datastax-brisk channel on irc.freenode.net
 
----------------------------------
+------------------------------------
 DataStax AMI for DataStax Enterprise
 and DataStax Community
 AMI version """ + str(version) + """
 """ + versionInfo + """
 
----------------------------------
+------------------------------------
 
 """
 
