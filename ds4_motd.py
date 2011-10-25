@@ -100,6 +100,13 @@ CQL Shell: datastax-cqlsh/cqlsh `hostname`"""
 
 if conf.getConfig("AMI", "Type") == "Enterprise":
     print "Hive: dse hive (on Analytic nodes)"
+    print "Pig: dse pig (on Analytic nodes)"
+    print
+    print "Portfolio (Cassandra + Hive) Demo:"
+    print "    http://www.datastax.com/docs/1.0/datastax_enterprise/portfolio_demo"
+    print "Pig Demo:"
+    print "    http://www.datastax.com/docs/1.0/datastax_enterprise/about_pig"
+    print
 
 if opscenterIP and opscenterInstalled:
     print "Opscenter: http://" + opscenterIP + ":8888/"
@@ -123,6 +130,9 @@ For first time users, refer to ~/datastax_ami/SWITCHES.txt.
 Support Links:
     Cassandra:
         http://www.datastax.com/docs
+
+    DataStax Enterprise:
+        http://www.datastax.com/docs/dse
 
     AMI:
         http://www.datastax.com/ami
