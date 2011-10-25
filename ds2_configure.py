@@ -481,6 +481,7 @@ def mountRAID():
         
         # Check if there are enough drives to start a RAID set
         if len(devices) > 1:
+            time.sleep(20)
             # Make sure the devices are umounted, then run fdisk on each device
             logger.info('Clear "invalid flag 0x0000 of partition table 4" by issuing a write, then running fdisk on each device...')
             formatCommands = """echo 'n
