@@ -115,6 +115,7 @@ def getAddresses():
         except:
             logger.error('One of the options was not set correctly. Please verify your settings')
             conf.setConfig("AMI", "LeadingSeed", internalip)
+            options = False
             print userdata
 
         conf.setConfig("AMI", "Type", "Community")
