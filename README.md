@@ -38,7 +38,7 @@ Options
         -p is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
-    -p <pass> (or --password)
+    -w <pass> (or --password)
         The password provided during DSE registration
         -u is REQUIRED in order to use this option
         REQUIRED for a DSE installation
