@@ -593,10 +593,10 @@ def mountRAID():
 
         # Never create raid array again
         conf.setConfig("AMI", "RAIDAttempted", True)
-        if mntPoint:
-            conf.setConfig("AMI", "MountDirectory", mntPoint)
-        else:
+        if len(partitions) > 1:
             conf.setConfig("AMI", "MountDirectory", raidMnt)
+        else:
+            conf.setConfig("AMI", "MountDirectory", mntPoint)
 
         logger.info("Mounted Raid.\n")
 
