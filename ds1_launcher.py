@@ -11,7 +11,9 @@ if os.path.isfile('ds2_configure.py'):
     read = logger.exe('python ds2_configure.py', False)
     if len(read[1]) > 0:
         # TODO: later
-        # logger.error(read[1])
+        logger.error("DEBUG")
+        logger.error(read[1])
+        logger.error("/DEBUG")
         pass
 
     # Set ulimit hard limits
