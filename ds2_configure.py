@@ -622,15 +622,11 @@ def syncClocks():
     logger.exe('sudo service ntp restart')
 
 def installCQLsh():
-    lastdir = os.getcwd()
-    os.chdir('/home/ubuntu/')
-
     logger.exe('wget http://downloads.datastax.com/community/datastax-cqlsh.tar.gz', False)
     logger.exe('tar xf datastax-cqlsh.tar.gz')
     logger.exe('chown -R ubuntu:ubuntu datastax-cqlsh')
     logger.exe('rm datastax-cqlsh.tar.gz')
-    
-    os.chdir(lastdir)
+    logger.exe('mv datastax-cqlsh /home/ubuntu')
 
 def additionalConfigurations():
     pass
