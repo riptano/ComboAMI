@@ -36,7 +36,7 @@ Growing the Cluster:
     -t <token> (or --token)
         Forces this token on the node 
 
-    -z "<seed>,<seed>..." (or --seeds)
+    -s "<seed>,<seed>..." (or --seeds)
         Allows a single node to join a cluster
         Note: Spaces are not allowed
 
@@ -71,6 +71,7 @@ Ports Needed:
     Internal:
         Cassandra:
             7000: Cassandra intra-node port
+            8983: Portfolio Demo
             61621: OpsCenter agent port
             61622: OpsCenter agent port
         OpsCenter:
