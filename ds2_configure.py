@@ -623,7 +623,7 @@ def installCQLsh():
     logger.exe('tar xf datastax-cqlsh.tar.gz')
     logger.exe('chown ubuntu:ubuntu datastax-cqlsh')
     logger.exe('rm datastax-cqlsh.tar.gz')
-    logger.exe('mv datastax-cqlsh ../')
+    logger.exe('mv datastax-cqlsh /home/ubuntu/')
 
 def additionalConfigurations():
     pass
