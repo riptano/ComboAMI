@@ -47,9 +47,9 @@ def pipe(command1, command2, log=True):
     output = p2.communicate()[0]
     
     if log:
-        if output and len(output) > 0 and len(output[0]) > 0:
+        if output and len(output[0]) > 0:
             appendLog('[PIPE] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command1 + ' | ' + command2 + ":\n" + output[0])
-        elif output and len(output) > 1 and len(output[1] > 0):
+        if output and len(output[1] > 0):
             appendLog('[PIPE] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command1 + ' | ' + command2 + ":\n" + output[1])
 
         return output
