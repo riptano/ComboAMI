@@ -269,6 +269,7 @@ def getAddresses():
     while stayinloop:
         if time.time() - timeIntoLoop > 10 * 60:
             logger.error('EC2 must have not started the cluster correctly. Aborting the clustering of this reservation. Please try again.')
+            conf.setConfig("AMI", "LeadingSeed", internalip)
             return
 
         logger.info('Reflector loop...')
@@ -517,6 +518,7 @@ def mountRAID():
             time.sleep(10)
             logger.pipe('yes', 'sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList, False)
             logger.pipe('echo DEVICE ' + partionList, 'sudo tee /etc/mdadm/mdadm.conf')
+            time.sleep(5)
             logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
             time.sleep(10)
             logger.exe('blockdev --setra 65536 /dev/md0')
