@@ -114,10 +114,11 @@ def getAddresses():
             (options, args) = parser.parse_args(userdata.strip().split(" "))
         except:
             logger.error('One of the options was not set correctly. Please verify your settings')
+            conf.setConfig("AMI", "LeadingSeed", internalip)
             print userdata
 
         conf.setConfig("AMI", "Type", "Community")
-        if options.username and options.password:
+        if options and options.username and options.password:
             repo_url = "http://deb.opsc.datastax.com/"
 
             # Configure HTTP authentication
@@ -136,7 +137,7 @@ def getAddresses():
                 # Print error message if failed
                 if "401" in str(inst):
                     logger.warn('Authentication failed. Continuing with DataStax Community.')
-        elif options.username or options.password:
+        elif options and options.username or options.password:
             logger.warn('Both username and password are required to use DataStax Enterprise. Continuing with DataStax Community.')
             
         # Add repos
@@ -151,7 +152,7 @@ def getAddresses():
         logger.pipe('curl -s http://opscenter.datastax.com/debian/repo_key', 'sudo apt-key add -')
         logger.pipe('curl -s http://debian.datastax.com/debian/repo_key', 'sudo apt-key add -')
 
-        if options.dev:
+        if options and options.dev:
             logger.pipe('echo "deb ' + options.dev.split(',')[0] + ' maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
             logger.pipe('curl -s ' + options.dev.split(',')[1], 'sudo apt-key add -')
 
