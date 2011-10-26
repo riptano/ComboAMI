@@ -84,7 +84,7 @@ while True:
         break
 
 nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
-print nodetoolOut
+print nodetoolOut[0]
 
 opscenterIP = None
 opscenterInstalled = None
