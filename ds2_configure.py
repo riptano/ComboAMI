@@ -203,7 +203,7 @@ def getAddresses():
                     f.write(dseDefault)
             else:
                 logger.error('CFS replication can only be set in DataStax Enterprise installs. Please refer to SWITCHES.txt if you wish to run DataStax Enterprise.')
-                logger.error('Continuing as Cassandra 0.8.')
+                logger.error('Continuing as DataStax Community...')
         if options and options.vanillanodes:
             if conf.getConfig("AMI", "Type") == "Enterprise":
                 logger.info('Using vanilla nodes: ' + options.vanillanodes)
@@ -222,7 +222,7 @@ def getAddresses():
                     sys.exit(1)
             else:
                 logger.error('Vanilla nodes can only be set in DataStax Enterprise installs. Please refer to SWITCHES.txt if you wish to run DataStax Enterprise.')
-                logger.error('Continuing as Cassandra 0.8.')
+                logger.error('Continuing as DataStax Community...')
         else:
             if conf.getConfig("AMI", "Type") == "Enterprise":
                 with open('/etc/default/dse', 'r') as f:
