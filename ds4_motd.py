@@ -26,6 +26,9 @@ try:
     p = re.search('(-w\s*)(\w*)', userdata)
     if p:
         userdata = userdata.replace(p.group(2), '****')
+    p = re.search('(--password\s*)(\w*)', userdata)
+    if p:
+        userdata = userdata.replace(p.group(2), '****')
 
     print
     print "Cluster started with these options:"
