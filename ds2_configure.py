@@ -325,7 +325,7 @@ def getAddresses():
     
     if userdata:
         logger.info("Started with user data set to:")
-        print userdata
+        logger.info(userdata)
     else:
         logger.info("No user data was set.")
     logger.info("Seed list: " + str(seedList))
@@ -362,7 +362,7 @@ def constructYaml():
         seedsYaml += ip + ','
     seedsYaml = seedsYaml[:-1]
 
-    # Set seeds for 0.8
+    # Set seeds for DSE/C
     p = re.compile('seeds:.*')
     yaml = p.sub('seeds: "' + seedsYaml + '"', yaml)
 
@@ -593,7 +593,10 @@ def mountRAID():
 
         # Never create raid array again
         conf.setConfig("AMI", "RAIDAttempted", True)
-        conf.setConfig("AMI", "MountDirectory", mntPoint)
+        if mntPoint:
+            conf.setConfig("AMI", "MountDirectory", mntPoint)
+        else:
+            conf.setConfig("AMI", "MountDirectory", raidMnt)
 
         logger.info("Mounted Raid.\n")
 
@@ -619,11 +622,15 @@ def syncClocks():
     logger.exe('sudo service ntp restart')
 
 def installCQLsh():
+    lastdir = os.getcwd()
+    os.chdir('/home/ubuntu/')
+
     logger.exe('wget http://downloads.datastax.com/community/datastax-cqlsh.tar.gz', False)
     logger.exe('tar xf datastax-cqlsh.tar.gz')
     logger.exe('chown -R ubuntu:ubuntu datastax-cqlsh')
     logger.exe('rm datastax-cqlsh.tar.gz')
-    logger.exe('mv datastax-cqlsh /home/ubuntu/')
+    
+    os.chdir(lastdir)
 
 def additionalConfigurations():
     pass
