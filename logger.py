@@ -34,7 +34,6 @@ def pipe(command1, command2, log=True):
     p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
     read = p2.stdout.read()
 
-    
     if not log:
         read = ""
     
@@ -47,6 +46,9 @@ def pipe(command1, command2, log=True):
     output = p2.communicate()[0]
     
     if log:
+        if read and len(read) > 0:
+            appendLog('[PIPE] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command1 + ' | ' + command2 + ":\n" + read)
+ 
         if output and len(output[0]) > 0:
             appendLog('[PIPE] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command1 + ' | ' + command2 + ":\n" + output[0])
         if output and len(output[1] > 0):
