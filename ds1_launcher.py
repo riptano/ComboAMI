@@ -9,10 +9,12 @@ import conf
 if os.path.isfile('ds2_configure.py'):
     # Configure DataStax variables
     read = logger.exe('python ds2_configure.py', False)
-    if len(read[1]) > 0:
+    stderr = read[1]
+    stderr = stderr.replace('yes: standard output: Broken pipe', '').strip()
+    if len(stderr) > 0:
         # TODO: later
         logger.error("DEBUG")
-        logger.error(read[1])
+        logger.error(stderr)
         logger.error("/DEBUG")
         pass
 
