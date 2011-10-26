@@ -50,8 +50,6 @@ def setupDemos():
         logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Portfolios.json %s/cassandra/data/PortfolioDemo/Portfolios-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
         logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/StockHist.json %s/cassandra/data/PortfolioDemo/StockHist-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
         logger.exe('nodetool -h %s refresh PortfolioDemo Stocks' % internalip)
-        logger.exe('sudo chown -R cassandra:cassandra %s/cassandra/data/' % conf.getConfig("AMI", "MountDirectory"))
-        logger.exe('sudo chmod 644 %s/cassandra/data/' % conf.getConfig("AMI", "MountDirectory"))
 
 def emailReport(subject, message):
     msg = MIMEMultipart()
