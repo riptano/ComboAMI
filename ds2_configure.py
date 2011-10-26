@@ -90,13 +90,13 @@ def getAddresses():
         # Option that specifies the username
         parser.add_option("-u", "--username", action="store", type="string", dest="username")
         # Option that specifies the password
-        parser.add_option("-w", "--password", action="store", type="string", dest="password")
+        parser.add_option("-p", "--password", action="store", type="string", dest="password")
         # Option that allows for an emailed report of the startup diagnostics
         parser.add_option("-e", "--email", action="store", type="string", dest="email")
         # Option that specifies the installation of OpsCenter on the first node
         # parser.add_option("-o", "--opscenter", action="store", type="string", dest="opscenter")
         # Option that allows partitioners to be changed
-        parser.add_option("-p", "--partitioner", action="store", type="string", dest="partitioner")
+        parser.add_option("-P", "--partitioner", action="store", type="string", dest="partitioner")
 
         # Option that allows for a token to be declared by the user
         parser.add_option("-t", "--token", action="store", type="string", dest="token")

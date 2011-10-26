@@ -38,7 +38,7 @@ Options
         -p is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
-    -w <pass> (or --password)
+    -p <pass> (or --password)
         The password provided during DSE registration
         -u is REQUIRED in order to use this option
         REQUIRED for a DSE installation
@@ -74,7 +74,7 @@ Options
         error collecting
         Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
 
-    -p [rop | bop | opp] (or --partitioner)
+    -P [rop | bop | opp] (or --partitioner)
         Configures the partitioner for the cluster
         Choices: RandomPartitioner, ByteOrderedPartitioner, or
         OrderPreservingPartitioner (deprecated)
