@@ -523,9 +523,9 @@ def mountRAID():
             logger.pipe('yes', 'sudo mdadm --create /dev/md0 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList)
             logger.pipe('echo DEVICE partitions', 'sudo tee /etc/mdadm/mdadm.conf')
             # logger.pipe('echo DEVICE ' + partionList, 'sudo tee /etc/mdadm/mdadm.conf')
-            # time.sleep(5)
-            # logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
-            # time.sleep(10)
+            time.sleep(5)
+            logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
+            time.sleep(10)
             logger.exe('blockdev --setra 65536 /dev/md0')
 
             logger.info('Formatting the RAID0 set:')
