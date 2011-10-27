@@ -45,11 +45,11 @@ def setupDemos():
         req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
         internalip = urllib2.urlopen(req).read()
 
-        logger.exe('cassandra-cli -h %s -f /usr/share/dse-demos/portfolio_manager/scripts/PortfolioDemo_load.txt' % internalip)
-        logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Stocks.json %s/cassandra/data/PortfolioDemo/Stocks-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
-        logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Portfolios.json %s/cassandra/data/PortfolioDemo/Portfolios-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
-        logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/StockHist.json %s/cassandra/data/PortfolioDemo/StockHist-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
-        logger.exe('nodetool -h %s refresh PortfolioDemo Stocks' % internalip)
+        # logger.exe('cassandra-cli -h %s -f /usr/share/dse-demos/portfolio_manager/scripts/PortfolioDemo_load.txt' % internalip)
+        # logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Stocks.json %s/cassandra/data/PortfolioDemo/Stocks-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
+        # logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/Portfolios.json %s/cassandra/data/PortfolioDemo/Portfolios-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
+        # logger.exe('sudo json2sstable -s -c Stocks -K PortfolioDemo /usr/share/dse-demos/portfolio_manager/scripts/StockHist.json %s/cassandra/data/PortfolioDemo/StockHist-h-1-Data.db' % conf.getConfig("AMI", "MountDirectory"))
+        # logger.exe('nodetool -h %s refresh PortfolioDemo Stocks' % internalip)
 
 def emailReport(subject, message):
     msg = MIMEMultipart()
