@@ -64,6 +64,7 @@ def getAddresses():
         
     except Exception, e:
         logger.info("No User Data was set. Naming cluster the same as the reservation ID.")
+        logger.pipe('echo "deb http://debian.datastax.com/community stable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         logger.pipe('curl -s http://installer.datastax.com/downloads/ubuntuarchive.repo_key', 'sudo apt-key add -')
@@ -151,9 +152,9 @@ def getAddresses():
             
         # Add repos
         if conf.getConfig("AMI", "Type") == "Enterprise":
-            logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@debian.datastax.com/enterprise unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+            logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@debian.datastax.com/enterprise stable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         else:
-            logger.pipe('echo "deb http://debian.datastax.com/community unstable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+            logger.pipe('echo "deb http://debian.datastax.com/community stable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 
         logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
@@ -526,9 +527,15 @@ def mountRAID():
         
             logger.info('Creating the RAID0 set:')
             time.sleep(10)
+            logger.info("-----------------------------------------------------")
+            logger.info("Before raiding")
+            logger.exe('')
+            logger.info("-----------------------------------------------------")
             logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList, expectError=True)
-            # logger.pipe('yes', 'sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList)
-            # logger.pipe('echo DEVICE partitions', 'sudo tee /etc/mdadm/mdadm.conf')
+            logger.info("-----------------------------------------------------")
+            logger.info("After raiding")
+            logger.info("-----------------------------------------------------")
+
             logger.pipe('echo DEVICE ' + partionList, 'sudo tee /etc/mdadm/mdadm.conf')
             time.sleep(5)
             logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
