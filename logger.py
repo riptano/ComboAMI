@@ -10,7 +10,7 @@ def appendLog(text):
         f.write(text + "\n")
         print text
 
-def exe(command, log=True):
+def exe(command, log=True, expectError=False):
     # Helper function to execute commands and print traces of the command and output for debugging/logging purposes
     process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     read = process.communicate()
@@ -20,7 +20,10 @@ def exe(command, log=True):
         if len(read[0]) > 0:
             appendLog('[EXEC] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command + ":\n" + read[0])
         elif len(read[1]) > 0:
-            appendLog('[ERROR] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command + ":\n" + read[1])
+            if expectError:
+                appendLog('[EXEC:E] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command + ":\n" + read[1])
+            else:
+                appendLog('[ERROR] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command + ":\n" + read[1])
     
     if not log or (len(read[0]) == 0 and len(read[1]) == 0):
         appendLog('[EXEC] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command)

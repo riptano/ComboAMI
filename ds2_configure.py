@@ -520,7 +520,7 @@ def mountRAID():
         
             logger.info('Creating the RAID0 set:')
             time.sleep(10)
-            logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList)
+            logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList, expectError=True)
             # logger.pipe('yes', 'sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList)
             # logger.pipe('echo DEVICE partitions', 'sudo tee /etc/mdadm/mdadm.conf')
             logger.pipe('echo DEVICE ' + partionList, 'sudo tee /etc/mdadm/mdadm.conf')
