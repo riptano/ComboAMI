@@ -64,11 +64,17 @@ def getAddresses():
         
     except Exception, e:
         logger.info("No User Data was set. Naming cluster the same as the reservation ID.")
-        logger.exe('sudo add-apt-repository "deb http://www.apache.org/dist/cassandra/debian 08x main"')
+        logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        logger.pipe('curl -s http://installer.datastax.com/downloads/ubuntuarchive.repo_key', 'sudo apt-key add -')
+        logger.pipe('curl -s http://opscenter.datastax.com/debian/repo_key', 'sudo apt-key add -')
+        logger.pipe('curl -s http://debian.datastax.com/debian/repo_key', 'sudo apt-key add -')
         logger.exe('sudo apt-get update')
-        logger.exe('sudo apt-get install -y cassandra')
+        logger.exe('sudo apt-get install -y apache-cassandra1')
         logger.exe('sudo rm -rf /var/lib/cassandra/*')
         logger.exe('sudo service cassandra stop')
+        logger.exe('sudo apt-get install -y dsc-demos')
+        logger.exe('sudo apt-get -y install opscenter')
 
     if userDataExists:
         # Setup parser
