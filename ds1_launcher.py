@@ -16,9 +16,9 @@ if os.path.isfile('ds2_configure.py'):
 
     if len(stderr) > 0:
         # TODO: later
-        # logger.error("DEBUG")
-        # logger.error(stderr)
-        # logger.error("/DEBUG")
+        logger.error("DEBUG")
+        logger.error(stderr)
+        logger.error("/DEBUG")
         pass
 
     # Set ulimit hard limits
