@@ -493,7 +493,7 @@ def mountRAID():
         
         # Check if there are enough drives to start a RAID set
         if len(devices) > 1:
-            time.sleep(20)
+            time.sleep(3) # was at 20
             # Make sure the devices are umounted, then run fdisk on each device
             logger.info('Clear "invalid flag 0x0000 of partition table 4" by issuing a write, then running fdisk on each device...')
             formatCommands = """echo 'n
@@ -526,14 +526,32 @@ def mountRAID():
             partionList = partionList.strip()
         
             logger.info('Creating the RAID0 set:')
-            time.sleep(10)
+            time.sleep(3) # was at 10
             logger.info("-----------------------------------------------------")
             logger.info("Before raiding")
-            logger.exe('')
+            logger.exe('fuser -fv /dev/sdb1')
+            logger.exe('fuser -cv /dev/sdb1')
+            logger.exe('cat /proc/mdstat')
+            logger.exe('cat /proc/devices')
+            logger.exe('cat /proc/modules')
+            logger.exe('cat /proc/diskstats')
+            logger.exe('cat /sys/block/sdb/stat')
+            logger.exe('cat /proc/mounts')
+            logger.pipe('sudo lsof', 'grep sdb1')
             logger.info("-----------------------------------------------------")
             logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList, expectError=True)
             logger.info("-----------------------------------------------------")
             logger.info("After raiding")
+            logger.info("Before raiding")
+            logger.exe('fuser -fv /dev/sdb1')
+            logger.exe('fuser -cv /dev/sdb1')
+            logger.exe('cat /proc/mdstat')
+            logger.exe('cat /proc/devices')
+            logger.exe('cat /proc/modules')
+            logger.exe('cat /proc/diskstats')
+            logger.exe('cat /sys/block/sdb/stat')
+            logger.exe('cat /proc/mounts')
+            logger.pipe('sudo lsof', 'grep sdb1')
             logger.info("-----------------------------------------------------")
 
             logger.pipe('echo DEVICE ' + partionList, 'sudo tee /etc/mdadm/mdadm.conf')
