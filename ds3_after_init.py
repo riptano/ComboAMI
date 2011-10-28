@@ -40,9 +40,14 @@ def checkAndLaunchOpsCenter():
         conf.setConfig("AMI", "CompletedFirstBoot", True)
 
 def setupDemos():
-    logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_PRICES')
-    logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o UPDATE_PORTFOLIOS')
-    logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_HISTORICAL_PRICES -n 100')
+    global launchindex
+    if int(launchindex) == 0:
+        req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
+        internalip = urllib2.urlopen(req).read()
+
+        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_PRICES -d %s', internalip)
+        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o UPDATE_PORTFOLIOS -d %s', internalip)
+        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_HISTORICAL_PRICES -n 100 -d %s', internalip)
 
 def emailReport(subject, message):
     msg = MIMEMultipart()
