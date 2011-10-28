@@ -140,6 +140,10 @@ def getAddresses():
         if not options or not options.clustersize:
             exitPath("Missing required --totalnodes (-n) switch.")
 
+        if options.token or options.seeds:
+            if not (options.token and options.seeds):
+                exitPath("Both --token (-t) and --seeds (-s) must be set in order to attach nodes.")
+
         if conf.getConfig("AMI", "Type") == "Enterprise":
             if options and options.username and options.password:
                 repo_url = "http://deb.opsc.datastax.com/"
