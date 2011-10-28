@@ -35,7 +35,7 @@ def exitPath(errorMsg):
     if p:
         userdata = userdata.replace(p.group(2), '****')
 
-    errorMsg = errorMsg + "Aborting installation.\n\nPlease verify your settings:\n" + userdata
+    errorMsg = errorMsg + " Aborting installation.\n\nPlease verify your settings:\n" + userdata
     
     logger.error(errorMsg)
     conf.setConfig("AMI", "Error", errorMsg)
