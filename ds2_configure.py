@@ -146,7 +146,7 @@ def getAddresses():
 
         if conf.getConfig("AMI", "Type") == "Enterprise":
             if options and options.username and options.password:
-                repo_url = "http://deb.opsc.datastax.com/"
+                repo_url = "http://debian.datastax.com/enterprise"
 
                 # Configure HTTP authentication
                 password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
