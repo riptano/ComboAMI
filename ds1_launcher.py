@@ -27,10 +27,6 @@ if os.path.isfile('ds2_configure.py'):
     logger.pipe('echo "root soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
     logger.pipe('echo "root hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
 
-# Exit if AMI failed at a milestone command
-if conf.getConfig("AMI", "Error"):
-    sys.exit(1)
-
 # Create /raid0
 logger.exe('sudo mount -a')
 

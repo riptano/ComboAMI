@@ -64,8 +64,8 @@ def getAddresses():
         
     except Exception, e:
         logger.error("No User Data was set.")
-        conf.setConfig("AMI", "Error", "No User Data was set.\nPlease visit http://datastax.com/ami for this AMI's feature set.")
-        return
+        conf.setConfig("AMI", "Error", "No User Data was set.\n    Please visit http://datastax.com/ami for this AMI's feature set.")
+        sys.exit(1)
 
     if userDataExists:
         # Setup parser
@@ -112,9 +112,16 @@ def getAddresses():
         try:
             (options, args) = parser.parse_args(userdata.strip().split(" "))
         except:
+            # Remove passwords from printing
+            p = re.search('(-w\s*)(\w*)', userdata)
+            if p:
+                userdata = userdata.replace(p.group(2), '****')
+            p = re.search('(--password\s*)(\w*)', userdata)
+            if p:
+                userdata = userdata.replace(p.group(2), '****')
+                
             logger.error('One of the options was not set correctly. Please verify your settings')
-            conf.setConfig("AMI", "LeadingSeed", internalip)
-            print userdata
+            conf.setConfig("AMI", "Error", "One of the options was not set correctly. Please verify your settings:\n%s\n    Please visit http://datastax.com/ami for this AMI's feature set." % userdata)
             sys.exit(1)
 
         conf.setConfig("AMI", "Type", "Community")

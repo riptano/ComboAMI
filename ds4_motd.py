@@ -7,7 +7,9 @@ import conf
 
 def amiErrorHandling():
     if conf.getConfig("AMI", "Error"):
+        print
         print conf.getConfig("AMI", "Error")
+        print
         sys.exit(1)
 
 
