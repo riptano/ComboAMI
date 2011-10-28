@@ -184,6 +184,7 @@ def getAddresses():
 
         # Perform the install
         logger.exe('sudo apt-get update')
+        logger.exe('sudo apt-get update')
         time.sleep(5)
         logger.info('Performing deployment install...')
         if conf.getConfig("AMI", "Type") == "Community":
