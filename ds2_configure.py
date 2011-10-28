@@ -374,9 +374,6 @@ def calculateTokens():
 def constructYaml():
     with open(confPath + 'cassandra.yaml', 'r') as f:
         yaml = f.read()
-    
-    # Set autobootstrap: false
-    yaml += "\nautobootstrap: false\n"
 
     # Create the seed list
     global seedList
@@ -422,9 +419,6 @@ def constructYaml():
         logger.info('Using predefined token: ' + options.token)
         p = re.compile( 'initial_token:.*')
         yaml = p.sub( 'initial_token: ' + options.token, yaml)
-
-        p = re.compile( 'autobootstrap: false')
-        yaml = p.sub( 'autobootstrap: true', yaml)
     else:
         # Construct token for an equally split ring
         logger.info('Cluster tokens: ' + str(tokens))
