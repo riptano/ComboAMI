@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import os, subprocess, shlex, time, urllib2
+import os, subprocess, shlex, sys, time, urllib2
 import logger
 import conf
 
@@ -16,9 +16,9 @@ if os.path.isfile('ds2_configure.py'):
 
     if len(stderr) > 0:
         # TODO: later
-        logger.error("DEBUG")
-        logger.error(stderr)
-        logger.error("/DEBUG")
+        # logger.error("DEBUG")
+        # logger.error(stderr)
+        # logger.error("/DEBUG")
         pass
 
     # Set ulimit hard limits
@@ -26,6 +26,10 @@ if os.path.isfile('ds2_configure.py'):
     logger.pipe('echo "* hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
     logger.pipe('echo "root soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
     logger.pipe('echo "root hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
+
+# Exit if AMI failed at a milestone command
+if conf.getConfig("AMI", "Error"):
+    sys.exit(1)
 
 # Create /raid0
 logger.exe('sudo mount -a')

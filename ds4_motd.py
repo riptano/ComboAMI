@@ -1,8 +1,17 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import shlex, subprocess, time, urllib2, os, re
+import shlex, subprocess, time, urllib2, os, re, sys
 import conf
+
+
+def amiErrorHandling():
+    if conf.getConfig("AMI", "Error"):
+        print conf.getConfig("AMI", "Error")
+        sys.exit(1)
+
+
+amiErrorHandling()
 
 nodetoolStatement = "nodetool -h localhost ring"
 
@@ -49,6 +58,7 @@ while True:
         if not waitingforstatus:
             print "Waiting for cluster to boot..."
             waitingforstatus = True
+    amiErrorHandling()
     time.sleep(5)
 
 print """Waiting for nodetool...
@@ -67,6 +77,7 @@ while True:
 
 stoppedErrorMsg = False
 while True:
+    amiErrorHandling()
     nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
     if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
         if not stoppedErrorMsg:
