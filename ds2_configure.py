@@ -527,42 +527,26 @@ def mountRAID():
         
             logger.info('Creating the RAID0 set:')
             time.sleep(3) # was at 10
-            logger.info("-----------------------------------------------------")
-            logger.info("Before raiding")
-            logger.exe('fuser -fv /dev/sdb1')
-            logger.exe('fuser -cv /dev/sdb1')
-            logger.exe('cat /proc/mdstat')
-            logger.exe('cat /proc/devices')
-            logger.exe('cat /proc/modules')
-            logger.exe('cat /proc/diskstats')
-            logger.exe('cat /sys/block/sdb/stat')
-            logger.exe('cat /proc/mounts')
-            logger.pipe('sudo lsof', 'grep sdb1')
-            logger.info("-----------------------------------------------------")
-            logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList, expectError=True)
-            logger.info("-----------------------------------------------------")
-            logger.info("After raiding")
-            logger.info("Before raiding")
-            logger.exe('fuser -fv /dev/sdb1')
-            logger.exe('fuser -cv /dev/sdb1')
-            logger.exe('cat /proc/mdstat')
-            logger.exe('cat /proc/devices')
-            logger.exe('cat /proc/modules')
-            logger.exe('cat /proc/diskstats')
-            logger.exe('cat /sys/block/sdb/stat')
-            logger.exe('cat /proc/mounts')
-            logger.pipe('sudo lsof', 'grep sdb1')
-            logger.info("-----------------------------------------------------")
 
-            logger.pipe('echo DEVICE ' + partionList, 'sudo tee /etc/mdadm/mdadm.conf')
-            time.sleep(5)
-            logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
-            time.sleep(10)
-            logger.exe('blockdev --setra 65536 /dev/md0')
+            raidCreated = False
+            while not raidCreated:
+                logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList, expectError=True)
+                raidCreated = True
 
-            logger.info('Formatting the RAID0 set:')
-            time.sleep(10)
-            logger.exe('sudo mkfs.xfs -f /dev/md0')
+                logger.pipe('echo DEVICE ' + partionList, 'sudo tee /etc/mdadm/mdadm.conf')
+                time.sleep(5)
+                logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
+                time.sleep(10)
+                logger.exe('blockdev --setra 65536 /dev/md0')
+
+                logger.info('Formatting the RAID0 set:')
+                time.sleep(10)
+                raidError = logger.exe('sudo mkfs.xfs -f /dev/md0')[1]
+
+                if raidError:
+                    logger.exe('sudo mdadm --stop /dev/md_d0')
+                    logger.exe('sudo mdadm --zero-superblock /dev/sdb1')
+                    raidCreated = False
             
             # Configure fstab and mount the new RAID0 device
             raidMnt = '/raid0'
