@@ -74,11 +74,6 @@ Options
         error collecting
         Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
 
-    -P [rop | bop | opp] (or --partitioner)
-        Configures the partitioner for the cluster
-        Choices: RandomPartitioner, ByteOrderedPartitioner, or
-        OrderPreservingPartitioner (deprecated)
-
 
 Ports Needed
 ============
