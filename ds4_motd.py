@@ -52,10 +52,16 @@ except:
 
 
 waitingforstatus = False
+dots = 0
 while True:
     status = conf.getConfig("AMI", "CurrentStatus")
     if not status == 'Complete!' and not status == False:
-        print status
+        ticker = ''
+        for dot in dots:
+            ticker += '.'
+
+        sys.stdout.write("\r %s%s " % (status, ticker))
+        sys.stdout.flush()
     elif status == 'Complete!':
         break
     else:
@@ -64,6 +70,7 @@ while True:
             waitingforstatus = True
     amiErrorHandling()
     time.sleep(5)
+    dots = (dots + 1) % 4
 
 print """Waiting for nodetool...
 The cluster is now in it's finalization phase. This should only take a moment...
