@@ -14,7 +14,7 @@ Quickstart
 Launch the number of instances desired in your cluster with the User
 Data field set to
 
-    -n <number of instances being started>
+    -n <number of instances being started> -v Community
 
 
 Options
@@ -30,6 +30,11 @@ Options
     -n <#> (or --totalnodes) 
         Cluster size
         REQUIRED for a balanced, high-performing ring
+
+    -v [Community | Enterprise] (or --version)
+        Installs either DataStax Enterprise or
+        DataStax Community Edition
+        REQUIRED
 
 ##DataStax Enterprise Specific:
 
@@ -73,6 +78,9 @@ Options
         Sends emails to and from this address for easier
         error collecting
         Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
+
+    -o no (or --opscenter)
+        Disables the installation of OpsCenter on the cluster
 
 
 Ports Needed
