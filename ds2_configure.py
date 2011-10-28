@@ -25,6 +25,21 @@ options = False
 
 tokens = {}
 
+def exitPath(errorMsg):
+    # Remove passwords from printing
+    p = re.search('(-w\s*)(\w*)', userdata)
+    if p:
+        userdata = userdata.replace(p.group(2), '****')
+    p = re.search('(--password\s*)(\w*)', userdata)
+    if p:
+        userdata = userdata.replace(p.group(2), '****')
+
+    errorMsg = errorMsg + "\n\nPlease verify your settings:\n" + userdata
+    
+    logger.error(errorMsg)
+    conf.setConfig("AMI", "Error", errorMsg)
+    sys.exit(1)
+
 
 def clearMOTD():
     # To clear the default MOTD
@@ -63,9 +78,8 @@ def getAddresses():
         userDataExists = True
         
     except Exception, e:
-        logger.error("No User Data was set.")
-        conf.setConfig("AMI", "Error", "No User Data was set.\n    Please visit http://datastax.com/ami for this AMI's feature set.")
-        sys.exit(1)
+        userdata = ""
+        exitPath("No User Data was set.")
 
     if userDataExists:
         # Setup parser
@@ -77,11 +91,11 @@ def getAddresses():
         
         # Letters available: ...
         # Option that requires a version
-        parser.add_option("-v", "--version", action="store", type="string", dest="partitioner")
-        # Option that specifies the cluster's name
-        parser.add_option("-c", "--clustername", action="store", type="string", dest="clustername")
+        parser.add_option("-v", "--version", action="store", type="string", dest="version")
         # Option that specifies how the ring will be divided
         parser.add_option("-n", "--totalnodes", action="store", type="string", dest="clustersize")
+        # Option that specifies the cluster's name
+        parser.add_option("-c", "--clustername", action="store", type="string", dest="clustername")
         # Option that specifies how the number of Cassandra nodes
         parser.add_option("-r", "--realtimenodes", action="store", type="string", dest="vanillanodes")
         # Option that specifies the CassandraFS replication factor
@@ -112,41 +126,41 @@ def getAddresses():
         try:
             (options, args) = parser.parse_args(userdata.strip().split(" "))
         except:
-            # Remove passwords from printing
-            p = re.search('(-w\s*)(\w*)', userdata)
-            if p:
-                userdata = userdata.replace(p.group(2), '****')
-            p = re.search('(--password\s*)(\w*)', userdata)
-            if p:
-                userdata = userdata.replace(p.group(2), '****')
-                
-            logger.error('One of the options was not set correctly. Please verify your settings')
-            conf.setConfig("AMI", "Error", "One of the options was not set correctly. Please verify your settings:\n%s\n    Please visit http://datastax.com/ami for this AMI's feature set." % userdata)
-            sys.exit(1)
+            exitPath("One of the options was not set correctly.")
 
-        conf.setConfig("AMI", "Type", "Community")
-        if options and options.username and options.password:
-            repo_url = "http://deb.opsc.datastax.com/"
-
-            # Configure HTTP authentication
-            password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-            password_mgr.add_password(None, repo_url, options.username, options.password)
-            handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-            opener = urllib2.build_opener(handler)
-
-            # Try reading from the authenticated connection
-            try:
-                opener.open(repo_url)
+        if options and options.version:
+            if options.version.lower() == "community":
+                conf.setConfig("AMI", "Type", "Community")
+            if options.version.lower() == "enterprise":
                 conf.setConfig("AMI", "Type", "Enterprise")
-                global confPath
-                confPath = os.path.expanduser("/etc/dse/cassandra/")
-            except Exception as inst:
-                # Print error message if failed
-                if "401" in str(inst):
-                    logger.warn('Authentication failed. Continuing with DataStax Community.')
-        elif options and options.username or options.password:
-            logger.warn('Both username and password are required to use DataStax Enterprise. Continuing with DataStax Community.')
-            
+        else:
+            exitPath("Missing required --version (-v) switch.")
+
+        if not options or not options.clustersize:
+            exitPath("Missing required --totalnodes (-n) switch.")
+
+        if conf.getConfig("AMI", "Type") == "Enterprise":
+            if options and options.username and options.password:
+                repo_url = "http://deb.opsc.datastax.com/"
+
+                # Configure HTTP authentication
+                password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+                password_mgr.add_password(None, repo_url, options.username, options.password)
+                handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+                opener = urllib2.build_opener(handler)
+
+                # Try reading from the authenticated connection
+                try:
+                    opener.open(repo_url)
+                    global confPath
+                    confPath = os.path.expanduser("/etc/dse/cassandra/")
+                except Exception as inst:
+                    # Print error message if failed
+                    if "401" in str(inst):
+                        exitPath('Authentication for DataStax Enterprise failed. Please confirm your username and password.\n')
+            elif options and (options.username or options.password):
+                exitPath("Both --username (-u) and --password (-p) required for DataStax Enterprise.")
+                        
         # Add repos
         if conf.getConfig("AMI", "Type") == "Enterprise":
             logger.pipe('echo "deb http://' + options.username + ':' + options.password + '@debian.datastax.com/enterprise stable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
@@ -225,9 +239,7 @@ def getAddresses():
                     with open('/etc/default/dse', 'w') as f:
                         f.write(dseDefault)
                 if not options.clustersize:
-                    logger.error('Vanilla option was set without Cluster Size.')
-                    logger.error('Continuing as a collection of 1-node clusters.')
-                    sys.exit(1)
+                    exitPath("Vanilla option was set without --totalnodes (-n). Installation aborted.")
             else:
                 logger.error('Vanilla nodes can only be set in DataStax Enterprise installs. Please refer to SWITCHES.txt if you wish to run DataStax Enterprise.')
                 logger.error('Continuing as DataStax Community...')
@@ -326,9 +338,6 @@ def getAddresses():
     conf.setConfig("AMI", "CurrentStatus", "Complete!")
 
     conf.setConfig("AMI", "LeadingSeed", seedList[0])
-
-    if options and options.vanillanodes and not options.clustersize:
-        sys.exit(0)
 
     conf.setConfig("OpsCenter", "DNS", opscenterDNS)
     

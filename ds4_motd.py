@@ -10,6 +10,8 @@ def amiErrorHandling():
         print
         print conf.getConfig("AMI", "Error")
         print
+        print "Please visit http://datastax.com/ami for this AMI's feature set."
+        print
         sys.exit(1)
 
 
