@@ -26,6 +26,7 @@ options = False
 tokens = {}
 
 def exitPath(errorMsg):
+    global userdata
     # Remove passwords from printing
     p = re.search('(-p\s*)(\w*)', userdata)
     if p:
