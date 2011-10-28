@@ -35,7 +35,7 @@ def exitPath(errorMsg):
     if p:
         userdata = userdata.replace(p.group(2), '****')
 
-    errorMsg = errorMsg + "\n\nPlease verify your settings:\n" + userdata
+    errorMsg = errorMsg + "Aborting installation.\n\nPlease verify your settings:\n" + userdata
     
     logger.error(errorMsg)
     conf.setConfig("AMI", "Error", errorMsg)
@@ -225,8 +225,7 @@ def getAddresses():
                 with open('/etc/default/dse', 'w') as f:
                     f.write(dseDefault)
             else:
-                logger.error('CFS replication can only be set in DataStax Enterprise installs. Please refer to SWITCHES.txt if you wish to run DataStax Enterprise.')
-                logger.error('Continuing as DataStax Community...')
+                exitPath('CFS replication can only be set in DataStax Enterprise installs.')
         if options and options.vanillanodes:
             if conf.getConfig("AMI", "Type") == "Enterprise":
                 logger.info('Using vanilla nodes: ' + options.vanillanodes)
@@ -242,8 +241,7 @@ def getAddresses():
                 if not options.clustersize:
                     exitPath("Vanilla option was set without --totalnodes (-n). Installation aborted.")
             else:
-                logger.error('Vanilla nodes can only be set in DataStax Enterprise installs. Please refer to SWITCHES.txt if you wish to run DataStax Enterprise.')
-                logger.error('Continuing as DataStax Community...')
+                exitPath('Vanilla nodes can only be set in DataStax Enterprise installs.')
         else:
             if conf.getConfig("AMI", "Type") == "Enterprise":
                 with open('/etc/default/dse', 'r') as f:
