@@ -107,7 +107,7 @@ def getAddresses():
         # Option that allows for an emailed report of the startup diagnostics
         parser.add_option("-e", "--email", action="store", type="string", dest="email")
         # Option that specifies the installation of OpsCenter on the first node
-        # parser.add_option("-o", "--opscenter", action="store", type="string", dest="opscenter")
+        parser.add_option("-o", "--opscenter", action="store", type="string", dest="opscenter")
         # Option that allows partitioners to be changed
         parser.add_option("-P", "--partitioner", action="store", type="string", dest="partitioner")
 
@@ -205,7 +205,7 @@ def getAddresses():
         if options and options.clustername:
             logger.info('Using cluster name: ' + options.clustername)
             clustername = options.clustername
-        if int(launchindex) == 0:
+        if int(launchindex) == 0 and options.opscenter != "no":
             if not conf.getConfig("OpsCenter", "DNS"):
                 logger.info('Installing OpsCenter...')
                 if conf.getConfig("AMI", "Type") == "Community":
