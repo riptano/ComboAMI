@@ -31,7 +31,7 @@ Options
         Cluster size
         REQUIRED for a balanced, high-performing ring
 
-    -v [Community | Enterprise] (or --version)
+    -v [ community | enterprise ] (or --version)
         Installs either DataStax Enterprise or
         DataStax Community Edition
         REQUIRED

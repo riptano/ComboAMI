@@ -9,7 +9,7 @@ Basic AMI Switches:
         Cluster size
         REQUIRED
 
-    -v [Community | Enterprise] (or --version)
+    -v [ community | enterprise ] (or --version)
         Installs either DataStax Enterprise or
         DataStax Community Edition
         REQUIRED
