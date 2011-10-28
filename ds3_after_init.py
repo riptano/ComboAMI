@@ -39,20 +39,6 @@ def checkAndLaunchOpsCenter():
         logger.exe('sudo service opscenterd restart')
         conf.setConfig("AMI", "CompletedFirstBoot", True)
 
-def setupDemos():
-    global launchindex
-    logger.info('Checking if this is the first node...')
-    if int(launchindex) == 0:
-        logger.info('Getting internal IP...')
-        req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
-        internalip = urllib2.urlopen(req).read()
-
-        logger.info('Loading Demos...')
-        logger.info('Excecuting: ' + 'sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_PRICES -d %s' % internalip)
-        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_PRICES -d %s' % internalip)
-        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o UPDATE_PORTFOLIOS -d %s' % internalip)
-        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_HISTORICAL_PRICES -n 100 -d %s' % internalip)
-
 def emailReport(subject, message):
     msg = MIMEMultipart()
     msg['Subject'] = subject
@@ -137,7 +123,6 @@ if conf.getConfig("AMI", "Email"):
         print "[ERROR] No emails will be sent. Error during parsing."
 
 checkAndLaunchOpsCenter()
-setupDemos()
 
 if username and password:
     with open('ami.log', 'r') as f:
