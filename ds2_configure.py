@@ -541,11 +541,11 @@ def mountRAID():
 
                 logger.info('Formatting the RAID0 set:')
                 time.sleep(10)
-                raidError = logger.exe('sudo mkfs.xfs -f /dev/md0')[1]
+                raidError = logger.exe('sudo mkfs.xfs -f /dev/md0', expectError=True)[1]
 
                 if raidError:
-                    logger.exe('sudo mdadm --stop /dev/md_d0')
-                    logger.exe('sudo mdadm --zero-superblock /dev/sdb1')
+                    logger.exe('sudo mdadm --stop /dev/md_d0', expectError=True)
+                    logger.exe('sudo mdadm --zero-superblock /dev/sdb1', expectError=True)
                     raidCreated = False
             
             # Configure fstab and mount the new RAID0 device
