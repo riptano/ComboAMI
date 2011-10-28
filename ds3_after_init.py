@@ -45,9 +45,9 @@ def setupDemos():
         req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
         internalip = urllib2.urlopen(req).read()
 
-        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_PRICES -d %s', internalip)
-        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o UPDATE_PORTFOLIOS -d %s', internalip)
-        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_HISTORICAL_PRICES -n 100 -d %s', internalip)
+        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_PRICES -d %s' % internalip)
+        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o UPDATE_PORTFOLIOS -d %s' % internalip)
+        logger.exe('sudo /usr/share/dse-demos/portfolio_manager/bin/pricer -o INSERT_HISTORICAL_PRICES -n 100 -d %s' % internalip)
 
 def emailReport(subject, message):
     msg = MIMEMultipart()
