@@ -57,7 +57,7 @@ while True:
     status = conf.getConfig("AMI", "CurrentStatus")
     if not status == 'Complete!' and not status == False:
         ticker = ''
-        for dot in dots:
+        for i in range(dots):
             ticker += '.'
 
         sys.stdout.write("\r %s%s " % (status, ticker))
