@@ -25,17 +25,20 @@ options = False
 
 tokens = {}
 
-def exitPath(errorMsg):
-    global userdata
-    # Remove passwords from printing
-    p = re.search('(-p\s+)(\w*)', userdata)
-    if p:
-        userdata = userdata.replace(p.group(2), '****')
-    p = re.search('(--password\s+)(\w*)', userdata)
-    if p:
-        userdata = userdata.replace(p.group(2), '****')
+def exitPath(errorMsg, appendMsg=False):
+    if not appendMsg:
+        global userdata
+        # Remove passwords from printing
+        p = re.search('(-p\s+)(\w*)', userdata)
+        if p:
+            userdata = userdata.replace(p.group(2), '****')
+        p = re.search('(--password\s+)(\w*)', userdata)
+        if p:
+            userdata = userdata.replace(p.group(2), '****')
 
-    errorMsg = errorMsg + " Aborting installation.\n\nPlease verify your settings:\n" + userdata
+        appendMsg = " Aborting installation.\n\nPlease verify your settings:\n" + userdata
+
+    errorMsg += appendMsg
     
     logger.error(errorMsg)
     conf.setConfig("AMI", "Error", errorMsg)
@@ -293,9 +296,7 @@ def getAddresses():
     timeIntoLoop = time.time()
     while stayinloop:
         if time.time() - timeIntoLoop > 10 * 60:
-            logger.error('EC2 must have not started the cluster correctly. Aborting the clustering of this reservation. Please try again.')
-            conf.setConfig("AMI", "LeadingSeed", internalip)
-            return
+            exitPath('EC2 is experiencing some issues and has not allocated all of the resources in under 10 minutes.', '\n\nAborting the clustering of this reservation. Please try again.')
 
         logger.info('Reflector loop...')
         defaultReflector = 'http://reflector2.datastax.com/reflector.php'
