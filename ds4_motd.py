@@ -72,6 +72,7 @@ while True:
     amiErrorHandling()
     time.sleep(5)
     dots = (dots + 1) % 4
+print
 
 print """Waiting for nodetool...
 The cluster is now in it's finalization phase. This should only take a moment...
@@ -103,7 +104,7 @@ startTime = time.time()
 while True:
     if nodetoolOut.count("Up") == int(conf.getConfig("Cassandra", "ClusterSize")):
         break
-    if time.time() - startTime > 30:
+    if time.time() - startTime > 40:
         break
 
 nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()

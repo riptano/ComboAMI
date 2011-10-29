@@ -54,9 +54,9 @@ if internalip != conf.getConfig("AMI", "LeadingSeed"):
         nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
         if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
             logger.info("Seed node now online!")
-            time.sleep(20)
+            time.sleep(5)
             break
-        time.sleep(10)
+        time.sleep(5)
         logger.info("Retrying seed node...")
 
 
