@@ -60,7 +60,7 @@ while True:
         for i in range(dots):
             ticker += '.'
 
-        sys.stdout.write("\r %s%s " % (status, ticker))
+        sys.stdout.write("\r %s%s    " % (status, ticker))
         sys.stdout.flush()
     elif status == 'Complete!':
         break
