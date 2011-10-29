@@ -36,10 +36,10 @@ try:
     userdata = urllib2.urlopen(req).read()
 
     # Remove passwords from printing
-    p = re.search('(-p\s*)(\w*)', userdata)
+    p = re.search('(-p\s+)(\w*)', userdata)
     if p:
         userdata = userdata.replace(p.group(2), '****')
-    p = re.search('(--password\s*)(\w*)', userdata)
+    p = re.search('(--password\s+)(\w*)', userdata)
     if p:
         userdata = userdata.replace(p.group(2), '****')
 
@@ -104,7 +104,7 @@ startTime = time.time()
 while True:
     if nodetoolOut.count("Up") == int(conf.getConfig("Cassandra", "ClusterSize")):
         break
-    if time.time() - startTime > 40:
+    if time.time() - startTime > 60:
         break
 
 nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
