@@ -60,8 +60,8 @@ while True:
         for i in range(dots):
             ticker += '.'
 
-        sys.stdout.write("\r                                     ")
-        sys.stdout.write("\r %s%s " % (status, ticker))
+        sys.stdout.write("\r                                                                                                                         ")
+        sys.stdout.write("\r%s%s " % (status, ticker))
         sys.stdout.flush()
     elif status == 'Complete!':
         break
@@ -103,7 +103,7 @@ startTime = time.time()
 while True:
     if nodetoolOut.count("Up") == int(conf.getConfig("Cassandra", "ClusterSize")):
         break
-    if time.time() - startTime > 15:
+    if time.time() - startTime > 30:
         break
 
 nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()

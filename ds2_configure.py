@@ -48,7 +48,7 @@ def clearMOTD():
     logger.exe('sudo touch /etc/motd')
 
 def getAddresses():
-    conf.setConfig("AMI", "CurrentStatus", "Installation started...")
+    conf.setConfig("AMI", "CurrentStatus", "Installation started")
     # Find internal IP address for seed list
     global internalip
     req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
@@ -342,7 +342,7 @@ def getAddresses():
 
     conf.setConfig("AMI", "LeadingSeed", seedList[0])
 
-    conf.setConfig("AMI", "CurrentStatus", "Installation complete...")
+    conf.setConfig("AMI", "CurrentStatus", "Installation complete")
 
     conf.setConfig("OpsCenter", "DNS", opscenterDNS)
     
@@ -483,7 +483,7 @@ def constructEnv():
 def mountRAID():
     # Only create raid0 once. Mount all times in init.d script.
     if not conf.getConfig("AMI", "RAIDAttempted"):
-        conf.setConfig("AMI", "CurrentStatus", "Raiding started...")
+        conf.setConfig("AMI", "CurrentStatus", "Raiding started")
         # Remove EC2 default /mnt from fstab
         fstab = ''
         fileToOpen = '/etc/fstab'
@@ -540,7 +540,7 @@ def mountRAID():
             time.sleep(3) # was at 10
 
             raidCreated = False
-            conf.setConfig("AMI", "CurrentStatus", "Raid creation...")
+            conf.setConfig("AMI", "CurrentStatus", "Raid creation")
             while not raidCreated:
                 logger.exe('sudo mdadm --create /dev/md0 --chunk=256 --level=0 --raid-devices=' + str(len(devices)) + ' ' + partionList, expectError=True)
                 raidCreated = True
@@ -634,7 +634,7 @@ def mountRAID():
             conf.setConfig("AMI", "MountDirectory", mntPoint)
 
         logger.info("Mounted Raid.\n")
-        conf.setConfig("AMI", "CurrentStatus", "Raiding complete...")
+        conf.setConfig("AMI", "CurrentStatus", "Raiding complete")
 
 def syncClocks():
     # Confirm that NTP is installed
