@@ -35,7 +35,7 @@ def exe(command, externalLog=False):
 
 def checkAndLaunchOpsCenter():
     global launchindex
-    if int(launchindex) == 0 and conf.getConfig("OpsCenter", "DNS") and not conf.getConfig("AMI", "CompletedFirstBoot") and options.opscenter != "no"::
+    if int(launchindex) == 0 and conf.getConfig("OpsCenter", "DNS") and not conf.getConfig("AMI", "CompletedFirstBoot") and options.opscenter != "no":
         logger.exe('sudo service opscenterd restart')
         conf.setConfig("AMI", "CompletedFirstBoot", True)
 
