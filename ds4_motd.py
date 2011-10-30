@@ -185,7 +185,7 @@ knownErrors = []
 knownErrors.append("yes: write error\n")
 knownErrors.append("java.io.ioexception: timedoutexception()\n")
 knownErrors.append("caused by: timedoutexception()\n")
-knownErrors.append("Error getting MD array info from /dev/md0\n")
+knownErrors.append("Error getting MD array info from /dev/md0\n".lower())
 for line in open('/home/ubuntu/datastax_ami/ami.log'):
     if ('error' in line.lower() or '[warn]' in line.lower() or 'exception' in line.lower()) and not line.lower() in knownErrors:
         notices += line
