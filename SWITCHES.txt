@@ -36,20 +36,6 @@ DataStax Enterprise Specific:
         At least these many non-vanilla nodes REQUIRED
         Default: 0
 
-Growing the Cluster:
-    
-    -t <token> (or --token)
-        Forces this token on the node 
-
-    -s "<seed>,<seed>..." (or --seeds)
-        Allows a single node to join a cluster
-        Note: Spaces are not allowed
-
-    -a 1 (or --analyticsnode)
-        Setting the option with 1 forces the joining 
-        node to be an Analytics node
-        Note: Optional and only for DataStax Enterprise.
-
 Advanced:
 
     -e <smtpAddress>:<port>:<email>:<password> (or --email)
