@@ -223,6 +223,8 @@ def getAddresses():
                 elif conf.getConfig("AMI", "Type") == "Enterprise":
                     logger.exe('sudo apt-get -y install opscenter')
                 logger.exe('sudo service opscenterd stop')
+        elif options.opscenter == "no":
+            conf.setConfig("OpsCenter", "NoOpsCenter", True)
         if options and options.cfsreplication:
             if conf.getConfig("AMI", "Type") == "Enterprise":
                 logger.info('Using cfsreplication factor: ' + options.cfsreplication)
