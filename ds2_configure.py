@@ -379,9 +379,6 @@ def constructYaml():
     with open(confPath + 'cassandra.yaml', 'r') as f:
         yaml = f.read()
 
-    # Set auto_bootstrap: false
-    yaml += "\nauto_bootstrap: false\n"
-
     # Create the seed list
     global seedList
 
@@ -423,13 +420,16 @@ def constructYaml():
     yaml = yaml.replace("cluster_name: 'Test Cluster'", "cluster_name: '" + clustername + "'")
     
     if options and options.token:
+        # Set auto_bootstrap: true
+        yaml += "\nauto_bootstrap: true\n"
+
         logger.info('Using predefined token: ' + options.token)
         p = re.compile( 'initial_token:.*')
         yaml = p.sub( 'initial_token: ' + options.token, yaml)
-
-        p = re.compile( 'auto_bootstrap: false')
-        yaml = p.sub( 'auto_bootstrap: true', yaml)
     else:
+        # Set auto_bootstrap: false
+        yaml += "\nauto_bootstrap: false\n"
+
         # Construct token for an equally split ring
         logger.info('Cluster tokens: ' + str(tokens))
         if options and options.clustersize:
