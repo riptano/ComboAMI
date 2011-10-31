@@ -176,8 +176,6 @@ def getAddresses():
         else:
             logger.pipe('echo "deb http://debian.datastax.com/community stable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
 
-        logger.pipe('echo "deb http://debian.riptano.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-        logger.pipe('echo "deb http://debian.datastax.com/maverick maverick main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
         logger.pipe('curl -s http://installer.datastax.com/downloads/ubuntuarchive.repo_key', 'sudo apt-key add -')
         logger.pipe('curl -s http://opscenter.datastax.com/debian/repo_key', 'sudo apt-key add -')
         logger.pipe('curl -s http://debian.datastax.com/debian/repo_key', 'sudo apt-key add -')
