@@ -36,10 +36,10 @@ try:
     userdata = urllib2.urlopen(req).read()
 
     # Remove passwords from printing
-    p = re.search('(-p\s+)(\w*)', userdata)
+    p = re.search('(-p\s+)(\S*)', userdata)
     if p:
         userdata = userdata.replace(p.group(2), '****')
-    p = re.search('(--password\s+)(\w*)', userdata)
+    p = re.search('(--password\s+)(\S*)', userdata)
     if p:
         userdata = userdata.replace(p.group(2), '****')
 
