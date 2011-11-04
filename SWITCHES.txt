@@ -60,9 +60,11 @@ Ports Needed:
     Internal:
         Cassandra:
             7000: Cassandra intra-node port
+            7199: Cassandra JMX monitoring port
             8983: Portfolio Demo
             61621: OpsCenter agent port
             61622: OpsCenter agent port
+            1024+: JMX reconnections
         OpsCenter:
             61620: OpsCenter intra-node monitoring ports
 
