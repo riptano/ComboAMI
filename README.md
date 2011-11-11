@@ -86,11 +86,13 @@ Ports Needed
             7000: Cassandra intra-node port
             7199: Cassandra JMX monitoring port
             8983: Portfolio Demo
+            9290: Hadoop thrift port
             61621: OpsCenter agent port
-            61622: OpsCenter agent port
             1024+: JMX reconnections
         OpsCenter:
+            50031: OpsCenter job tracker proxy
             61620: OpsCenter intra-node monitoring ports
+
 
 Step-by-step
 ============
