@@ -190,7 +190,7 @@ def getAddresses():
         time.sleep(5)
         logger.info('Performing deployment install...')
         if conf.getConfig("AMI", "Type") == "Community":
-            logger.exe('sudo apt-get install -y apache-cassandra1')
+            logger.exe('sudo apt-get install -y dsc')
             logger.exe('sudo rm -rf /var/lib/cassandra/*')
             logger.exe('sudo service cassandra stop')
             logger.exe('sudo apt-get install -y dsc-demos')
@@ -664,13 +664,6 @@ def syncClocks():
     # Restart the service
     logger.exe('sudo service ntp restart')
 
-def installCQLsh():
-    logger.exe('wget http://downloads.datastax.com/community/datastax-cqlsh.tar.gz', False)
-    logger.exe('tar xf datastax-cqlsh.tar.gz')
-    logger.exe('chown -R ubuntu:ubuntu datastax-cqlsh')
-    logger.exe('rm datastax-cqlsh.tar.gz')
-    logger.exe('mv datastax-cqlsh /home/ubuntu')
-
 def additionalConfigurations():
     pass
 
@@ -688,7 +681,6 @@ constructEnv()
 mountRAID()
 
 syncClocks()
-installCQLsh()
 additionalConfigurations()
 
 logger.info("ds2_configure.py completed!\n")
