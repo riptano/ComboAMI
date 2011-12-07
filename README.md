@@ -120,6 +120,21 @@ See FILES.txt for a description of how the scripts here configure the
 AMI.
 
 
+Upgrading
+=========
+
+1. On each of your Cassandra nodes, run `sudo apt-get install [ cassandra | apache-cassandra1 | dse-full ]`, depending on which version you were currently on and want to upgade to.  
+    * `cassandra` upgrades to the latest in 0.8.x release.
+    * `apache-cassandra` upgrades to the latest in the 1.0.x release.
+    * `dse-full` upgrades to the latest DataStax Enterprise release.
+    * If you are trying to upgrade across major versions, make sure to read NEWS.txt on the newer packages and consult http://docs.datastax.com for full details for upgrading packaged releases. Typically a new repository must be added followed by a `sudo apt-get update`.
+2. Account for New and Changed Parameters in cassandra.yaml. If the default Cassandra configuration file has changed, you will find backups of it in the conf directory. You can use that to compare the two configurations and make appropriate changes.
+3. Make sure any client drivers – such as Hector or Pycassa clients – are compatible with your current version.
+4. Run nodetool drain to flush the commit log and then restart each Cassandra node, one at a time, monitoring the log files for any issues.
+5. After upgrading and restarting all Cassandra nodes, restart client applications.
+6. [Upgrading from 0.8 to 1.0] After upgrading, run nodetool scrub against each node before running repair, moving nodes, or adding new ones.
+
+
 Branching details
 =================
 
