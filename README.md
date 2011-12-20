@@ -79,6 +79,7 @@ Ports Needed
             8012: Hadoop Job Tracker client port
             50030: Hadoop Job Tracker website port
             50060: Hadoop Task Tracker website port
+            8983: Portfolio Demo website port
         OpsCenter:
             8888: OpsCenter website port
     Internal:
