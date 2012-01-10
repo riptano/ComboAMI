@@ -14,18 +14,11 @@ def doInitialConfigurations():
     # Begin configuration this is only run once in Public Packages
     if os.path.isfile('ds2_configure.py'):
         # Configure DataStax variables
-        read = logger.exe('python ds2_configure.py', False)
-        
-        stderr = read[1]
-        stderr = stderr.replace('yes: standard output: Broken pipe', '').strip()
-        stderr = stderr.replace('yes: write error', '').strip()
-
-        if len(stderr) > 0:
-            # TODO: later
-            # logger.error("DEBUG")
-            # logger.error(stderr)
-            # logger.error("/DEBUG")
-            pass
+        try:
+            import ds2_configure
+            ds2_configure.run()
+        except:
+            logger.exception('ds1_launcher.py')
 
         # Set ulimit hard limits
         logger.pipe('echo "* soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')

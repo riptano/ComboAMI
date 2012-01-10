@@ -669,19 +669,19 @@ def additionalConfigurations():
 
 
 
+def run():
+    clearMOTD()
+    getAddresses()
 
-clearMOTD()
-getAddresses()
+    calculateTokens()
+    constructYaml()
+    constructOpscenterConf()
+    constructEnv()
 
-calculateTokens()
-constructYaml()
-constructOpscenterConf()
-constructEnv()
+    mountRAID()
 
-mountRAID()
+    syncClocks()
+    additionalConfigurations()
 
-syncClocks()
-additionalConfigurations()
-
-logger.info("ds2_configure.py completed!\n")
-conf.setConfig("AMI", "CurrentStatus", "Complete!")
+    logger.info("ds2_configure.py completed!\n")
+    conf.setConfig("AMI", "CurrentStatus", "Complete!")

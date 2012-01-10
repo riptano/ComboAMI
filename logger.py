@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import urllib2, os, re, shlex, subprocess, time
+import urllib2
+import os
+import re
+import shlex
+import subprocess
+import time
 
 configfile = 'ami.log'
 

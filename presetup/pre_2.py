@@ -14,7 +14,7 @@ import os
 # Custom  tcp  7000  7000  0.0.0.0/0
 
 def exe(command, shellEnabled=False):
-    print '[EXEC] %s:' % command
+    print '[EXEC] %s' % command
     if shellEnabled:
         process = subprocess.Popen(command, shell=True)
     else:
