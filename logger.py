@@ -9,6 +9,8 @@ import subprocess
 import sys
 import time
 
+from exceptions import SystemExit
+
 configfile = 'ami.log'
 
 def appendLog(text):
@@ -75,6 +77,9 @@ def error(infotext):
     appendLog('[ERROR] ' + str(infotext))
 
 def exception(filename):
+    if type(sys.exc_info()[1]) == SystemExit:
+        return
+    
     appendLog("[ERROR] Exception seen in " + str(filename) + ':')
     import traceback
     appendLog(traceback.format_exc())
