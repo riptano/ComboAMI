@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import os
 import logger
 import conf
 

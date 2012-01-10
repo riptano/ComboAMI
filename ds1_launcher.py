@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import os, subprocess, shlex, sys, time, urllib2
+import os
+import subprocess
+import shlex
+import time
+import urllib2
+
 import logger
 import conf
 
