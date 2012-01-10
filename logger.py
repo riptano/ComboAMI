@@ -77,3 +77,4 @@ def exception(filename):
     appendLog("[ERROR] Exception seen in " + str(filename) + ':')
     import traceback
     appendLog(traceback.format_exc())
+    sys.exit(1)
