@@ -13,8 +13,8 @@ import os
 # Custom  tcp  9160  9160  0.0.0.0/0
 # Custom  tcp  7000  7000  0.0.0.0/0
 
-def exe(command):
-    process = subprocess.Popen(shlex.split(command))
+def exe(command, shellEnabled=False):
+    process = subprocess.Popen(shlex.split(command), shell=shellEnabled)
     process.wait()
     return process
 
@@ -113,12 +113,12 @@ def fixTooManyOpenFiles():
 def clearCommands():
     # Clear everything on the way out.
     exe('sudo rm .ssh/authorized_keys')
-    subprocess.Popen("sudo rm -rf /etc/ssh/ssh_host_dsa_key*", shell=True)
-    subprocess.Popen("sudo rm -rf /etc/ssh/ssh_host_key*", shell=True)
-    subprocess.Popen("sudo rm -rf /etc/ssh/ssh_host_rsa_key*", shell=True)
+    exe("sudo rm -rf /etc/ssh/ssh_host_dsa_key*", shellEnabled=True)
+    exe("sudo rm -rf /etc/ssh/ssh_host_key*", shellEnabled=True)
+    exe("sudo rm -rf /etc/ssh/ssh_host_rsa_key*", shellEnabled=True)
 
-    subprocess.Popen("sudo rm -rf /tmp/*", shell=True)
-    subprocess.Popen("sudo rm -rf /tmp/.*", shell=True)
+    exe("sudo rm -rf /tmp/*", shellEnabled=True)
+    exe("sudo rm -rf /tmp/.*", shellEnabled=True)
     exe('rm -rf ~/.bash_history')
 
 def allowKeylessSSH():
