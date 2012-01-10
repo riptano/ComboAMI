@@ -67,3 +67,8 @@ def warn(infotext):
 
 def error(infotext):
     appendLog('[ERROR] ' + str(infotext))
+
+def exception(filename):
+    appendLog("[ERROR] Exception seen in " + str(filename) + ':')
+    import traceback
+    appendLog(traceback.format_exc())

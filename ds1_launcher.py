@@ -81,8 +81,9 @@ def startServices():
         logger.exe('sudo service dse restart')
 
 
-doInitialConfigurations()
-performRestartTasks()
-waitForSeed()
-launchOpsCenter()
-startServices()
+def run():
+    doInitialConfigurations()
+    performRestartTasks()
+    waitForSeed()
+    launchOpsCenter()
+    startServices()

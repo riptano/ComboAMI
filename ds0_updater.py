@@ -4,7 +4,13 @@
 import logger
 import conf
 
+# Update the AMI codebase if it's its first booot
 if not conf.getConfig("AMI", "CompletedFirstBoot"):
-	logger.exe('git pull')
+    logger.exe('git pull')
 
-logger.exe('python ds1_launcher.py', False)
+# Start AMI start code
+try:
+    import ds1_launcher
+    ds1_launcher.run()
+except:
+    logger.exception('ds0_updater.py')

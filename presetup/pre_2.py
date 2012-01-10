@@ -94,9 +94,7 @@ def createInitD():
 
     # Clear old ami.log
     cd /home/ubuntu/datastax_ami
-    echo "\n======================================================\n" >> ami.log
-    echo "\n======================================================\n" >> error.log
-    python ds0_updater.py 2>> error.log
+    python ds0_updater.py
     """
     exe('sudo touch /etc/init.d/start-ami-script.sh')
     exe('sudo chmod 777 /etc/init.d/start-ami-script.sh')
@@ -127,6 +125,7 @@ def allowKeylessSSH():
     # Allow SSH within the ring to be easier (only for private AMIs)
     # exe('ssh-keygen')
     # exe('cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys')
+    pass
 
 
 installSoftware()
