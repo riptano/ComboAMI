@@ -42,7 +42,9 @@ def exitPath(errorMsg, appendMsg=False):
     
     logger.error(errorMsg)
     conf.setConfig("AMI", "Error", errorMsg)
-    sys.exit(1)
+    
+    import exceptions
+    raise exceptions.AttributeError
 
 
 def clearMOTD():
