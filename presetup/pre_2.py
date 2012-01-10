@@ -14,7 +14,7 @@ import os
 # Custom  tcp  7000  7000  0.0.0.0/0
 
 def exe(command, shellEnabled=False):
-    print '%s:' % command
+    print '[EXEC] %s:' % command
     if shellEnabled:
         process = subprocess.Popen(command, shell=True)
     else:
@@ -24,6 +24,7 @@ def exe(command, shellEnabled=False):
 
 def pipe(command1, command2):
     # Helper function to execute piping commands and print traces of the commands and output for debugging/logging purposes
+    print '[PIPE] %s | %s' % (command1, command2)
     p1 = subprocess.Popen(shlex.split(command1), stdout=subprocess.PIPE)
     p2 = subprocess.Popen(shlex.split(command2), stdin=p1.stdout)
     p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
