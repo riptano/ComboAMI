@@ -30,6 +30,8 @@ def doInitialConfigurations():
         logger.exe('sudo chown -hR ubuntu:ubuntu /home/ubuntu')
         logger.exe('sudo chown -hR cassandra:cassandra /raid0/cassandra', False)
         logger.exe('sudo chown -hR cassandra:cassandra /mnt/cassandra', False)
+    else:
+        logger.info('Skipping initial configurations.')
 
 def performRestartTasks():
     logger.info("AMI Type: " + str(conf.getConfig("AMI", "Type")))

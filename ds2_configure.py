@@ -203,12 +203,9 @@ def getAddresses():
         logger.info('Performing deployment install...')
         if conf.getConfig("AMI", "Type") == "Community":
             logger.exe('sudo apt-get install -y dsc')
-            logger.exe('sudo rm -rf /var/lib/cassandra/*')
             logger.exe('sudo service cassandra stop')
-            logger.exe('sudo apt-get install -y dsc-demos')
         elif conf.getConfig("AMI", "Type") == "Enterprise":
             logger.exe('sudo apt-get install -y dse-full')
-            logger.exe('sudo rm -rf /var/lib/cassandra/*')
             logger.exe('sudo service dse stop')
 
         # Remove the presaved information from startup
@@ -445,13 +442,10 @@ def constructYaml():
         if options and options.clustersize:
             if options.vanillanodes:
                 if launchindex < options.vanillanodes:
-                    print 1
                     token = tokens[0][launchindex]
                 else:
-                    print 2
                     token = tokens[1][launchindex - options.vanillanodes]
             else:
-                print 3
                 token = tokens[0][launchindex]
                 
             p = re.compile( 'initial_token:.*')
