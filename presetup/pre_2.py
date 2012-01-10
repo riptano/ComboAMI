@@ -94,10 +94,11 @@ def createInitD():
     export JAVA_HOME=/usr/lib/jvm/java-6-sun
 
     # Setup system properties
-    sudo ulimit -n 32768
+    sudo su -c 'ulimit -n 32768'
     echo 1 | sudo tee /proc/sys/vm/overcommit_memory
 
     # Clear old ami.log
+    echo "\n======================================================\n" >> ami.log
     cd /home/ubuntu/datastax_ami
     python ds0_updater.py
     """

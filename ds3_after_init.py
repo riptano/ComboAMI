@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
+import os
+import smtplib
 import shlex
 import subprocess
-import os
 import time
 import urllib2
-import smtplib
 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText

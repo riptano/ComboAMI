@@ -1,8 +1,18 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
-import urllib2, os, re, subprocess, sys, glob, random, time, traceback
+import glob
+import os
+import random
+import re
+import subprocess
+import sys
+import time
+import traceback
+import urllib2
+
 from optparse import OptionParser
+
 import logger
 import conf
 
@@ -42,7 +52,7 @@ def exitPath(errorMsg, appendMsg=False):
     
     logger.error(errorMsg)
     conf.setConfig("AMI", "Error", errorMsg)
-    
+
     import exceptions
     raise exceptions.AttributeError
 
