@@ -14,7 +14,11 @@ import os
 # Custom  tcp  7000  7000  0.0.0.0/0
 
 def exe(command, shellEnabled=False):
-    process = subprocess.Popen(shlex.split(command), shell=shellEnabled)
+    print '%s:' % command
+    if shellEnabled:
+        process = subprocess.Popen(command, shell=True)
+    else:
+        process = subprocess.Popen(shlex.split(command))
     process.wait()
     return process
 
