@@ -90,7 +90,6 @@ Ports Needed
             7000: Cassandra intra-node port
             7199: Cassandra JMX monitoring port
         DataStax Enterprise Specific:
-            8983: Portfolio Demo
             9290: Hadoop thrift port
         OpsCenter:
             50031: OpsCenter job tracker proxy
