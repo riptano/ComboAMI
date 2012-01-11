@@ -73,6 +73,8 @@ Ports Needed
 ============
 
     Public Facing:
+        SSH:
+            22: Default SSH port
         Cassandra:
             9160: Cassandra client port
         DataStax Enterprise Specific:
