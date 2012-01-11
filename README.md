@@ -86,10 +86,10 @@ Ports Needed
             8888: OpsCenter website port
     Internal:
         Cassandra:
+            1024+: JMX reconnections
             7000: Cassandra intra-node port
             7199: Cassandra JMX monitoring port
         DataStax Enterprise Specific:
-            1024+: JMX reconnections
             8983: Portfolio Demo
             9290: Hadoop thrift port
         OpsCenter:
