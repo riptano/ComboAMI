@@ -79,22 +79,23 @@ Ports Needed
             9160: Cassandra client port
         DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
+            8983: Portfolio Demo website port
             50030: Hadoop Job Tracker website port
             50060: Hadoop Task Tracker website port
-            8983: Portfolio Demo website port
         OpsCenter:
             8888: OpsCenter website port
     Internal:
         Cassandra:
             7000: Cassandra intra-node port
             7199: Cassandra JMX monitoring port
+        DataStax Enterprise Specific:
+            1024+: JMX reconnections
             8983: Portfolio Demo
             9290: Hadoop thrift port
-            61621: OpsCenter agent port
-            1024+: JMX reconnections
         OpsCenter:
             50031: OpsCenter job tracker proxy
             61620: OpsCenter intra-node monitoring ports
+            61621: OpsCenter agent port
 
 
 Step-by-step
