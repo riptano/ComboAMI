@@ -126,8 +126,8 @@ AMI.
 Upgrading
 =========
 
-1. Backup all the data on all your nodes using the snapshot utility. This provides you with the easiest way to revert any unwanted changes or incompatibilies that may arise. See http://www.datastax.com/docs/0.7/operations/scheduled_tasks#backing-up-data for more information.
-2. On each of your Cassandra nodes, run `sudo apt-get install [ cassandra | apache-cassandra1 | dse-full ]`, depending on which version you were currently on and want to upgade to.  
+1. Backup all the data on all your nodes using the snapshot utility. This provides you with the easiest way to revert any unwanted changes or incompatibilities that may arise. See http://www.datastax.com/docs/0.7/operations/scheduled_tasks#backing-up-data for more information.
+2. On each of your Cassandra nodes, run `sudo apt-get install [ cassandra | apache-cassandra1 | dse-full ]`, depending on which version you were currently on and want to upgrade to.  
     * `cassandra` upgrades to the latest in 0.8.x release.
     * `apache-cassandra` upgrades to the latest in the 1.0.x release.
     * `dse-full` upgrades to the latest DataStax Enterprise release.
