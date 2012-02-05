@@ -15,12 +15,12 @@ except:
     pass
 
 
-def setConfig(section, variable, value):
+def set_config(section, variable, value):
     config.set(section, variable, value)
     with open(configfile, 'wb') as configtext:
         config.write(configtext)
 
-def getConfig(section, variable):
+def get_config(section, variable):
     try:
         config.read(configfile)
         return config.get(section, variable.lower())

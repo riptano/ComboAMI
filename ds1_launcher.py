@@ -10,7 +10,7 @@ import urllib2
 import logger
 import conf
 
-def doInitialConfigurations():
+def initial_configurations():
     # Begin configuration this is only run once in Public Packages
     if os.path.isfile('ds2_configure.py'):
         # Configure DataStax variables
@@ -33,8 +33,8 @@ def doInitialConfigurations():
     else:
         logger.info('Skipping initial configurations.')
 
-def performRestartTasks():
-    logger.info("AMI Type: " + str(conf.getConfig("AMI", "Type")))
+def restart_tasks():
+    logger.info("AMI Type: " + str(conf.get_config("AMI", "Type")))
 
     # Create /raid0
     logger.exe('sudo mount -a')
@@ -42,16 +42,16 @@ def performRestartTasks():
     # Disable swap
     logger.exe('sudo swapoff --all')
 
-def waitForSeed():
+def wait_for_seed():
     # Wait for the seed node to come online
     req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
     internalip = urllib2.urlopen(req).read()
 
-    if internalip != conf.getConfig("AMI", "LeadingSeed"):
+    if internalip != conf.get_config("AMI", "LeadingSeed"):
         logger.info("Waiting for seed node to come online...")
-        nodetoolStatement = "nodetool -h " + conf.getConfig("AMI", "LeadingSeed") + " ring"
+        nodetoolStatement = "nodetool -h " + conf.get_config("AMI", "LeadingSeed") + " ring"
         logger.info(nodetoolStatement)
-        stoppedErrorMsg = False
+
         while True:
             nodetoolOut = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
             if (nodetoolOut.lower().find("error") == -1 and nodetoolOut.lower().find("up") and len(nodetoolOut) > 0):
@@ -61,24 +61,24 @@ def waitForSeed():
             time.sleep(5)
             logger.info("Retrying seed node...")
 
-def launchOpsCenter():
+def launch_opscenter():
     logger.info('Starting a background process to start OpsCenter after a given delay...')
     subprocess.Popen(shlex.split('sudo -u ubuntu python ds3_after_init.py &'))
 
-def startServices():
+def start_services():
     # Actually start the application
-    if conf.getConfig("AMI", "Type") == "Community" or conf.getConfig("AMI", "Type") == "False":
+    if conf.get_config("AMI", "Type") == "Community" or conf.get_config("AMI", "Type") == "False":
         logger.info('Starting DataStax Community...')
         logger.exe('sudo service cassandra restart')
 
-    elif conf.getConfig("AMI", "Type") == "Enterprise":
+    elif conf.get_config("AMI", "Type") == "Enterprise":
         logger.info('Starting DataStax Enterprise...')
         logger.exe('sudo service dse restart')
 
 
 def run():
-    doInitialConfigurations()
-    performRestartTasks()
-    waitForSeed()
-    launchOpsCenter()
-    startServices()
+    initial_configurations()
+    restart_tasks()
+    wait_for_seed()
+    launch_opscenter()
+    start_services()

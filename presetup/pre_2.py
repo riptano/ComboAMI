@@ -6,13 +6,6 @@ import subprocess
 import time
 import os
 
-# Using this AMI: ami-cef405a7
-
-# And this security group:
-# SSH  tcp  22  22  0.0.0.0/0
-# Custom  tcp  9160  9160  0.0.0.0/0
-# Custom  tcp  7000  7000  0.0.0.0/0
-
 def exe(command, shellEnabled=False):
     print '[EXEC] %s' % command
     if shellEnabled:
@@ -31,7 +24,7 @@ def pipe(command1, command2):
     output = p2.communicate()[0]
     return output
 
-def installSoftware():
+def install_software():
     # Setup Repositories
     pipe('echo "deb http://archive.canonical.com/ lucid partner"', 'sudo tee -a /etc/apt/sources.list.d/java.sources.list')
     exe('sudo apt-get -y update')
@@ -55,28 +48,28 @@ def installSoftware():
     exe('sudo update-alternatives --set java /usr/lib/jvm/java-6-sun/jre/bin/java')
     exe('sudo aptitude remove openjdk-6-jre-headless openjdk-6-jre-lib -y')
 
-def setupProfiles():
+def setup_profiles():
     # Setup a link to the motd script that is provided in the git repository
-    fileToOpen = '/home/ubuntu/.profile'
-    exe('sudo chmod 777 ' + fileToOpen)
-    with open(fileToOpen, 'a') as f:
+    file_to_open = '/home/ubuntu/.profile'
+    exe('sudo chmod 777 ' + file_to_open)
+    with open(file_to_open, 'a') as f:
         f.write("""
     python datastax_ami/ds4_motd.py
     export JAVA_HOME=/usr/lib/jvm/java-6-sun
     """)
-    exe('sudo chmod 644 ' + fileToOpen)
+    exe('sudo chmod 644 ' + file_to_open)
 
     os.chdir('/root')
-    fileToOpen = '.profile'
-    exe('sudo chmod 777 ' + fileToOpen)
-    with open(fileToOpen, 'w') as f:
+    file_to_open = '.profile'
+    exe('sudo chmod 777 ' + file_to_open)
+    with open(file_to_open, 'w') as f:
         f.write("""
     export JAVA_HOME=/usr/lib/jvm/java-6-sun
     """)
-    exe('sudo chmod 644 ' + fileToOpen)
+    exe('sudo chmod 644 ' + file_to_open)
     os.chdir('/home/ubuntu')
 
-def createInitD():
+def create_initd():
     # Create init.d script
     initscript = """#!/bin/sh
 
@@ -111,12 +104,12 @@ def createInitD():
     # Setup AMI Script to start on boot
     exe('sudo update-rc.d -f start-ami-script.sh start 99 2 3 4 5 .')
 
-def fixTooManyOpenFiles():
+def fix_too_many_open_files():
     # Setup limits.conf
     pipe('echo "* soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
     pipe('echo "* hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
 
-def clearCommands():
+def clear_commands():
     # Clear everything on the way out.
     exe('sudo rm .ssh/authorized_keys')
     exe("sudo rm -rf /etc/ssh/ssh_host_dsa_key*", shellEnabled=True)
@@ -127,20 +120,20 @@ def clearCommands():
     exe("sudo rm -rf /tmp/.*", shellEnabled=True)
     exe('rm -rf ~/.bash_history')
 
-def allowKeylessSSH():
+def allow_keyless_ssh():
     # Allow SSH within the ring to be easier (only for private AMIs)
     # exe('ssh-keygen')
     # exe('cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys')
     pass
 
 
-installSoftware()
-setupProfiles()
-createInitD()
-fixTooManyOpenFiles()
-clearCommands()
+install_software()
+setup_profiles()
+create_initd()
+fix_too_many_open_files()
+clear_commands()
 
-# allowKeylessSSH()
+# allow_keyless_ssh()
 
 print "Image succesfully configured."
 

@@ -40,8 +40,8 @@ def exe(command, log=True, expectError=False):
 
 def pipe(command1, command2, log=True):
     # Helper function to execute piping commands and print traces of the commands and output for debugging/logging purposes
-    p1 = subprocess.Popen(shlex.split(command1), stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(shlex.split(command2), stdin=p1.stdout, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    p1 = subprocess.Popen(shlex.split(command1), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p2 = subprocess.Popen(shlex.split(command2), stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
     read = p2.stdout.read()
 

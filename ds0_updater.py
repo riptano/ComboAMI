@@ -5,7 +5,7 @@ import logger
 import conf
 
 # Update the AMI codebase if it's its first booot
-if not conf.getConfig("AMI", "CompletedFirstBoot"):
+if not conf.get_config("AMI", "CompletedFirstBoot"):
     logger.exe('git pull')
 
 # Start AMI start code
