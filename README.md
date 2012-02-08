@@ -3,19 +3,14 @@ Summary
 DataStax's Amazon Machine Image is the quickest way to get a DataStax
 Community or DataStax Enterprise cluster up and running on EC2.
 
-Search for AMIs by using the term: 
-
-    datastax_clustering_ami
-
 
 Quickstart
 ==========
 
-Launch the number of instances desired in your cluster with the User
-Data field set to
+Use `cassandralauncher` as found and documented here: 
+https://github.com/joaquincasares/cassandralauncher
 
-    -n <number of instances being started> -v Community
-
+This will ensure all options are processed correctly and easily.
 
 Options
 =======
