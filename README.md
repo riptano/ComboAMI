@@ -63,6 +63,9 @@ Options
     -o no (or --opscenter)
         Disables the installation of OpsCenter on the cluster
 
+    -h <max_heap_size>,<heap_newsize> (or --heapsize)
+        Sets the Cassandra heapsize as such
+
 
 Ports Needed
 ============

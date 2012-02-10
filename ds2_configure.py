@@ -118,6 +118,9 @@ def parse_ec2_userdata():
     # Option that allows partitioners to be changed
     parser.add_option("-P", "--partitioner", action="store", type="string", dest="partitioner")
 
+    # Option that allows partitioners to be changed
+    parser.add_option("-h", "--heapsize", action="store", type="string", dest="heapsize")
+
     # Option that allows for a token to be declared by the user
     parser.add_option("-t", "--token", action="store", type="string", dest="token")
     # Option that allows for seeds to be declared by the user
@@ -415,6 +418,16 @@ def construct_env():
     # Perform the replacement
     p = re.compile('JVM_OPTS="\$JVM_OPTS -Djava.rmi.server.hostname=(.*\s*)*?#')
     cassandra_env = p.sub('{0}\n\n#'.format(settings), cassandra_env)
+
+    if options.heapsize:
+        if len(options.heapsize.split(',')) == 2:
+            max_heap = options.heapsize.split(',')[0].strip()
+            new_size = options.heapsize.split(',')[1].strip()
+            cassandra_env = cassandra_env.replace('#MAX_HEAP_SIZE="4G"', 'MAX_HEAP_SIZE="%s"' % max_heap)
+            cassandra_env = cassandra_env.replace('#HEAP_NEWSIZE="800M"', 'HEAP_NEWSIZE="%s"' % new_size)
+        else:
+            logger.warn('The correct settings for --heapsize are: "MAX_HEAP_SIZE,HEAP_NEWSIZE".\n')
+            logger.warn('Ignoring heapsize settings and continuing.')
     
     with open(os.path.join(config_data['conf_path'], 'cassandra-env.sh'), 'w') as f:
         f.write(cassandra_env)
