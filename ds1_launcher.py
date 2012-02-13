@@ -18,7 +18,9 @@ def initial_configurations():
             import ds2_configure
             ds2_configure.run()
         except:
+            conf.set_config("AMI", "Error", "Exception seen in %s:" % 'ds1_launcher.py')
             logger.exception('ds1_launcher.py')
+
 
         # Set ulimit hard limits
         logger.pipe('echo "* soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')

@@ -83,7 +83,4 @@ def exception(filename):
     appendLog("[ERROR] Exception seen in %s:" % filename)
     import traceback
     appendLog(traceback.format_exc())
-
-    import conf
-    conf.set_config("AMI", "Error", "Exception seen in %s:" % filename)
     sys.exit(1)
