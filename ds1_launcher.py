@@ -18,7 +18,8 @@ def initial_configurations():
             import ds2_configure
             ds2_configure.run()
         except:
-            conf.set_config("AMI", "Error", "Exception seen in %s:" % 'ds1_launcher.py')
+            conf.set_config("AMI", "Error", "Exception seen in %s. Please check ~/datastax_ami/ami.log for more info." % 'ds1_launcher.py')
+
             logger.exception('ds1_launcher.py')
 
 
