@@ -254,6 +254,7 @@ def get_seed_list():
         logger.info(config_data['seed_list'])
     else:
         # Read seed list from reflector
+        config_data['seed_list'] = []
         time_in_loop = time.time()
         continue_loop = True
         while continue_loop:
@@ -273,27 +274,27 @@ def get_seed_list():
             try:
                 r = urllib2.urlopen(req).read()
                 r = r.split("\n")
-                logger.info(r)
+                logger.debug(r)
 
                 status =  "[INFO] {0} Received {1} of {2} responses from: ".format(time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()), r[0], expected_responses)
                 status += "       {0}".format(r[2:])
                 conf.set_config("AMI", "CurrentStatus", status)
-                logger.info(int(r[0]) == expected_responses)
+                logger.debug(int(r[0]) == expected_responses)
                 
                 if int(r[0]) == expected_responses:
-                    logger.info(r)
+                    logger.debug(r)
                     r.pop(0)
-                    logger.info(r)
+                    logger.debug(r)
                     opscenterDNS = r[0]
                     conf.set_config("OpsCenter", "DNS", opscenterDNS)
                     r.pop(0)
-                    logger.info(r)
+                    logger.debug(r)
 
                     # Assign the first IP to be a seed
                     config_data['seed_list'].append(r[0])
                     config_data['opscenterseed'] = config_data['seed_list'][0]
-                    logger.info(config_data)
-                    logger.info(options)
+                    logger.debug(config_data)
+                    logger.debug(options)
                     
                     if options.vanillanodes and options.vanillanodes != options.clustersize:
                         # Add one more IP to be a seed if using two datacenters
