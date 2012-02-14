@@ -319,7 +319,7 @@ def calculate_tokens():
     
     if initalized:
         tokentool.focus()
-        tokentool.calculate_tokens()
+        tokentool.calculateTokens()
         config_data['tokens'] = tokentool.originalTokens
 
 def construct_yaml():
