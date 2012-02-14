@@ -95,6 +95,7 @@ def check_for_one_up_node():
                 stopped_error_msg = True
             else:
                 break
+    return nodetool_out
 
 def waiting_for_full_cluster_to_launch():
     start_time = time.time()
@@ -202,8 +203,8 @@ def run():
 
     waiting_for_status()
     waiting_for_nodetool()
-    check_for_one_up_node()
-    waiting_for_full_cluster_to_launch()
+    nodetool_out = check_for_one_up_node()
+    waiting_for_full_cluster_to_launch(nodetool_out)
 
     print_tools()
     print_opscenter_information()
