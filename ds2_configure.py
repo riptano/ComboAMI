@@ -119,7 +119,7 @@ def parse_ec2_userdata():
     parser.add_option("-P", "--partitioner", action="store", type="string", dest="partitioner")
 
     # Option that allows partitioners to be changed
-    parser.add_option("-h", "--heapsize", action="store", type="string", dest="heapsize")
+    parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
 
     # Option that allows for a token to be declared by the user
     parser.add_option("-t", "--token", action="store", type="string", dest="token")
