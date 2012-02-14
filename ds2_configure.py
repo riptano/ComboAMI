@@ -255,7 +255,8 @@ def get_seed_list():
     else:
         # Read seed list from reflector
         time_in_loop = time.time()
-        while True:
+        continue_loop = True
+        while continue_loop:
             if time.time() - time_in_loop > 10 * 60:
                 exit_path('EC2 is experiencing some issues and has not allocated all of the resources in under 10 minutes.', '\n\nAborting the clustering of this reservation. Please try again.')
 
@@ -290,7 +291,7 @@ def get_seed_list():
                     if options.vanillanodes and options.vanillanodes != options.clustersize:
                         # Add one more IP to be a seed if using two datacenters
                         config_data['seed_list'].append(r[1])
-                    break
+                    continue_loop = False
                 else:
                     time.sleep(2 + random.randint(0, options.clustersize / 4 + 1))
             except:
