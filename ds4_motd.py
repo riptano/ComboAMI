@@ -97,7 +97,7 @@ def check_for_one_up_node():
                 break
     return nodetool_out
 
-def waiting_for_full_cluster_to_launch():
+def waiting_for_full_cluster_to_launch(nodetool_out):
     start_time = time.time()
     while True:
         if nodetool_out.count("Up") == int(conf.get_config("Cassandra", "ClusterSize")):
