@@ -67,6 +67,9 @@ def pipe(command1, command2, log=True):
 
         return output
 
+def debug(infotext):
+    appendLog('[DEBUG] ' + str(infotext))
+
 def info(infotext):
     appendLog('[INFO] ' + str(infotext))
 
