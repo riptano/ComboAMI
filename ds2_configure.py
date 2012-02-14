@@ -236,7 +236,7 @@ def clean_installation():
     logger.exe('sudo chown -R cassandra:cassandra /var/log/cassandra')
 
 def opscenter_installation():
-    if instance_data['launchindex'] and options.opscenter != "no":
+    if instance_data['launchindex'] == 0 and options.opscenter != "no":
         logger.info('Installing OpsCenter...')
         if conf.get_config("AMI", "Type") == "Community":
             logger.exe('sudo apt-get -y install opscenter-free')
