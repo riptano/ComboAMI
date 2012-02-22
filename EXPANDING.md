@@ -4,13 +4,13 @@ Expanding a DataStax AMI Cluster
 1. Start a 1-node cluster.
 2. Login and run: `sudo service cassandra stop`
 3. Edit /etc/[dse/resources/]cassandra/cassandra.yaml
-    * Change your seeds to match the cluster seeds.
-    * Change your token to the position you want.  
+    * Change your seeds to match the cluster's seeds.
+    * Change your token to the position you want.
         For more info: http://www.datastax.com/support/tokens
-4. Run: `sudo rm -rf /raid0/cassandra/*`  
+4. Run: `sudo mkdir /raid0/cassandra.bak; sudo mv /raid0/cassandra/* /raid0/cassandra.bak`
     Note: the astrick here is important since you want to keep the cassandra folder and permissions.
-5. Run `sudo service cassandra start`  
-    Running ``nodetool -h `hostname` ring`` will confirm you're up and running.
+5. Run `sudo service cassandra start`
+    Running ``nodetool -h `hostname` ring`` will confirm you're new node is up and running and has joined the existing cluster.
 
 Tokens
 ------
