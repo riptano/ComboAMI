@@ -138,8 +138,7 @@ def parse_ec2_userdata():
     except:
         exit_path("One of the options was not set correctly.")
 
-    options.vanillanodes = int(options.vanillanodes)
-    options.clustersize = int(options.clustersize)
+    options.vanillanodes = int(options.vanillanodes) if options.vanillanodes else 0
 
 def use_ec2_userdata():
     if not options:
@@ -147,6 +146,7 @@ def use_ec2_userdata():
 
     if not options.clustersize:
         exit_path("Missing required --totalnodes (-n) switch.")
+    options.clustersize = int(options.clustersize)
 
     if options.version:
         if options.version.lower() == "community":
