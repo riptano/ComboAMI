@@ -44,6 +44,14 @@ def install_software():
     exe('sudo -u ubuntu mvn install')
     time.sleep(5)
 
+    # Preinstall Cassandra from source to get all the dependencies for convenience
+    exe('git clone https://github.com/apache/cassandra.git')
+    with os.getcwd() as home_path:
+        os.chdir('cassandra')
+        exe('ant')
+        os.chdir(home_path)
+    exe('rm -rf cassandra/')
+
     # Remove OpenJDK
     exe('sudo update-alternatives --set java /usr/lib/jvm/java-6-sun/jre/bin/java')
     exe('sudo aptitude remove openjdk-6-jre-headless openjdk-6-jre-lib -y')
