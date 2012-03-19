@@ -665,11 +665,13 @@ def syncClocks():
     logger.exe('sudo service ntp restart')
 
 def additionalConfigurations():
+    logger.exe('sudo apt-get install xfsprogs')
     pass
 
 
 
 
+additionalConfigurations()
 clearMOTD()
 getAddresses()
 
@@ -681,7 +683,6 @@ constructEnv()
 mountRAID()
 
 syncClocks()
-additionalConfigurations()
 
 logger.info("ds2_configure.py completed!\n")
 conf.setConfig("AMI", "CurrentStatus", "Complete!")
