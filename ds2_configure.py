@@ -623,7 +623,10 @@ def sync_clocks():
     # Restart the service
     logger.exe('sudo service ntp restart')
 
-def additional_configurations():
+def additional_pre_configurations():
+    logger.exe('sudo apt-get install xfsprogs')
+
+def additional_post_configurations():
     pass
 
 
@@ -633,6 +636,7 @@ def run():
     logger.exe('sudo rm ds2_configure.py')
     logger.info('Deleting ds2_configure.py now. This AMI will never change any configs after this first run.')
 
+    additional_pre_configurations()
     clear_motd()
     get_ec2_data()
     parse_ec2_userdata()
@@ -655,7 +659,7 @@ def run():
     prepare_for_raid()
 
     sync_clocks()
-    additional_configurations()
+    additional_post_configurations()
 
     logger.info("ds2_configure.py completed!\n")
     conf.set_config("AMI", "CurrentStatus", "Complete!")
