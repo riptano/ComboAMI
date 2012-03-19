@@ -665,7 +665,6 @@ def syncClocks():
     logger.exe('sudo service ntp restart')
 
 def additionalConfigurations():
-    logger.exe('sudo apt-get install xfsprogs')
     pass
 
 
