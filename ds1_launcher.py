@@ -37,7 +37,7 @@ def initial_configurations():
         logger.info('Skipping initial configurations.')
 
 def write_bin_tools():
-    with open('/bin/datastax_support') as f:
+    with open('/bin/datastax_support', 'w') as f:
         f.write("""#!/usr/bin/env python
             print '''
             Support Links:
@@ -61,7 +61,7 @@ def write_bin_tools():
             '''
         """)
 
-    with open('/bin/datastax_demos') as f:
+    with open('/bin/datastax_demos', 'w') as f:
         f.write("""#!/usr/bin/env python
             print '''
             Portfolio (Hive) Demo:
@@ -77,7 +77,7 @@ def write_bin_tools():
             '''
         """)
 
-    with open('/bin/datastax_tools') as f:
+    with open('/bin/datastax_tools', 'w') as f:
         f.write("""#!/usr/bin/env python
             print '''
             Nodetool:
