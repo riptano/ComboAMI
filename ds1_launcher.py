@@ -39,54 +39,57 @@ def initial_configurations():
 def write_bin_tools():
     with open('/usr/bin/datastax_support', 'w') as f:
         f.write("""#!/usr/bin/env python\nprint '''DataStax Support Links:
-            Support Links:
-                Cassandra Cluster Launcher:
-                    https://github.com/joaquincasares/cassandralauncher
 
-                Documentation:
-                    http://www.datastax.com/docs
+    Support Links:
+        Cassandra Cluster Launcher:
+            https://github.com/joaquincasares/cassandralauncher
 
-                AMI:
-                    http://www.datastax.com/ami
+        Documentation:
+            http://www.datastax.com/docs
 
-                Cassandra client libraries:
-                    http://www.datastax.com/download/clientdrivers
+        AMI:
+            http://www.datastax.com/ami
 
-                Support Forums:
-                    http://www.datastax.com/support-forums
+        Cassandra client libraries:
+            http://www.datastax.com/download/clientdrivers
 
-                For quick support, visit:
-                    IRC: #cassandra channel on irc.freenode.net
+        Support Forums:
+            http://www.datastax.com/support-forums
+
+        For quick support, visit:
+            IRC: #cassandra channel on irc.freenode.net
             '''
         """)
 
     with open('/usr/bin/datastax_demos', 'w') as f:
         f.write("""#!/usr/bin/env python\nprint '''DataStax Demo Links:
-            Portfolio (Hive) Demo:
-                http://www.datastax.com/demos/portfolio
-            Pig Demo:
-                http://www.datastax.com/demos/pig
-            Wikipedia (Solr) Demo:
-                http://www.datastax.com/demos/wikipedia
-            Logging (Solr) Demo:
-                http://www.datastax.com/demos/logging
-            Sqoop Demo:
-                http://www.datastax.com/demos/sqoop
+
+    Portfolio (Hive) Demo:
+        http://www.datastax.com/demos/portfolio
+    Pig Demo:
+        http://www.datastax.com/demos/pig
+    Wikipedia (Solr) Demo:
+        http://www.datastax.com/demos/wikipedia
+    Logging (Solr) Demo:
+        http://www.datastax.com/demos/logging
+    Sqoop Demo:
+        http://www.datastax.com/demos/sqoop
             '''
         """)
 
     with open('/usr/bin/datastax_tools', 'w') as f:
         f.write("""#!/usr/bin/env python\nprint '''Installed DSE/C Tools:
-            Nodetool:
-                nodetool -h `hostname` ring
-            Cli:
-                cassandra-cli -h `hostname`
-            CQL Shell:
-                cqlsh
-            Hive:
-                dse hive (on Analytic nodes)
-            Pig:
-                dse pig (on Analytic nodes)
+
+    Nodetool:
+        nodetool -h `hostname` ring
+    Cli:
+        cassandra-cli -h `hostname`
+    CQL Shell:
+        cqlsh
+    Hive:
+        dse hive (on Analytic nodes)
+    Pig:
+        dse pig (on Analytic nodes)
             '''
         """)
 
