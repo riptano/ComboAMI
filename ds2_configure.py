@@ -101,7 +101,7 @@ def parse_ec2_userdata():
     # Option that requires either: Enterprise or Community
     parser.add_option("--version", action="store", type="string", dest="version")
     # Option that specifies how the ring will be divided
-    parser.add_option("--totalnodes", action="store", type="int", dest="clustersize")
+    parser.add_option("--totalnodes", action="store", type="int", dest="totalnodes")
     # Option that specifies the cluster's name
     parser.add_option("--clustername", action="store", type="string", dest="clustername")
     # Option that allows for a release version of Enterprise or Community
@@ -140,17 +140,17 @@ def parse_ec2_userdata():
     except:
         exit_path("One of the options was not set correctly.")
 
-    options.realtimenodes = (options.clustersize - options.analyticsnodes - options.searchnodes)
+    options.realtimenodes = (options.totalnodes - options.analyticsnodes - options.searchnodes)
     options.seed_indexes = [0, options.realtimenodes, options.realtimenodes + options.analyticsnodes]
 
 def use_ec2_userdata():
     if not options:
         exit_path("EC2 User Data must be set for the DataStax AMI to run.")
 
-    if not options.clustersize:
+    if not options.totalnodes:
         exit_path("Missing required --totalnodes (-n) switch.")
 
-    if options.clustersize - options.analyticsnodes - options.searchnodes < 0:
+    if options.totalnodes - options.analyticsnodes - options.searchnodes < 0:
         exit_path("Total nodes assigned > total available nodes")
 
     if options.version:
@@ -174,8 +174,8 @@ def use_ec2_userdata():
         logger.info('Using cluster name: {0}'.format(options.clustername))
         instance_data['clustername'] = options.clustername
 
-    logger.info('Using cluster size: {0}'.format(options.clustersize))
-    conf.set_config("Cassandra", "ClusterSize", options.clustersize)
+    logger.info('Using cluster size: {0}'.format(options.totalnodes))
+    conf.set_config("Cassandra", "TotalNodes", options.totalnodes)
 
     if options.reflector:
         logger.info('Using reflector: {0}'.format(options.reflector))
@@ -302,7 +302,7 @@ def get_seed_list():
 
                 continue_loop = False
             else:
-                time.sleep(2 + random.randint(0, options.clustersize / 4 + 1))
+                time.sleep(2 + random.randint(0, options.totalnodes / 4 + 1))
         except:
             traceback.print_exc(file=sys.stdout)
             time.sleep(2 + random.randint(0, 5))
