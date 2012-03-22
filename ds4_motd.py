@@ -76,6 +76,7 @@ def waiting_for_nodetool():
     print "Note: You can also use CTRL+C to view the logs if desired:"
     print "    AMI log: ~/datastax_ami/ami.log"
     print "    Cassandra log: /var/log/cassandra/system.log"
+    print
 
     retcode = 0
     while True:
@@ -111,16 +112,22 @@ def waiting_for_full_cluster_to_launch(nodetool_out):
 def print_tools():
     print "Nodetool: nodetool -h `hostname` ring"
     print "Cli: cassandra-cli -h `hostname`"
-    print "CQL Shell: cqlsh `hostname`"
+    print "CQL Shell: cqlsh"
 
     if conf.get_config("AMI", "Type") == "Enterprise":
         print "Hive: dse hive (on Analytic nodes)"
         print "Pig: dse pig (on Analytic nodes)"
         print
-        print "Portfolio (Cassandra + Hive) Demo:"
-        print "    http://www.datastax.com/docs/1.0/datastax_enterprise/portfolio_demo"
+        print "Portfolio (Hive) Demo:"
+        print "    http://www.datastax.com/demos/portfolio"
         print "Pig Demo:"
-        print "    http://www.datastax.com/docs/1.0/datastax_enterprise/about_pig"
+        print "    http://www.datastax.com/demos/pig"
+        print "Wikipedia (Solr) Demo:"
+        print "    http://www.datastax.com/demos/wikipedia"
+        print "Logging (Solr) Demo:"
+        print "    http://www.datastax.com/demos/logging"
+        print "Sqoop Demo:"
+        print "    http://www.datastax.com/demos/sqoop"
         print
 
 def print_opscenter_information():
@@ -156,20 +163,23 @@ For first time users, refer to ~/datastax_ami/SWITCHES.txt.
 
 
 Support Links:
-    Cassandra:
-        http://www.datastax.com/docs
+    Cassandra Cluster Launcher:
+        https://github.com/joaquincasares/cassandralauncher
 
-    DataStax Enterprise:
-        http://www.datastax.com/docs/dse
+    Documentation:
+        http://www.datastax.com/docs
 
     AMI:
         http://www.datastax.com/ami
 
     Cassandra client libraries:
-        http://www.datastax.com/docs/clients
+        http://www.datastax.com/download/clientdrivers
+
+    Support Forums:
+        http://www.datastax.com/support-forums
 
     For quick support, visit:
-        IRC: #datastax-brisk channel on irc.freenode.net
+        IRC: #cassandra channel on irc.freenode.net
 
 ------------------------------------
 DataStax AMI for DataStax Enterprise
