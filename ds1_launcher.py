@@ -36,6 +36,63 @@ def initial_configurations():
     else:
         logger.info('Skipping initial configurations.')
 
+def write_bin_tools():
+    with open('/bin/datastax_support') as f:
+        f.write("""#!/usr/bin/env python
+            print '''
+            Support Links:
+                Cassandra Cluster Launcher:
+                    https://github.com/joaquincasares/cassandralauncher
+
+                Documentation:
+                    http://www.datastax.com/docs
+
+                AMI:
+                    http://www.datastax.com/ami
+
+                Cassandra client libraries:
+                    http://www.datastax.com/download/clientdrivers
+
+                Support Forums:
+                    http://www.datastax.com/support-forums
+
+                For quick support, visit:
+                    IRC: #cassandra channel on irc.freenode.net
+            '''
+        """)
+
+    with open('/bin/datastax_demos') as f:
+        f.write("""#!/usr/bin/env python
+            print '''
+            Portfolio (Hive) Demo:
+                http://www.datastax.com/demos/portfolio
+            Pig Demo:
+                http://www.datastax.com/demos/pig
+            Wikipedia (Solr) Demo:
+                http://www.datastax.com/demos/wikipedia
+            Logging (Solr) Demo:
+                http://www.datastax.com/demos/logging
+            Sqoop Demo:
+                http://www.datastax.com/demos/sqoop
+            '''
+        """)
+
+    with open('/bin/datastax_tools') as f:
+        f.write("""#!/usr/bin/env python
+            print '''
+            Nodetool:
+                nodetool -h `hostname` ring
+            Cli:
+                cassandra-cli -h `hostname`
+            CQL Shell:
+                cqlsh
+            Hive:
+                dse hive (on Analytic nodes)
+            Pig:
+                dse pig (on Analytic nodes)
+            '''
+        """)
+
 def restart_tasks():
     logger.info("AMI Type: " + str(conf.get_config("AMI", "Type")))
 
@@ -81,6 +138,7 @@ def start_services():
 
 def run():
     initial_configurations()
+    write_bin_tools()
     restart_tasks()
     wait_for_seed()
     launch_opscenter()

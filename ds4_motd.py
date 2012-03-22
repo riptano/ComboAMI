@@ -109,27 +109,6 @@ def waiting_for_full_cluster_to_launch(nodetool_out):
     nodetool_out = subprocess.Popen(shlex.split(config_data['nodetool_statement']), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
     print nodetool_out
 
-def print_tools():
-    print "Nodetool: nodetool -h `hostname` ring"
-    print "Cli: cassandra-cli -h `hostname`"
-    print "CQL Shell: cqlsh"
-
-    if conf.get_config("AMI", "Type") == "Enterprise":
-        print "Hive: dse hive (on Analytic nodes)"
-        print "Pig: dse pig (on Analytic nodes)"
-        print
-        print "Portfolio (Hive) Demo:"
-        print "    http://www.datastax.com/demos/portfolio"
-        print "Pig Demo:"
-        print "    http://www.datastax.com/demos/pig"
-        print "Wikipedia (Solr) Demo:"
-        print "    http://www.datastax.com/demos/wikipedia"
-        print "Logging (Solr) Demo:"
-        print "    http://www.datastax.com/demos/logging"
-        print "Sqoop Demo:"
-        print "    http://www.datastax.com/demos/sqoop"
-        print
-
 def print_opscenter_information():
     try:
         opscenter_ip = conf.get_config("OpsCenter", "DNS")
@@ -139,6 +118,14 @@ def print_opscenter_information():
             print "    Please wait 60 seconds if this is the cluster's first start..."
     except:
         pass
+
+def print_tools():
+    print "Tools:"
+    print "    Run: datastax_tools"
+    print "Demos:"
+    print "    Run: datastax_demos"
+    print "Support:"
+    print "    Run: datastax_support"
 
 def print_trialing_info():
     try:
@@ -160,26 +147,6 @@ def print_trialing_info():
     print """
 
 For first time users, refer to ~/datastax_ami/SWITCHES.txt.
-
-
-Support Links:
-    Cassandra Cluster Launcher:
-        https://github.com/joaquincasares/cassandralauncher
-
-    Documentation:
-        http://www.datastax.com/docs
-
-    AMI:
-        http://www.datastax.com/ami
-
-    Cassandra client libraries:
-        http://www.datastax.com/download/clientdrivers
-
-    Support Forums:
-        http://www.datastax.com/support-forums
-
-    For quick support, visit:
-        IRC: #cassandra channel on irc.freenode.net
 
 ------------------------------------
 DataStax AMI for DataStax Enterprise
@@ -216,8 +183,8 @@ def run():
     nodetool_out = check_for_one_up_node()
     waiting_for_full_cluster_to_launch(nodetool_out)
 
-    print_tools()
     print_opscenter_information()
+    print_tools()
     print_trialing_info()
     print_errors()
 
