@@ -140,6 +140,11 @@ def parse_ec2_userdata():
     except:
         exit_path("One of the options was not set correctly.")
 
+    if not options.analyticsnodes:
+        options.analyticsnodes = 0
+    if not options.searchnodes:
+        options.searchnodes = 0
+
     options.realtimenodes = (options.totalnodes - options.analyticsnodes - options.searchnodes)
     options.seed_indexes = [0, options.realtimenodes, options.realtimenodes + options.analyticsnodes]
 
