@@ -5,7 +5,8 @@ $reservationid = $_GET["reservationid"];
 $indexid = $_GET["indexid"];
 $internalip = $_GET["internalip"];
 $externaldns = $_GET["externaldns"];
-$secondDCstart = $_GET["secondDCstart"];
+$second_seed_index = $_GET["second_seed_index"];
+$third_seed_index = $_GET["third_seed_index"];
 
 $dbname='db-dsec';
 $seedtable ="seeds";
@@ -68,7 +69,7 @@ function populateSeedList(){
 
 function returnSeed(){
   global $db, $seedtable;
-  global $reservationid, $externaldns, $secondDCstart, $indexid;
+  global $reservationid, $externaldns, $second_seed_index, $third_seed_index, $indexid;
   
   # Find external dns of first node
   $query = $db->prepare("SELECT seed_dns
@@ -82,25 +83,30 @@ function returnSeed(){
   # Query for the seeds.
   $query = $db->prepare("SELECT seed_ip, index_id 
                          FROM $seedtable 
-                         WHERE reservation_id=:reservationid AND (index_id=0 OR index_id=:secondDCstart)
+                         WHERE reservation_id=:reservationid AND (index_id=0 OR index_id=:second_seed_index OR index_id=:third_seed_index)
                          ORDER BY index_id");
   $query->bindParam(':reservationid', $reservationid, PDO::PARAM_STR, 20);
-  $query->bindParam(':secondDCstart', $secondDCstart, PDO::PARAM_STR, 20);
+  $query->bindParam(':second_seed_index', $second_seed_index, PDO::PARAM_STR, 20);
+  $query->bindParam(':third_seed_index', $third_seed_index, PDO::PARAM_STR, 20);
   $query->execute();
   $results = $query->fetchAll();
 
+  # Stats Tracking
   if ($indexid == 0 and sizeof($results) >= 1){
     newStats(1);
   } elseif ($indexid > 0){
     updateStats();
   }
 
-  echo sizeof($results);
-  echo "\n" . $externaldns;
   #print_r($results);
+
+  $seed_list = array();
   foreach ($results as $result){
-    echo "\n" . $result['seed_ip'];
+    array_push($seed_list, $result['seed_ip']);
   }
+
+  $data = array('number_of_returned_ips' => sizeof($results), 'opscenter_dns' => $externaldns, 'seeds' => $seed_list);
+  echo json_encode($data);
 }
 
 # Simple stat collectors. Isn't designed to be fool proof, just highly confidential.
@@ -108,11 +114,14 @@ function returnSeed(){
 
 # Only called on new clusters
 function newStats($initialSize){
-  global $db, $statstable, $secondDCstart, $reservationid;
+  global $db, $statstable, $second_seed_index, $third_seed_index, $reservationid;
 
   $numDCS = 1;
-  if (intval($secondDCstart) > 0){
-    $numDCS = 2;
+  if (intval($second_seed_index) > 0){
+    $numDCS++;
+  }
+  if (intval($third_seed_index) > intval($second_seed_index)){
+    $numDCS++;
   }
 
   $query = $db->prepare("INSERT INTO $statstable(reservation_id, cluster_size, num_dcs, created_at) 
