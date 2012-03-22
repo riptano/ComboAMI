@@ -171,9 +171,9 @@ def use_ec2_userdata():
     else:
         exit_path("Missing required --version (-v) switch.")
 
-    if options.token or options.seeds:
-        if not (options.token and options.seeds):
-            exit_path("Both --token (-t) and --seeds (-s) must be set in order to attach nodes.")
+    # if options.token or options.seeds:
+    #     if not (options.token and options.seeds):
+    #         exit_path("Both --token (-t) and --seeds (-s) must be set in order to attach nodes.")
 
     if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.realtimenodes or options.analyticsnodes or options.searchnodes):
         exit_path('CFS Replication, Vanilla Nodes, and adding an Analytic Node settings can only be set in DataStax Enterprise installs.')
@@ -263,55 +263,56 @@ def opscenter_installation():
         conf.set_config("OpsCenter", "NoOpsCenter", True)
 
 def get_seed_list():
-    if options.seeds:
-        # Read seed list from user-data
-        config_data['seed_list'] = options.seeds.strip("'").strip('"').replace(' ', '')
-        config_data['seed_list'] = config_data['seed_list'].split(",")
-        logger.info(config_data['seed_list'])
-    else:
-        # Read seed list from reflector
-        expected_responses = 3
-        time_in_loop = time.time()
-        continue_loop = True
-        while continue_loop:
-            if time.time() - time_in_loop > 10 * 60:
-                exit_path('EC2 is experiencing some issues and has not allocated all of the resources in under 10 minutes.', '\n\nAborting the clustering of this reservation. Please try again.')
+    # if options.seeds:
+    #     # Read seed list from user-data
+    #     config_data['seed_list'] = options.seeds.strip("'").strip('"').replace(' ', '')
+    #     config_data['seed_list'] = config_data['seed_list'].split(",")
+    #     logger.info(config_data['seed_list'])
+    #     return
 
-            logger.info('Reflector loop...')
-            default_reflector = 'http://reflector2.datastax.com/reflector2.php'
-            req = urllib2.Request('{0}?indexid={1}&reservationid={2}&internalip={3}&externaldns={4}&second_seed_index={5}&third_seed_index={6}'.format(
-                                        default_reflector,
-                                        instance_data['launchindex'],
-                                        instance_data['reservationid'],
-                                        instance_data['internalip'],
-                                        instance_data['publichostname'],
-                                        options.seed_indexes[1],
-                                        options.seed_indexes[2]
-                                 ))
-            req.add_header('User-agent', 'DataStaxSetup')
-            try:
-                response = urllib2.urlopen(req).read()
-                response = json.loads(response)
+    # Read seed list from reflector
+    expected_responses = 3
+    time_in_loop = time.time()
+    continue_loop = True
+    while continue_loop:
+        if time.time() - time_in_loop > 10 * 60:
+            exit_path('EC2 is experiencing some issues and has not allocated all of the resources in under 10 minutes.', '\n\nAborting the clustering of this reservation. Please try again.')
 
-                status =  "[INFO] {0} Received {1} of {2} responses from:        {0}".format(
-                                time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()),
-                                response['number_of_returned_ips'],
-                                expected_responses,
-                                response['seeds']
-                          )
-                conf.set_config("AMI", "CurrentStatus", status)
+        logger.info('Reflector loop...')
+        default_reflector = 'http://reflector2.datastax.com/reflector2.php'
+        req = urllib2.Request('{0}?indexid={1}&reservationid={2}&internalip={3}&externaldns={4}&second_seed_index={5}&third_seed_index={6}'.format(
+                                    default_reflector,
+                                    instance_data['launchindex'],
+                                    instance_data['reservationid'],
+                                    instance_data['internalip'],
+                                    instance_data['publichostname'],
+                                    options.seed_indexes[1],
+                                    options.seed_indexes[2]
+                             ))
+        req.add_header('User-agent', 'DataStaxSetup')
+        try:
+            response = urllib2.urlopen(req).read()
+            response = json.loads(response)
 
-                if response['number_of_returned_ips'] == expected_responses:
-                    conf.set_config("OpsCenter", "DNS", response['opscenter_dns'])
+            status =  "[INFO] {0} Received {1} of {2} responses from:        {0}".format(
+                            time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()),
+                            response['number_of_returned_ips'],
+                            expected_responses,
+                            response['seeds']
+                      )
+            conf.set_config("AMI", "CurrentStatus", status)
 
-                    config_data['seed_list'] = set(response['seeds'])
+            if response['number_of_returned_ips'] == expected_responses:
+                conf.set_config("OpsCenter", "DNS", response['opscenter_dns'])
 
-                    continue_loop = False
-                else:
-                    time.sleep(2 + random.randint(0, options.clustersize / 4 + 1))
-            except:
-                traceback.print_exc(file=sys.stdout)
-                time.sleep(2 + random.randint(0, 5))
+                config_data['seed_list'] = set(response['seeds'])
+
+                continue_loop = False
+            else:
+                time.sleep(2 + random.randint(0, options.clustersize / 4 + 1))
+        except:
+            traceback.print_exc(file=sys.stdout)
+            time.sleep(2 + random.randint(0, 5))
 
 def checkpoint_info():
     logger.info("Seed list: {0}".format(config_data['seed_list']))
@@ -370,32 +371,32 @@ def construct_yaml():
     yaml = yaml.replace("cluster_name: 'Test Cluster'", "cluster_name: '{0}'".format(instance_data['clustername']))
 
     # To allow the addition of a single node
-    if options.token:
-        # Set auto_bootstrap: true
-        yaml += "\nauto_bootstrap: true\n"
+    # if options.token:
+    #     # Set auto_bootstrap: true
+    #     yaml += "\nauto_bootstrap: true\n"
 
-        logger.info('Using predefined token: {0}'.format(options.token))
-        p = re.compile( 'initial_token:.*')
-        yaml = p.sub( 'initial_token: {0}'.format(options.token), yaml)
-    # Handles the ring instantiation token settings
-    else:
-        # Set auto_bootstrap: false
-        yaml += "\nauto_bootstrap: false\n"
+    #     logger.info('Using predefined token: {0}'.format(options.token))
+    #     p = re.compile( 'initial_token:.*')
+    #     yaml = p.sub( 'initial_token: {0}'.format(options.token), yaml)
+    #     # Jump to writing of yaml
 
-        # Construct token for an equally split ring
-        logger.info('Cluster tokens: {0}'.format(config_data['tokens']))
+    # Set auto_bootstrap: false
+    yaml += "\nauto_bootstrap: false\n"
 
-        if instance_data['launchindex'] < options.seed_indexes[1]:
-            token = config_data['tokens'][0][instance_data['launchindex']]
+    # Construct token for an equally split ring
+    logger.info('Cluster tokens: {0}'.format(config_data['tokens']))
 
-        if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
-            token = config_data['tokens'][1][instance_data['launchindex'] - options.realtimenodes]
+    if instance_data['launchindex'] < options.seed_indexes[1]:
+        token = config_data['tokens'][0][instance_data['launchindex']]
 
-        if options.seed_indexes[2] <= instance_data['launchindex']:
-            token = config_data['tokens'][2][instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes]
+    if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
+        token = config_data['tokens'][1][instance_data['launchindex'] - options.realtimenodes]
 
-        p = re.compile( 'initial_token:.*')
-        yaml = p.sub( 'initial_token: {0}'.format(token), yaml)
+    if options.seed_indexes[2] <= instance_data['launchindex']:
+        token = config_data['tokens'][2][instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes]
+
+    p = re.compile( 'initial_token:.*')
+    yaml = p.sub( 'initial_token: {0}'.format(token), yaml)
 
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'w') as f:
         f.write(yaml)
