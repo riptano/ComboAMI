@@ -176,6 +176,7 @@ def use_ec2_userdata():
 
     logger.info('Using cluster size: {0}'.format(options.totalnodes))
     conf.set_config("Cassandra", "TotalNodes", options.totalnodes)
+    logger.info('Using seed indexes: {0}'.format(options.seed_indexes))
 
     if options.reflector:
         logger.info('Using reflector: {0}'.format(options.reflector))
