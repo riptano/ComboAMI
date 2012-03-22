@@ -298,6 +298,7 @@ def get_seed_list():
                 conf.set_config("OpsCenter", "DNS", response['opscenter_dns'])
 
                 config_data['seed_list'] = set(response['seeds'])
+                config_data['opscenterseed'] = response['seeds'][0]
 
                 continue_loop = False
             else:
