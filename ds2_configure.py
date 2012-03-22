@@ -259,7 +259,7 @@ def opscenter_installation():
 
 def get_seed_list():
     # Read seed list from reflector
-    expected_responses = 3
+    expected_responses = len(set(options.seed_indexes))
     time_in_loop = time.time()
     continue_loop = True
     while continue_loop:
