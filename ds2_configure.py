@@ -261,7 +261,8 @@ def opscenter_installation():
 def get_seed_list():
     # Read seed list from reflector
     index_set = set(options.seed_indexes)
-    index_set.remove(options.totalnodes)
+    if options.totalnodes in index_set:
+        index_set.remove(options.totalnodes)
     expected_responses = len(index_set)
 
     time_in_loop = time.time()
