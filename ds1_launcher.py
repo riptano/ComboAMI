@@ -93,6 +93,10 @@ def write_bin_tools():
             '''
         """)
 
+    os.chmod('/usr/bin/datastax_support', 0755)
+    os.chmod('/usr/bin/datastax_demos', 0755)
+    os.chmod('/usr/bin/datastax_tools', 0755)
+
 def restart_tasks():
     logger.info("AMI Type: " + str(conf.get_config("AMI", "Type")))
 
