@@ -311,7 +311,7 @@ def checkpoint_info():
     logger.info("Seed list: {0}".format(config_data['seed_list']))
     logger.info("OpsCenter: {0}".format(config_data['opscenterseed']))
     logger.info("Options: {0}".format(options))
-    conf.set_config("AMI", "LeadingSeed", config_data['seed_list'][0])
+    conf.set_config("AMI", "LeadingSeed", config_data['opscenterseed'])
     conf.set_config("AMI", "CurrentStatus", "Installation complete")
 
 def calculate_tokens():
