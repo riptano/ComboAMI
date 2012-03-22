@@ -57,7 +57,7 @@ def write_bin_tools():
 
         For quick support, visit:
             IRC: #cassandra channel on irc.freenode.net
-            '''
+        '''
         """)
 
     with open('/usr/bin/datastax_demos', 'w') as f:
@@ -73,7 +73,7 @@ def write_bin_tools():
             http://www.datastax.com/demos/logging
         Sqoop Demo:
             http://www.datastax.com/demos/sqoop
-            '''
+        '''
         """)
 
     with open('/usr/bin/datastax_tools', 'w') as f:
@@ -89,7 +89,7 @@ def write_bin_tools():
             dse hive (on Analytic nodes)
         Pig:
             dse pig (on Analytic nodes)
-            '''
+        '''
         """)
 
     os.chmod('/usr/bin/datastax_support', 0755)
