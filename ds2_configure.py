@@ -98,12 +98,14 @@ def parse_ec2_userdata():
     parser.add_option("--dev", action="store", type="string", dest="dev")
 
     # Letters available: ...
-    # Option that requires a version
+    # Option that requires either: Enterprise or Community
     parser.add_option("--version", action="store", type="string", dest="version")
     # Option that specifies how the ring will be divided
     parser.add_option("--totalnodes", action="store", type="int", dest="clustersize")
     # Option that specifies the cluster's name
     parser.add_option("--clustername", action="store", type="string", dest="clustername")
+    # Option that allows for a release version of Enterprise or Community
+    parser.add_option("--release", action="store", type="string", dest="release")
 
     # Option that specifies how the number of Analytics nodes
     parser.add_option("--analyticsnodes", action="store", type="int", dest="analyticsnodes")
@@ -224,10 +226,16 @@ def setup_repos():
 def clean_installation():
     logger.info('Performing deployment install...')
     if conf.get_config("AMI", "Type") == "Community":
-        logger.exe('sudo apt-get install -y dsc')
+        if options.release:
+            logger.exe('sudo apt-get install -y dsc=%s' % options.release)
+        else:
+            logger.exe('sudo apt-get install -y dsc')
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
-        logger.exe('sudo apt-get install -y dse-full')
+        if options.release:
+            logger.exe('sudo apt-get install -y dse-full=%s' % options.release)
+        else:
+            logger.exe('sudo apt-get install -y dse-full')
         logger.exe('sudo service dse stop')
 
     # Remove the presaved information from startup
