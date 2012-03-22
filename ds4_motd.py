@@ -111,7 +111,7 @@ def waiting_for_full_cluster_to_launch(nodetool_out):
 def print_tools():
     print "Nodetool: nodetool -h `hostname` ring"
     print "Cli: cassandra-cli -h `hostname`"
-    print "CQL Shell: datastax-cqlsh/cqlsh `hostname`"
+    print "CQL Shell: cqlsh `hostname`"
 
     if conf.get_config("AMI", "Type") == "Enterprise":
         print "Hive: dse hive (on Analytic nodes)"

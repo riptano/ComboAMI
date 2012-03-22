@@ -94,42 +94,51 @@ def parse_ec2_userdata():
 
     # Development options
     # Option that specifies the cluster's name
-    parser.add_option("-d", "--dev", action="store", type="string", dest="dev")
+    parser.add_option("--dev", action="store", type="string", dest="dev")
     
     # Letters available: ...
     # Option that requires a version
-    parser.add_option("-v", "--version", action="store", type="string", dest="version")
+    parser.add_option("--version", action="store", type="string", dest="version")
     # Option that specifies how the ring will be divided
-    parser.add_option("-n", "--totalnodes", action="store", type="string", dest="clustersize")
+    parser.add_option("--totalnodes", action="store", type="int", dest="clustersize")
     # Option that specifies the cluster's name
-    parser.add_option("-c", "--clustername", action="store", type="string", dest="clustername")
+    parser.add_option("--clustername", action="store", type="string", dest="clustername")
+
     # Option that specifies how the number of Cassandra nodes
-    parser.add_option("-r", "--realtimenodes", action="store", type="string", dest="vanillanodes")
+    # parser.add_option("--realtimenodes", action="store", type="int", dest="realtimenodes")
+    # Option that specifies how the number of Analytics nodes
+    parser.add_option("--analyticsnodes", action="store", type="string", dest="analyticsnodes")
+    # Option that specifies how the number of Analytics nodes
+    parser.add_option("--searchnodes", action="store", type="string", dest="searchnodes")
+
     # Option that specifies the CassandraFS replication factor
-    parser.add_option("-f", "--cfsreplicationfactor", action="store", type="string", dest="cfsreplication")
+    parser.add_option("--cfsreplicationfactor", action="store", type="int", dest="cfsreplication")
+
     # Option that specifies the username
-    parser.add_option("-u", "--username", action="store", type="string", dest="username")
+    parser.add_option("--username", action="store", type="string", dest="username")
     # Option that specifies the password
-    parser.add_option("-p", "--password", action="store", type="string", dest="password")
+    parser.add_option("--password", action="store", type="string", dest="password")
+
     # Option that allows for an emailed report of the startup diagnostics
-    parser.add_option("-e", "--email", action="store", type="string", dest="email")
+    parser.add_option("--email", action="store", type="string", dest="email")
     # Option that specifies the installation of OpsCenter on the first node
-    parser.add_option("-o", "--opscenter", action="store", type="string", dest="opscenter")
+    parser.add_option("--opscenter", action="store", type="string", dest="opscenter")
     # Option that allows partitioners to be changed
-    parser.add_option("-P", "--partitioner", action="store", type="string", dest="partitioner")
+    parser.add_option("--partitioner", action="store", type="string", dest="partitioner")
 
     # Option that allows partitioners to be changed
     parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
 
+    # Previous adding node switches
     # Option that allows for a token to be declared by the user
-    parser.add_option("-t", "--token", action="store", type="string", dest="token")
+    # parser.add_option("--token", action="store", type="string", dest="token")
     # Option that allows for seeds to be declared by the user
-    parser.add_option("-s", "--seeds", action="store", type="string", dest="seeds")
+    # parser.add_option("--seeds", action="store", type="string", dest="seeds")
     # Option that allows for declaring this seed a vanilla node (in DSE)
-    parser.add_option("-a", "--analyticsnode", action="store", type="string", dest="analyticsnode")
+    # parser.add_option("--analyticsnode", action="store", type="string", dest="analyticsnode")
 
     # # Option that specifies an alternative reflector.php
-    # parser.add_option("-r", "--reflector", action="store", type="string", dest="reflector")
+    # parser.add_option("--reflector", action="store", type="string", dest="reflector")
     
     # Grab provided reflector through provided userdata
     global options
@@ -138,7 +147,8 @@ def parse_ec2_userdata():
     except:
         exit_path("One of the options was not set correctly.")
 
-    options.vanillanodes = int(options.vanillanodes) if options.vanillanodes else 0
+    options.realtimenodes = (options.clustersize - options.analyticsnodes - options.searchnodes)
+    options.seed_indexes = [0, options.realtimenodes, options.realtimenodes + options.analyticsnodes]
 
 def use_ec2_userdata():
     if not options:
@@ -146,7 +156,9 @@ def use_ec2_userdata():
 
     if not options.clustersize:
         exit_path("Missing required --totalnodes (-n) switch.")
-    options.clustersize = int(options.clustersize)
+
+    if options.clustersize - options.analyticsnodes - options.searchnodes < 0:
+        exit_path("Total nodes assigned > total available nodes")
 
     if options.version:
         if options.version.lower() == "community":
@@ -161,6 +173,9 @@ def use_ec2_userdata():
     if options.token or options.seeds:
         if not (options.token and options.seeds):
             exit_path("Both --token (-t) and --seeds (-s) must be set in order to attach nodes.")
+
+    if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.realtimenodes or options.analyticsnodes or options.searchnodes):
+        exit_path('CFS Replication, Vanilla Nodes, and adding an Analytic Node settings can only be set in DataStax Enterprise installs.')
 
     if options.email:
         logger.info('Setting up diagnostic email using: {0}'.format(options.email))
@@ -263,8 +278,8 @@ def get_seed_list():
 
             logger.info('Reflector loop...')
             default_reflector = 'http://reflector2.datastax.com/reflector.php'
-            if options.vanillanodes and options.vanillanodes != options.clustersize:
-                second_dc_start = options.vanillanodes
+            if options.realtimenodes and options.realtimenodes != options.clustersize:
+                second_dc_start = options.realtimenodes
                 expected_responses = 2
             else:
                 second_dc_start = 0
@@ -288,8 +303,8 @@ def get_seed_list():
                     # Assign the first IP to be a seed
                     config_data['seed_list'].append(r[0])
                     config_data['opscenterseed'] = config_data['seed_list'][0]
-                    
-                    if options.vanillanodes and options.vanillanodes != options.clustersize:
+
+                    if options.realtimenodes and options.realtimenodes != options.clustersize:
                         # Add one more IP to be a seed if using two datacenters
                         config_data['seed_list'].append(r[1])
                     continue_loop = False
@@ -307,20 +322,16 @@ def checkpoint_info():
     conf.set_config("AMI", "CurrentStatus", "Installation complete")
 
 def calculate_tokens():
-    import tokentool
+    MAXRANGE = (2**127)
+    DCs = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
 
-    initalized = False
-    if options.vanillanodes:
-        tokentool.initialRingSplit([options.vanillanodes, options.clustersize - options.vanillanodes])
-        initalized = True
-    else:
-        tokentool.initialRingSplit([options.clustersize])
-        initalized = True
-    
-    if initalized:
-        tokentool.focus()
-        tokentool.calculateTokens()
-        config_data['tokens'] = tokentool.originalTokens
+    tokens = {}
+    for dc in range(len(DCs)):
+        tokens[dc] = {}
+        for i in range(DCs[dc]):
+            tokens[dc][i] = (i * MAXRANGE / DCs[dc]) + dc * 1000
+
+    config_data['tokens'] = tokens
 
 def construct_yaml():
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
@@ -374,14 +385,16 @@ def construct_yaml():
 
         # Construct token for an equally split ring
         logger.info('Cluster tokens: {0}'.format(config_data['tokens']))
-        if options.vanillanodes:
-            if instance_data['launchindex'] < options.vanillanodes:
-                token = config_data['tokens'][0][instance_data['launchindex']]
-            else:
-                token = config_data['tokens'][1][instance_data['launchindex'] - options.vanillanodes]
-        else:
+
+        if instance_data['launchindex'] < options.seed_indexes[1]:
             token = config_data['tokens'][0][instance_data['launchindex']]
-            
+
+        if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
+            token = config_data['tokens'][1][instance_data['launchindex'] - options.realtimenodes]
+
+        if options.seed_indexes[2] <= instance_data['launchindex']:
+            token = config_data['tokens'][2][instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes]
+
         p = re.compile( 'initial_token:.*')
         yaml = p.sub( 'initial_token: {0}'.format(token), yaml)
     
@@ -446,20 +459,29 @@ def construct_dse():
             dse_default = dse_default.replace("#CFS_REPLICATION_FACTOR=1", "CFS_REPLICATION_FACTOR={0}".format(options.cfsreplication))
 
         enable_hadoop = True
-        if options.vanillanodes:
-            logger.info('Using vanilla nodes: {0}'.format(options.vanillanodes))
-            if instance_data['launchindex'] < options.vanillanodes:
-                enable_hadoop = False
+        enable_search = True
 
-        if enable_hadoop or options.analyticsnode:
+        if instance_data['launchindex'] < options.seed_indexes[1]:
+            enable_hadoop = False
+            enable_search = False
+
+        if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
+            enable_hadoop = True
+            enable_search = False
+
+        if options.seed_indexes[2] <= instance_data['launchindex']:
+            enable_hadoop = False
+            enable_search = True
+
+        if enable_hadoop:
             dse_default = dse_default.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
+
+        if enable_search:
+            dse_default = dse_default.replace("SOLR_ENABLED=0", "SOLR_ENABLED=1")
 
         with open('/etc/default/dse', 'w') as f:
             f.write(dse_default)
 
-    if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.vanillanodes or options.analyticsnode):
-        exit_path('CFS Replication, Vanilla Nodes, and adding an Analytic Node settings can only be set in DataStax Enterprise installs.')
-    
 def mount_raid(devices):
     # Make sure the devices are umounted, then run fdisk on each device
     logger.info('Clear "invalid flag 0x0000 of partition table 4" by issuing a write, then running fdisk on each device...')
