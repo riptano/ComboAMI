@@ -3,6 +3,7 @@
 
 import exceptions
 import glob
+import json
 import os
 import random
 import re
@@ -62,15 +63,15 @@ def get_ec2_data():
     # Find internal IP address for seed list
     req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
     instance_data['internalip'] = urllib2.urlopen(req).read()
-    
+
     # Find public hostname for JMX
     req = urllib2.Request('http://instance-data/latest/meta-data/public-hostname')
     instance_data['publichostname'] = urllib2.urlopen(req).read()
-    
+
     # Find launch index for token splitting
     req = urllib2.Request('http://instance-data/latest/meta-data/ami-launch-index')
     instance_data['launchindex'] = int(urllib2.urlopen(req).read())
-    
+
     # Find reservation-id for cluster-id and jmxpass
     req = urllib2.Request('http://instance-data/latest/meta-data/reservation-id')
     instance_data['reservationid'] = urllib2.urlopen(req).read()
@@ -95,7 +96,7 @@ def parse_ec2_userdata():
     # Development options
     # Option that specifies the cluster's name
     parser.add_option("--dev", action="store", type="string", dest="dev")
-    
+
     # Letters available: ...
     # Option that requires a version
     parser.add_option("--version", action="store", type="string", dest="version")
@@ -139,7 +140,7 @@ def parse_ec2_userdata():
 
     # # Option that specifies an alternative reflector.php
     # parser.add_option("--reflector", action="store", type="string", dest="reflector")
-    
+
     # Grab provided reflector through provided userdata
     global options
     try:
@@ -189,7 +190,7 @@ def use_ec2_userdata():
     conf.set_config("Cassandra", "ClusterSize", options.clustersize)
     # if options.reflector:
     #     logger.info('Using reflector: {0}'.format(options.reflector))
-    
+
 def confirm_authentication():
     if conf.get_config("AMI", "Type") == "Enterprise":
         if options.username and options.password:
@@ -211,7 +212,7 @@ def confirm_authentication():
                     exit_path('Authentication for DataStax Enterprise failed. Please confirm your username and password.\n')
         elif (options.username or options.password):
             exit_path("Both --username (-u) and --password (-p) required for DataStax Enterprise.")
-                    
+
 def setup_repos():
     # Add repos
     if conf.get_config("AMI", "Type") == "Enterprise":
@@ -269,7 +270,7 @@ def get_seed_list():
         logger.info(config_data['seed_list'])
     else:
         # Read seed list from reflector
-        config_data['seed_list'] = []
+        expected_responses = 3
         time_in_loop = time.time()
         continue_loop = True
         while continue_loop:
@@ -277,36 +278,34 @@ def get_seed_list():
                 exit_path('EC2 is experiencing some issues and has not allocated all of the resources in under 10 minutes.', '\n\nAborting the clustering of this reservation. Please try again.')
 
             logger.info('Reflector loop...')
-            default_reflector = 'http://reflector2.datastax.com/reflector.php'
-            if options.realtimenodes and options.realtimenodes != options.clustersize:
-                second_dc_start = options.realtimenodes
-                expected_responses = 2
-            else:
-                second_dc_start = 0
-                expected_responses = 1
-            req = urllib2.Request('{0}?indexid={1}&reservationid={2}&internalip={3}&externaldns={4}&secondDCstart={5}'.format(default_reflector, instance_data['launchindex'], instance_data['reservationid'], instance_data['internalip'], instance_data['publichostname'], second_dc_start))
+            default_reflector = 'http://reflector2.datastax.com/reflector2.php'
+            req = urllib2.Request('{0}?indexid={1}&reservationid={2}&internalip={3}&externaldns={4}&second_seed_index={5}&third_seed_index={6}'.format(
+                                        default_reflector,
+                                        instance_data['launchindex'],
+                                        instance_data['reservationid'],
+                                        instance_data['internalip'],
+                                        instance_data['publichostname'],
+                                        options.seed_indexes[1],
+                                        options.seed_indexes[2]
+                                 ))
             req.add_header('User-agent', 'DataStaxSetup')
             try:
-                r = urllib2.urlopen(req).read()
-                r = r.split("\n")
+                response = urllib2.urlopen(req).read()
+                response = json.loads(response)
 
-                status =  "[INFO] {0} Received {1} of {2} responses from: ".format(time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()), r[0], expected_responses)
-                status += "       {0}".format(r[2:])
+                status =  "[INFO] {0} Received {1} of {2} responses from:        {0}".format(
+                                time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()),
+                                response['number_of_returned_ips'],
+                                expected_responses,
+                                response['seeds']
+                          )
                 conf.set_config("AMI", "CurrentStatus", status)
-                
-                if int(r[0]) == expected_responses:
-                    r.pop(0)
-                    opscenterDNS = r[0]
-                    conf.set_config("OpsCenter", "DNS", opscenterDNS)
-                    r.pop(0)
 
-                    # Assign the first IP to be a seed
-                    config_data['seed_list'].append(r[0])
-                    config_data['opscenterseed'] = config_data['seed_list'][0]
+                if response['number_of_returned_ips'] == expected_responses:
+                    conf.set_config("OpsCenter", "DNS", response['opscenter_dns'])
 
-                    if options.realtimenodes and options.realtimenodes != options.clustersize:
-                        # Add one more IP to be a seed if using two datacenters
-                        config_data['seed_list'].append(r[1])
+                    config_data['seed_list'] = set(response['seeds'])
+
                     continue_loop = False
                 else:
                     time.sleep(2 + random.randint(0, options.clustersize / 4 + 1))
@@ -347,7 +346,7 @@ def construct_yaml():
     # Set listen_address
     p = re.compile('listen_address:.*')
     yaml = p.sub('listen_address: {0}'.format(instance_data['internalip']), yaml)
-    
+
     # Set rpc_address
     p = re.compile('rpc_address:.*')
     yaml = p.sub('rpc_address: 0.0.0.0', yaml)
@@ -365,7 +364,7 @@ def construct_yaml():
             yaml = p.sub('partitioner: org.apache.cassandra.dht.ByteOrderedPartitioner', yaml)
         if options.partitioner == 'opp':
             yaml = p.sub('partitioner: org.apache.cassandra.dht.OrderPreservingPartitioner', yaml)
-            
+
     # Set cluster_name to reservationid
     instance_data['clustername'] = instance_data['clustername'].strip("'").strip('"')
     yaml = yaml.replace("cluster_name: 'Test Cluster'", "cluster_name: '{0}'".format(instance_data['clustername']))
@@ -397,25 +396,25 @@ def construct_yaml():
 
         p = re.compile( 'initial_token:.*')
         yaml = p.sub( 'initial_token: {0}'.format(token), yaml)
-    
+
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'w') as f:
         f.write(yaml)
-    
+
     logger.info('cassandra.yaml configured.')
 
 def construct_opscenter_conf():
     try:
         with open(os.path.join(config_data['opsc_conf_path'], 'opscenterd.conf'), 'r') as f:
             opsConf = f.read()
-        
+
         # Configure OpsCenter
         opsConf = opsConf.replace('port = 8080', 'port = 7199')
         opsConf = opsConf.replace('interface = 127.0.0.1', 'interface = 0.0.0.0')
         opsConf = opsConf.replace('seed_hosts = localhost', 'seed_hosts = {0}'.format(config_data['opscenterseed']))
-        
+
         with open(os.path.join(config_data['opsc_conf_path'], 'opscenterd.conf'), 'w') as f:
             f.write(opsConf)
-            
+
         logger.info('opscenterd.conf configured.')
     except:
         logger.info('opscenterd.conf not configured since conf was unable to be located.')
@@ -423,13 +422,13 @@ def construct_opscenter_conf():
 def construct_env():
     with open(os.path.join(config_data['conf_path'], 'cassandra-env.sh'), 'r') as f:
         cassandra_env = f.read()
-    
+
     # Clear commented line
     cassandra_env = cassandra_env.replace('# JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname=<public name>"', 'JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname=<public name>"')
-    
+
     # Set JMX hostname and password file
     settings = 'JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname={0}"\n'.format(instance_data['internalip'])
-    
+
     # Perform the replacement
     p = re.compile('JVM_OPTS="\$JVM_OPTS -Djava.rmi.server.hostname=(.*\s*)*?#')
     cassandra_env = p.sub('{0}\n\n#'.format(settings), cassandra_env)
@@ -443,10 +442,10 @@ def construct_env():
         else:
             logger.warn('The correct settings for --heapsize are: "MAX_HEAP_SIZE,HEAP_NEWSIZE".\n')
             logger.warn('Ignoring heapsize settings and continuing.')
-    
+
     with open(os.path.join(config_data['conf_path'], 'cassandra-env.sh'), 'w') as f:
         f.write(cassandra_env)
-    
+
     logger.info('cassandra-env.sh configured.')
 
 def construct_dse():
@@ -531,7 +530,7 @@ def mount_raid(devices):
             logger.exe('sudo mdadm --stop /dev/md_d0', expectError=True)
             logger.exe('sudo mdadm --zero-superblock /dev/sdb1', expectError=True)
             raid_created = False
-    
+
     # Configure fstab and mount the new RAID0 device
     mnt_point = '/raid0'
     logger.pipe("echo '/dev/md0\t{0}\txfs\tdefaults,nobootwait,noatime\t0\t0'".format(mnt_point), 'sudo tee -a /etc/fstab')
@@ -576,7 +575,7 @@ def prepare_for_raid():
     # Only create raid0 once. Mount all times in init.d script. A failsafe against deleting this file.
     if conf.get_config("AMI", "RAIDAttempted"):
         return
-    
+
     conf.set_config("AMI", "CurrentStatus", "Raiding started")
 
     # Remove EC2 default /mnt from fstab
@@ -590,13 +589,13 @@ def prepare_for_raid():
     with open(file_to_open, 'w') as f:
         f.write(fstab)
     logger.exe('sudo chmod 644 {0}'.format(file_to_open))
-    
+
     # Create a list of devices
     devices = glob.glob("/dev/sd*")
     devices.remove('/dev/sda1')
     devices.sort()
     logger.info('Unformatted devices: {0}'.format(devices))
-    
+
     # Check if there are enough drives to start a RAID set
     if len(devices) > 1:
         time.sleep(3) # was at 20
@@ -605,7 +604,7 @@ def prepare_for_raid():
     # Not enough drives to RAID together.
     else:
         mnt_point = format_xfs(devices)
-    
+
     # Change cassandra.yaml to point to the new data directories
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
         yaml = f.read()
@@ -627,7 +626,7 @@ def prepare_for_raid():
 def sync_clocks():
     # Confirm that NTP is installed
     logger.exe('sudo apt-get -y install ntp')
-    
+
     with open('/etc/ntp.conf', 'r') as f:
             ntp_conf = f.read()
 
