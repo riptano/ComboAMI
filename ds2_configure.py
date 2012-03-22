@@ -105,8 +105,6 @@ def parse_ec2_userdata():
     # Option that specifies the cluster's name
     parser.add_option("--clustername", action="store", type="string", dest="clustername")
 
-    # Option that specifies how the number of Cassandra nodes
-    # parser.add_option("--realtimenodes", action="store", type="int", dest="realtimenodes")
     # Option that specifies how the number of Analytics nodes
     parser.add_option("--analyticsnodes", action="store", type="int", dest="analyticsnodes")
     # Option that specifies how the number of Analytics nodes
@@ -130,16 +128,8 @@ def parse_ec2_userdata():
     # Option that allows partitioners to be changed
     parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
 
-    # Previous adding node switches
-    # Option that allows for a token to be declared by the user
-    # parser.add_option("--token", action="store", type="string", dest="token")
-    # Option that allows for seeds to be declared by the user
-    # parser.add_option("--seeds", action="store", type="string", dest="seeds")
-    # Option that allows for declaring this seed a vanilla node (in DSE)
-    # parser.add_option("--analyticsnode", action="store", type="string", dest="analyticsnode")
-
     # # Option that specifies an alternative reflector.php
-    # parser.add_option("--reflector", action="store", type="string", dest="reflector")
+    parser.add_option("--reflector", action="store", type="string", dest="reflector")
 
     # Grab provided reflector through provided userdata
     global options
@@ -171,10 +161,6 @@ def use_ec2_userdata():
     else:
         exit_path("Missing required --version (-v) switch.")
 
-    # if options.token or options.seeds:
-    #     if not (options.token and options.seeds):
-    #         exit_path("Both --token (-t) and --seeds (-s) must be set in order to attach nodes.")
-
     if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.realtimenodes or options.analyticsnodes or options.searchnodes):
         exit_path('CFS Replication, Vanilla Nodes, and adding an Analytic Node settings can only be set in DataStax Enterprise installs.')
 
@@ -188,8 +174,9 @@ def use_ec2_userdata():
 
     logger.info('Using cluster size: {0}'.format(options.clustersize))
     conf.set_config("Cassandra", "ClusterSize", options.clustersize)
-    # if options.reflector:
-    #     logger.info('Using reflector: {0}'.format(options.reflector))
+
+    if options.reflector:
+        logger.info('Using reflector: {0}'.format(options.reflector))
 
 def confirm_authentication():
     if conf.get_config("AMI", "Type") == "Enterprise":
@@ -263,25 +250,22 @@ def opscenter_installation():
         conf.set_config("OpsCenter", "NoOpsCenter", True)
 
 def get_seed_list():
-    # if options.seeds:
-    #     # Read seed list from user-data
-    #     config_data['seed_list'] = options.seeds.strip("'").strip('"').replace(' ', '')
-    #     config_data['seed_list'] = config_data['seed_list'].split(",")
-    #     logger.info(config_data['seed_list'])
-    #     return
-
     # Read seed list from reflector
     expected_responses = 3
     time_in_loop = time.time()
     continue_loop = True
     while continue_loop:
+        logger.info('Reflector loop...')
         if time.time() - time_in_loop > 10 * 60:
             exit_path('EC2 is experiencing some issues and has not allocated all of the resources in under 10 minutes.', '\n\nAborting the clustering of this reservation. Please try again.')
 
-        logger.info('Reflector loop...')
-        default_reflector = 'http://reflector2.datastax.com/reflector2.php'
+        if options.reflector:
+            reflector = options.reflector
+        else:
+            reflector = 'http://reflector2.datastax.com/reflector2.php'
+
         req = urllib2.Request('{0}?indexid={1}&reservationid={2}&internalip={3}&externaldns={4}&second_seed_index={5}&third_seed_index={6}'.format(
-                                    default_reflector,
+                                    reflector,
                                     instance_data['launchindex'],
                                     instance_data['reservationid'],
                                     instance_data['internalip'],
@@ -369,16 +353,6 @@ def construct_yaml():
     # Set cluster_name to reservationid
     instance_data['clustername'] = instance_data['clustername'].strip("'").strip('"')
     yaml = yaml.replace("cluster_name: 'Test Cluster'", "cluster_name: '{0}'".format(instance_data['clustername']))
-
-    # To allow the addition of a single node
-    # if options.token:
-    #     # Set auto_bootstrap: true
-    #     yaml += "\nauto_bootstrap: true\n"
-
-    #     logger.info('Using predefined token: {0}'.format(options.token))
-    #     p = re.compile( 'initial_token:.*')
-    #     yaml = p.sub( 'initial_token: {0}'.format(options.token), yaml)
-    #     # Jump to writing of yaml
 
     # Set auto_bootstrap: false
     yaml += "\nauto_bootstrap: false\n"
