@@ -168,7 +168,7 @@ def use_ec2_userdata():
     else:
         exit_path("Missing required --version (-v) switch.")
 
-    if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.realtimenodes or options.analyticsnodes or options.searchnodes):
+    if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.analyticsnodes or options.searchnodes):
         exit_path('CFS Replication, Vanilla Nodes, and adding an Analytic Node settings can only be set in DataStax Enterprise installs.')
 
     if options.email:
