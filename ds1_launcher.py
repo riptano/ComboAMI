@@ -38,7 +38,7 @@ def initial_configurations():
 
 def write_bin_tools():
     with open('/usr/bin/datastax_support', 'w') as f:
-        f.write("""#!/usr/bin/env python\nprint '''
+        f.write("""#!/usr/bin/env python\nprint '''DataStax Support Links:
             Support Links:
                 Cassandra Cluster Launcher:
                     https://github.com/joaquincasares/cassandralauncher
@@ -61,7 +61,7 @@ def write_bin_tools():
         """)
 
     with open('/usr/bin/datastax_demos', 'w') as f:
-        f.write("""#!/usr/bin/env python\nprint '''
+        f.write("""#!/usr/bin/env python\nprint '''DataStax Demo Links:
             Portfolio (Hive) Demo:
                 http://www.datastax.com/demos/portfolio
             Pig Demo:
@@ -76,7 +76,7 @@ def write_bin_tools():
         """)
 
     with open('/usr/bin/datastax_tools', 'w') as f:
-        f.write("""#!/usr/bin/env python\nprint '''
+        f.write("""#!/usr/bin/env python\nprint '''Installed DSE/C Tools:
             Nodetool:
                 nodetool -h `hostname` ring
             Cli:
