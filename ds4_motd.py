@@ -77,6 +77,7 @@ def waiting_for_nodetool():
     print "    AMI log: ~/datastax_ami/ami.log"
     print "    Cassandra log: /var/log/cassandra/system.log"
     print
+    print
 
     retcode = 0
     while True:
@@ -116,6 +117,8 @@ def print_opscenter_information():
         if packageQuery:
             print "Opscenter: http://{0}:8888/".format(opscenter_ip)
             print "    Please wait 60 seconds if this is the cluster's first start..."
+            print
+            print
     except:
         pass
 
@@ -145,8 +148,6 @@ def print_trialing_info():
         versionInfo = "DataStax Enterprise version " + versionInfo
 
     print """
-
-For first time users, refer to ~/datastax_ami/SWITCHES.txt.
 
 ------------------------------------
 DataStax AMI for DataStax Enterprise
