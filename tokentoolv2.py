@@ -193,6 +193,7 @@ def run_tests():
         [9],
         [1,1,1,1],
         [4],
+        [3,3,6,4,2]
     ]
     for test in tests:
         print_tokens(run(test))
