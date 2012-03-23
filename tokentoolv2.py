@@ -75,6 +75,7 @@ def calculate_offsets():
             if global_data['offsets'][this_dc] - previous_offset > 0:
                 exit_loop = False
 
+
 def print_tokens():
     print 'Offsets: ', global_data['offsets']
     print json.dumps(get_offset_tokens(), sort_keys=True, indent=4)

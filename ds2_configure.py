@@ -326,17 +326,19 @@ def checkpoint_info():
 
 def calculate_tokens():
     # MAXRANGE = (2**127)
-    # DCs = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
 
     # tokens = {}
-    # for dc in range(len(DCs)):
+    # for dc in range(len(datacenters)):
     #     tokens[dc] = {}
-    #     for i in range(DCs[dc]):
-    #         tokens[dc][i] = (i * MAXRANGE / DCs[dc]) + dc * 1000
+    #     for i in range(datacenters[dc]):
+    #         tokens[dc][i] = (i * MAXRANGE / datacenters[dc]) + dc * 1000
 
     # config_data['tokens'] = tokens
+
     import tokentoolv2
-    config_data['tokens'] = tokentoolv2.run()
+
+    datacenters = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
+    config_data['tokens'] = tokentoolv2.run(datacenters)
 
 def construct_yaml():
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
