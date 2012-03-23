@@ -325,16 +325,18 @@ def checkpoint_info():
     conf.set_config("AMI", "CurrentStatus", "Installation complete")
 
 def calculate_tokens():
-    MAXRANGE = (2**127)
-    DCs = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
+    # MAXRANGE = (2**127)
+    # DCs = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
 
-    tokens = {}
-    for dc in range(len(DCs)):
-        tokens[dc] = {}
-        for i in range(DCs[dc]):
-            tokens[dc][i] = (i * MAXRANGE / DCs[dc]) + dc * 1000
+    # tokens = {}
+    # for dc in range(len(DCs)):
+    #     tokens[dc] = {}
+    #     for i in range(DCs[dc]):
+    #         tokens[dc][i] = (i * MAXRANGE / DCs[dc]) + dc * 1000
 
-    config_data['tokens'] = tokens
+    # config_data['tokens'] = tokens
+    import tokentoolv2
+    config_data['tokens'] = tokentoolv2.run()
 
 def construct_yaml():
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
