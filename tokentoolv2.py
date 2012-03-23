@@ -123,7 +123,7 @@ def calc_tests(tokens):
     for this_dc in range(len(tokens)):
         these_calcs[this_dc] = []
         for node in range(len(tokens[this_dc])):
-            degrees = ((tokens[this_dc][node]) * 360 / 100) + 180
+            degrees = ((tokens[this_dc][node]) * 360 / global_data['MAXRANGE']) + 180
             radians = degrees * math.pi / 180
 
             center = global_data['graph_size'];
@@ -180,7 +180,7 @@ def run_tests():
     global_data['graph_size'] = 100
     global_data['length_of_line'] = 80
     global_data['colors'] = ['#000', '#00F', '#0F0', '#F00', '#0FF', '#FF0', '#F0F']
-    global_data['MAXRANGE'] = 100
+    global_data['MAXRANGE'] = 1000
 
     tests = [
         [1],
