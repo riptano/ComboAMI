@@ -17,54 +17,64 @@ Options
 
 ##Basic AMI Switches:
 
-    -c <name> (or --clustername)
+    --clustername <name>
         The name of the Cassandra cluster
         Note: Spaces are not allowed
-        REQUIRED for safety
+        REQUIRED
 
-    -n <#> (or --totalnodes) 
+    --totalnodes <#>
         Cluster size
-        REQUIRED for a balanced, high-performing ring
+        REQUIRED
 
-    -v [ community | enterprise ] (or --version)
+    --version [ community | enterprise ]
         Installs either DataStax Enterprise or
         DataStax Community Edition
         REQUIRED
 
 ##DataStax Enterprise Specific:
 
-    -u <user> (or --username)
+    --username <user>
         The username provided during DSE registration
         -p is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
-    -p <pass> (or --password)
+    --password <pass>
         The password provided during DSE registration
         -u is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
-    -r <#> (or --realtimenodes)
-        Number of vanilla nodes that only run Cassandra
-        -n is REQUIRED in order to use this option
+    --analyticsnodes <#>
+        Number of analytics nodes that run with Hadoop
         Default: 0
 
-    -f <#> (--cfsreplicationfactor)
-        The CFS replication factor
-        At least these many non-vanilla nodes REQUIRED
+    --searchnodes <#>
+        Number of search nodes that run with Solr
         Default: 0
 
 ##Advanced:
 
-    -e <smtpAddress>:<port>:<email>:<password> (or --email)
+    --cfsreplicationfactor <#>
+        The CFS replication factor
+        At least these many analytics nodes REQUIRED
+        Default: 1
+
+    --email <smtpAddress>:<port>:<email>:<password>
         Sends emails to and from this address for easier
         error collecting
         Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
 
-    -o no (or --opscenter)
+    --opscenter no
         Disables the installation of OpsCenter on the cluster
+        Default: yes
 
-    -h <max_heap_size>,<heap_newsize> (or --heapsize)
+    --heapsize <max_heap_size>,<heap_newsize>
         Sets the Cassandra heapsize as such
+        Default: What /etc/dse/cassandra/cassandra-env.sh
+        calculates to be the best fit for your instance size
+
+    --reflector <url>
+        Allows you to use your own reflector
+        Default: http://reflector2.datastax.com/reflector2.php
 
 
 Ports Needed
@@ -77,12 +87,12 @@ Ports Needed
             9160: Cassandra client port
         DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
-            8983: Portfolio Demo website port
+            8983: Portfolio Demo and Solr website port
             50030: Hadoop Job Tracker website port
             50060: Hadoop Task Tracker website port
         OpsCenter:
             8888: OpsCenter website port
-    Internal:
+    Intranode:
         Cassandra:
             1024+: JMX reconnections
             7000: Cassandra intra-node port
@@ -117,7 +127,7 @@ To start the service again, simply run
 Implementation details
 ======================
 
-See FILES.txt for a description of how the scripts here configure the
+See [FILES.txt](FILES.txt) for a description of how the scripts here configure the
 AMI.
 
 
@@ -125,7 +135,7 @@ Upgrading
 =========
 
 1. Backup all the data on all your nodes using the snapshot utility. This provides you with the easiest way to revert any unwanted changes or incompatibilities that may arise. See http://www.datastax.com/docs/0.7/operations/scheduled_tasks#backing-up-data for more information.
-2. On each of your Cassandra nodes, run `sudo apt-get install [ cassandra | apache-cassandra1 | dse-full ]`, depending on which version you were currently on and want to upgrade to.  
+2. On each of your Cassandra nodes, run `sudo apt-get install [ cassandra | apache-cassandra1 | dse-full ]`, depending on which version you were currently on and want to upgrade to.
     * `cassandra` upgrades to the latest in 0.8.x release.
     * `apache-cassandra` upgrades to the latest in the 1.0.x release.
     * `dse-full` upgrades to the latest DataStax Enterprise release.
