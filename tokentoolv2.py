@@ -86,7 +86,8 @@ def calculate_offsets():
                 running_offset.append(this_offset)
 
             # Set this datacenters offset to be an average of all the running offsets
-            global_data['offsets'][this_dc] += sum(running_offset) / len(running_offset)
+            if len(running_offset):
+                global_data['offsets'][this_dc] += sum(running_offset) / len(running_offset)
 
             # Vote on exiting the loop if this datacenter did not change it's offset
             if global_data['offsets'][this_dc] - previous_offset > 0:
@@ -188,6 +189,7 @@ def run_tests():
         [2, 2],
         [1, 2, 2],
         [2, 2, 2],
+        [0, 0, 2],
         [6],
         [3, 3, 3],
         [9],
