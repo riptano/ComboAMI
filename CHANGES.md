@@ -56,8 +56,8 @@ The list include:
 * Passwordless SSH around the cluster
 * datastax_ssh tool
   * Allows for SSH commands to easily be run across an entire cluster
-* Modified hosts file
-  * Allows for easy jumping between machines, e.g. c0, c1, a0, a1, s0, ...
 * nodelist file
   * An uploaded file onto the cluster for later, possible, use
+* Modified hosts file
+  * Allows for easy jumping between machines, e.g. c0, c1, a0, a1, s0, ...
 
