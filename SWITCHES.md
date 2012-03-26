@@ -41,19 +41,9 @@
         At least these many analytics nodes REQUIRED
         Default: 1
 
-    --email <smtpAddress>:<port>:<email>:<password>
-        Sends emails to and from this address for easier
-        error collecting
-        Example: smtp.gmail.com:587:ec2@datastax.com:pa$$word
-
     --opscenter no
         Disables the installation of OpsCenter on the cluster
         Default: yes
-
-    --heapsize <max_heap_size>,<heap_newsize>
-        Sets the Cassandra heapsize as such
-        Default: What /etc/dse/cassandra/cassandra-env.sh
-        calculates to be the best fit for your instance size
 
     --reflector <url>
         Allows you to use your own reflector

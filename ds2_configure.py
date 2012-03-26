@@ -120,18 +120,16 @@ def parse_ec2_userdata():
     # Option that specifies the password
     parser.add_option("--password", action="store", type="string", dest="password")
 
-    # Option that allows for an emailed report of the startup diagnostics
-    parser.add_option("--email", action="store", type="string", dest="email")
     # Option that specifies the installation of OpsCenter on the first node
     parser.add_option("--opscenter", action="store", type="string", dest="opscenter")
-    # Option that allows partitioners to be changed
-    parser.add_option("--partitioner", action="store", type="string", dest="partitioner")
-
-    # Option that allows partitioners to be changed
-    parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
-
-    # # Option that specifies an alternative reflector.php
+    # Option that specifies an alternative reflector.php
     parser.add_option("--reflector", action="store", type="string", dest="reflector")
+
+    # Unsupported dev options 
+    # Option that allows for an emailed report of the startup diagnostics
+    parser.add_option("--email", action="store", type="string", dest="email")
+    # Option that allows heapsize to be changed
+    parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
 
     # Grab provided reflector through provided userdata
     global options
@@ -363,16 +361,6 @@ def construct_yaml():
     # Uses the EC2Snitch for Community Editions
     if conf.get_config("AMI", "Type") == "Community":
         yaml = yaml.replace('endpoint_snitch: org.apache.cassandra.locator.SimpleSnitch', 'endpoint_snitch: org.apache.cassandra.locator.Ec2Snitch')
-
-    # Set partitioner, if provided
-    if options.partitioner:
-        p = re.compile('partitioner:.*')
-        if options.partitioner == 'rop':
-            yaml = p.sub('partitioner: org.apache.cassandra.dht.RandomPartitioner', yaml)
-        if options.partitioner == 'bop':
-            yaml = p.sub('partitioner: org.apache.cassandra.dht.ByteOrderedPartitioner', yaml)
-        if options.partitioner == 'opp':
-            yaml = p.sub('partitioner: org.apache.cassandra.dht.OrderPreservingPartitioner', yaml)
 
     # Set cluster_name to reservationid
     instance_data['clustername'] = instance_data['clustername'].strip("'").strip('"')
