@@ -26,8 +26,8 @@ Combo AMI
     * _Completely_ rewritten codebase for easy reading and understanding
     * Solr assignment and integration
     * New tokentool that supports multiple datacenter spacing
-    * Removed all short arguments (-v) and only long arguments
-    are accepted (--version)
+    * Removed all short arguments (`-v`) and only long arguments
+    are accepted (`--version`)
 * Future (as of March 24, 2012)
     * Planned DataStax Enterprise 1.0 support in AMI 2.2
       * Within a week
