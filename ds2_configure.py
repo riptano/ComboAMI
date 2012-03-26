@@ -238,7 +238,12 @@ def clean_installation():
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
         if options.release:
-            logger.exe('sudo apt-get install -y dse-full=%s' % options.release)
+            if options.release.startswith('1'):
+                logger.exe('sudo apt-get install -y dse-full={0} dse={0} dse-demos={0} dse-hive={0} dse-libcassandra={0} dse-libhadoop={0} dse-libhive={0} dse-libpig={0} dse-pig={0}'.format(options.release))
+            elif options.release.startswith('2'):
+                logger.exe('sudo apt-get install -y dse-full={0} dse={0} dse-demos={0} dse-hive={0} dse-libcassandra={0} dse-libhadoop={0} dse-libhive={0} dse-libpig={0} dse-pig={0} dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0}'.format(options.release))
+            else:
+                exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
             logger.exe('sudo apt-get install -y dse-full')
         logger.exe('sudo service dse stop')
