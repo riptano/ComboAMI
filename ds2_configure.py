@@ -236,6 +236,7 @@ def clean_installation():
             logger.exe('sudo apt-get install -y dsc=%s' % options.release)
         else:
             logger.exe('sudo apt-get install -y dsc')
+            logger.exe('sudo apt-get install -y dsc-demos')
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
         if options.release:
@@ -359,8 +360,8 @@ def construct_yaml():
     p = re.compile('rpc_address:.*')
     yaml = p.sub('rpc_address: 0.0.0.0', yaml)
 
-    # Uses the EC2Snitch
-    if not conf.get_config("AMI", "Type") == "Enterprise":
+    # Uses the EC2Snitch for Community Editions
+    if conf.get_config("AMI", "Type") == "Community":
         yaml = yaml.replace('endpoint_snitch: org.apache.cassandra.locator.SimpleSnitch', 'endpoint_snitch: org.apache.cassandra.locator.Ec2Snitch')
 
     # Set partitioner, if provided
