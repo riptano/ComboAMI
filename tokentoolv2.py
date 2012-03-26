@@ -107,10 +107,36 @@ def print_tokens(tokens=False):
 
 def run(datacenters):
     global_data['offsets'] = {}
+
+    # Calculate the amount of datacenters in the beginning
+    # of the list that have no nodes
+    # Because the first DC remains stable
+    leading_blank_centers = 0
+    for datacenter in datacenters:
+        if not datacenter:
+            leading_blank_centers += 1
+        else:
+            break
+    datacenters = datacenters[leading_blank_centers:]
+
     global_data['datacenters'] = datacenters
     calculate_tokens()
     calculate_offsets()
-    return get_offset_tokens()
+    returning_tokens = get_offset_tokens()
+
+    # Add the preceding blank datacenters back in
+    if leading_blank_centers:
+        translated_tokens = {}
+        for i in range(leading_blank_centers):
+            translated_tokens[i] = {}
+        i += 1
+        for j in range(len(returning_tokens.keys())):
+            translated_tokens[i] = returning_tokens[j]
+            i += 1
+        returning_tokens = translated_tokens
+
+    print returning_tokens
+    return returning_tokens
 
 # ===========================
 
@@ -189,7 +215,13 @@ def run_tests():
         [2, 2],
         [1, 2, 2],
         [2, 2, 2],
+        [2, 0, 0],
+        [0, 2, 0],
         [0, 0, 2],
+        [2, 2, 0],
+        [2, 0, 2],
+        [0, 2, 2],
+        [0, 0, 1, 1, 0, 1, 1],
         [6],
         [3, 3, 3],
         [9],
