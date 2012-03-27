@@ -54,7 +54,9 @@ def install_software():
     exe('rm -rf cassandra/')
 
     # Remove OpenJDK
-    exe('sudo aptitude remove openjdk-6-jre-headless openjdk-6-jre-lib -y')
+    # exe('sudo aptitude remove openjdk-6-jre-headless openjdk-6-jre-lib -y')
+    exe('sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_31/bin/java" 1')
+    exe('sudo update-alternatives --set java /opt/java/64/jdk1.6.0_31/bin/java')
 
 def setup_profiles():
     # Setup a link to the motd script that is provided in the git repository
@@ -63,7 +65,7 @@ def setup_profiles():
     with open(file_to_open, 'a') as f:
         f.write("""
     python datastax_ami/ds4_motd.py
-    export JAVA_HOME=/usr/lib/jvm/java-6-sun
+    export JAVA_HOME=/opt/java/64/jdk1.6.0_31
     """)
     exe('sudo chmod 644 ' + file_to_open)
 

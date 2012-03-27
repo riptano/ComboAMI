@@ -37,11 +37,13 @@ mv jdk-6u31-linux-x64.bin /opt/java/64/
 cd /opt/java/64
 chmod +x jdk*
 ./jdk*
+exit
 sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_31/bin/java" 1
 sudo update-alternatives --set java /opt/java/64/jdk1.6.0_31/bin/java
-exit
+export JAVA_HOME=/opt/java/64/jdk1.6.0_31
 
 # Begin the actual priming
+git pull
 sudo python presetup/pre_2.py
 sudo chown -R ubuntu:ubuntu . 
 rm -rf ~/.bash_history 
