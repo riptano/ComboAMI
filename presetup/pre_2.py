@@ -32,26 +32,26 @@ def install_software():
     exe('sudo apt-get -y update')
 
     while True:
-        errors = exe('sudo apt-get -y upgrade')[1]
-        if not errors:
+        output = exe('sudo apt-get -y upgrade')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     # Install other recommended tools
     while True:
-        errors = exe('sudo apt-get -y install libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs')[1]
-        if not errors:
+        output = exe('sudo apt-get -y install libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     # Install these for a much faster instance startup time
     while True:
-        errors = exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')[1]
-        if not errors:
+        output = exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     # Install RAID setup
     while True:
-        errors = exe('sudo apt-get -y --no-install-recommends install mdadm')[1]
-        if not errors:
+        output = exe('sudo apt-get -y --no-install-recommends install mdadm')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     # Preinstall Maven packages as a convenience

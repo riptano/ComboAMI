@@ -225,8 +225,8 @@ def setup_repos():
     # Perform the install
     logger.exe('sudo apt-get update')
     while True:
-        errors = logger.exe('sudo apt-get update')[1]
-        if not errors:
+        output = logger.exe('sudo apt-get update')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     time.sleep(5)
