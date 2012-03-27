@@ -42,7 +42,7 @@
 
     --cfsreplicationfactor <#>
         The CFS replication factor
-        Note: cfsreplicationfactor must be <= analyticsnodes
+        Note: --cfsreplicationfactor must be <= --analyticsnodes
         Default: 1
 
     --opscenter no
