@@ -34,12 +34,12 @@ Options
 
     --username <user>
         The username provided during DSE registration
-        -p is REQUIRED in order to use this option
+        --password is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
     --password <pass>
         The password provided during DSE registration
-        -u is REQUIRED in order to use this option
+        --username is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
     --analyticsnodes <#>
