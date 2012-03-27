@@ -623,7 +623,7 @@ def construct_core_site():
             core_site = f.read()
 
         hadoop_tmp_dir = os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop')
-        tmp_dir = '\n <!-- AMI configuration -->\n <property>\n   <name>hadoop.tmp.dir</name>\n   <value>%s</value>\n </property>\n</configuration>' % hadoop_tmp_dir
+        tmp_dir = '\n <!-- AMI configuration -->\n <property>\n   <name>hadoop.tmp.dir</name>\n   <value>%s/${user.name}</value>\n </property>\n</configuration>' % hadoop_tmp_dir
         core_site = core_site.replace('</configuration>', tmp_dir)
 
         logger.exe('sudo mkdir -p %s' % hadoop_tmp_dir)
