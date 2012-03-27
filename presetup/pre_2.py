@@ -28,8 +28,9 @@ def install_software():
     # Setup Repositories
     pipe('echo "deb http://archive.canonical.com/ lucid partner"', 'sudo tee -a /etc/apt/sources.list.d/java.sources.list')
     exe('sudo apt-get -y update')
-    exe('sudo apt-get -y upgrade')
     time.sleep(5)
+    exe('sudo apt-get -y update')
+    exe('sudo apt-get -y upgrade')
 
     # Install other recommended tools
     exe('sudo apt-get -y install libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs')
