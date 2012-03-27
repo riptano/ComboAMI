@@ -617,6 +617,16 @@ def prepare_for_raid():
     conf.set_config("AMI", "MountDirectory", mnt_point)
     conf.set_config("AMI", "CurrentStatus", "Raiding complete")
 
+def construct_core_site():
+    if conf.get_config("AMI", "Type") == "Enterprise":
+        with open('/etc/dse/hadoop/core-site.xml', 'r') as f:
+            core_site = f.read()
+        tmp_dir = ' <!-- AMI configuration -->\n <property>\n   <name>hadoop.tmp.dir</name>\n   <value>%s</value>\n </property>\n</configuration>' % os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop')
+        core_site = core_site.replace('</configuration>', tmp_dir)
+
+        with open('/etc/dse/hadoop/core-site.xml', 'w') as f:
+            f.write(core_site)
+
 def sync_clocks():
     # Confirm that NTP is installed
     logger.exe('sudo apt-get -y install ntp')
@@ -672,6 +682,7 @@ def run():
     construct_dse()
 
     prepare_for_raid()
+    construct_core_site()
 
     sync_clocks()
     additional_post_configurations()
