@@ -25,15 +25,18 @@ Combo AMI
     * Specifically for the DSE 2.0 release
     * _Completely_ rewritten codebase for easy reading and understanding
     * Solr assignment and integration
+    * Cluster names with spaces now allowed
     * New tokentool that supports multiple datacenter spacing
     * Removed all short arguments (`-v`) and only long arguments
     are accepted (`--version`)
+    * `--release` allows for specific DSE package releases
 * Future (as of March 24, 2012)
     * Planned DataStax Enterprise 1.0 support in AMI 2.2
       * Within a week
       * Made possible via the `--release <version>` argument
     * Planned DataStax Community 2.0 support on AMI 2.2
       * After release
+      * Will also allow for `--release` flag for DSC
 
 CassandraLauncher
 =================

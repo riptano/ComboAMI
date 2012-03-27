@@ -19,7 +19,6 @@ Options
 
     --clustername <name>
         The name of the Cassandra cluster
-        Note: Spaces are not allowed
         REQUIRED
 
     --totalnodes <#>
@@ -52,6 +51,11 @@ Options
         Default: 0
 
 ##Advanced:
+
+    --release <release_version>
+        Allows for the installation of a previous DSE version
+        Example: 1.0.2-1
+        Default: Ignored
 
     --cfsreplicationfactor <#>
         The CFS replication factor
