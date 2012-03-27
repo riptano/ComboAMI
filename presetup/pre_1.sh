@@ -41,7 +41,6 @@ chmod +x jdk*
 
 # Setup java alternatives
 exit
-cd datastax_ami
 sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_31/bin/java" 1
 sudo update-alternatives --set java /opt/java/64/jdk1.6.0_31/bin/java
 export JAVA_HOME=/opt/java/64/jdk1.6.0_31

@@ -30,16 +30,29 @@ def install_software():
     exe('sudo apt-get -y update')
     time.sleep(5)
     exe('sudo apt-get -y update')
-    exe('sudo apt-get -y upgrade')
+
+    while True:
+        errors = exe('sudo apt-get -y upgrade')[1]
+        if not errors.strip():
+            break
 
     # Install other recommended tools
-    exe('sudo apt-get -y install libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs')
+    while True:
+        errors = exe('sudo apt-get -y install libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs')[1]
+        if not errors.strip():
+            break
 
     # Install these for a much faster instance startup time
-    exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')
+    while True:
+        errors = exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')[1]
+        if not errors.strip():
+            break
 
     # Install RAID setup
-    exe('sudo apt-get -y --no-install-recommends install mdadm')
+    while True:
+        errors = exe('sudo apt-get -y --no-install-recommends install mdadm')[1]
+        if not errors.strip():
+            break
 
     # Preinstall Maven packages as a convenience
     exe('sudo -u ubuntu mvn install')
@@ -53,8 +66,7 @@ def install_software():
     os.chdir(home_path)
     exe('rm -rf cassandra/')
 
-    # Remove OpenJDK
-    # exe('sudo aptitude remove openjdk-6-jre-headless openjdk-6-jre-lib -y')
+    # Update Java alternatives
     exe('sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_31/bin/java" 1')
     exe('sudo update-alternatives --set java /opt/java/64/jdk1.6.0_31/bin/java')
 
