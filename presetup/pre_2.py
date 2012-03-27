@@ -9,10 +9,18 @@ import os
 def exe(command, shellEnabled=False):
     print '[EXEC] %s' % command
     if shellEnabled:
-        process = subprocess.Popen(command, shell=True)
+        process = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     else:
         process = subprocess.Popen(shlex.split(command))
     output = process.communicate()
+
+    if output[0]:
+        print 'stderr:'
+        print output[0]
+    if output[1]:
+        print 'stderr:'
+        print output[1]
+
     return output
 
 def pipe(command1, command2):
@@ -96,11 +104,11 @@ def create_initd():
     initscript = """#!/bin/sh
 
     ### BEGIN INIT INFO
-    # Provides:          
+    # Provides:
     # Required-Start:    $remote_fs $syslog
-    # Required-Stop:     
+    # Required-Stop:
     # Default-Start:     2 3 4 5
-    # Default-Stop:      
+    # Default-Stop:
     # Short-Description: Start AMI Configurations on boot.
     # Description:       Enables AMI Configurations on startup.
     ### END INIT INFO
