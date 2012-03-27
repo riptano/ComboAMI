@@ -11,7 +11,7 @@ def exe(command, shellEnabled=False):
     if shellEnabled:
         process = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     else:
-        process = subprocess.Popen(shlex.split(command))
+        process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     output = process.communicate()
 
     if output[0]:
