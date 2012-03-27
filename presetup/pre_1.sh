@@ -18,6 +18,7 @@ wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 sudo echo "sun-java6-bin shared/accepted-sun-dlj-v1-1 boolean true" | sudo debconf-set-selections
 
 # Install Git
+sudo sed -i.bk 's,^\(.*://[^.]*.ec2.archive.ubuntu.com\)/,\1.s3.amazonaws.com/,' /etc/apt/sources.list
 sudo apt-get -y update
 sudo apt-get -y install git
 
