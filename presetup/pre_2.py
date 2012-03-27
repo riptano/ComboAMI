@@ -46,11 +46,11 @@ def install_software():
     time.sleep(5)
 
     # Preinstall Cassandra from source to get all the dependencies for convenience
+    home_path = os.getcwd()
     exe('git clone https://github.com/apache/cassandra.git')
-    with os.getcwd() as home_path:
-        os.chdir('cassandra')
-        exe('ant')
-        os.chdir(home_path)
+    os.chdir('cassandra')
+    exe('ant')
+    os.chdir(home_path)
     exe('rm -rf cassandra/')
 
     # Remove OpenJDK
