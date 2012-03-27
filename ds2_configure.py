@@ -621,7 +621,7 @@ def construct_core_site():
     if conf.get_config("AMI", "Type") == "Enterprise":
         with open('/etc/dse/hadoop/core-site.xml', 'r') as f:
             core_site = f.read()
-        tmp_dir = ' <!-- AMI configuration -->\n <property>\n   <name>hadoop.tmp.dir</name>\n   <value>%s</value>\n </property>\n</configuration>' % os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop')
+        tmp_dir = '\n <!-- AMI configuration -->\n <property>\n   <name>hadoop.tmp.dir</name>\n   <value>%s</value>\n </property>\n</configuration>' % os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop')
         core_site = core_site.replace('</configuration>', tmp_dir)
 
         with open('/etc/dse/hadoop/core-site.xml', 'w') as f:
