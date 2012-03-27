@@ -125,7 +125,7 @@ def parse_ec2_userdata():
     # Option that specifies an alternative reflector.php
     parser.add_option("--reflector", action="store", type="string", dest="reflector")
 
-    # Unsupported dev options 
+    # Unsupported dev options
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--email", action="store", type="string", dest="email")
     # Option that allows heapsize to be changed
@@ -621,8 +621,13 @@ def construct_core_site():
     if conf.get_config("AMI", "Type") == "Enterprise":
         with open('/etc/dse/hadoop/core-site.xml', 'r') as f:
             core_site = f.read()
-        tmp_dir = '\n <!-- AMI configuration -->\n <property>\n   <name>hadoop.tmp.dir</name>\n   <value>%s</value>\n </property>\n</configuration>' % os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop')
+
+        hadoop_tmp_dir = os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop')
+        tmp_dir = '\n <!-- AMI configuration -->\n <property>\n   <name>hadoop.tmp.dir</name>\n   <value>%s</value>\n </property>\n</configuration>' % hadoop_tmp_dir
         core_site = core_site.replace('</configuration>', tmp_dir)
+
+        logger.exe('sudo mkdir -p %s' % hadoop_tmp_dir)
+        logger.exe('sudo chown -R cassandra:cassandra %s' % hadoop_tmp_dir)
 
         with open('/etc/dse/hadoop/core-site.xml', 'w') as f:
             f.write(core_site)
