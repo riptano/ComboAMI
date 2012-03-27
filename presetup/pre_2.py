@@ -15,7 +15,7 @@ def exe(command, shellEnabled=False):
     output = process.communicate()
 
     if output[0]:
-        print 'stderr:'
+        print 'stdout:'
         print output[0]
     if output[1]:
         print 'stderr:'
