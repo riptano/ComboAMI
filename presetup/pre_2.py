@@ -12,8 +12,8 @@ def exe(command, shellEnabled=False):
         process = subprocess.Popen(command, shell=True)
     else:
         process = subprocess.Popen(shlex.split(command))
-    process.wait()
-    return process
+    output = process.communicate()
+    return output
 
 def pipe(command1, command2):
     # Helper function to execute piping commands and print traces of the commands and output for debugging/logging purposes
