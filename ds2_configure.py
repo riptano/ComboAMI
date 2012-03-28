@@ -60,6 +60,13 @@ def clear_motd():
 def get_ec2_data():
     conf.set_config("AMI", "CurrentStatus", "Installation started")
 
+    # Find internal instance type
+    req = urllib2.Request('http://instance-data/latest/meta-data/instance-type')
+    instancetype = urllib2.urlopen(req).read()
+
+    if instancetype == 'm1.small' or instancetype == 'm1.medium':
+        exit_path("m1.small and m1.medium instances are not supported. At minimum, use an m1.large instance.")
+
     # Find internal IP address for seed list
     req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
     instance_data['internalip'] = urllib2.urlopen(req).read()
