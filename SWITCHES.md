@@ -58,8 +58,6 @@
     Public Facing:
         SSH:
             22: Default SSH port
-        Cassandra:
-            9160: Cassandra client port
         DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
             8983: Portfolio Demo and Solr website port
@@ -72,6 +70,7 @@
             1024+: JMX reconnections
             7000: Cassandra intra-node port
             7199: Cassandra JMX monitoring port
+            9160: Cassandra client port
         DataStax Enterprise Specific:
             9290: Hadoop thrift port
         OpsCenter:
