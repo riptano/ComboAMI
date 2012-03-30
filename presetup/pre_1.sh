@@ -1,5 +1,5 @@
-# Using this AMI: ami-08f40561 (Instance) NEWER: 1933fe70
-# ubuntu-maverick-10.10-amd64-server-20101225 NEWER: 20111001
+# Now using these: http://uec-images.ubuntu.com/releases/maverick/release/
+# Current as of 03/29/2012
 ### Script provided by DataStax.
 
 if [ ! -f cert-*.pem ];
