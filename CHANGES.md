@@ -30,6 +30,7 @@ Combo AMI
     * Removed all short arguments (`-v`) and only long arguments
     are accepted (`--version`)
     * `--release` allows for specific DSE package releases
+    * hadoop.tmp.dir is now set to be on the RAID0 device, if applicable
 * Future (as of March 24, 2012)
     * Planned DataStax Enterprise 1.0 support in AMI 2.2
       * Within a week

@@ -60,6 +60,13 @@ def clear_motd():
 def get_ec2_data():
     conf.set_config("AMI", "CurrentStatus", "Installation started")
 
+    # Find internal instance type
+    req = urllib2.Request('http://instance-data/latest/meta-data/instance-type')
+    instancetype = urllib2.urlopen(req).read()
+
+    if instancetype == 'm1.small' or instancetype == 'm1.medium':
+        exit_path("m1.small and m1.medium instances are not supported. At minimum, use an m1.large instance.")
+
     # Find internal IP address for seed list
     req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
     instance_data['internalip'] = urllib2.urlopen(req).read()
@@ -125,7 +132,7 @@ def parse_ec2_userdata():
     # Option that specifies an alternative reflector.php
     parser.add_option("--reflector", action="store", type="string", dest="reflector")
 
-    # Unsupported dev options 
+    # Unsupported dev options
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--email", action="store", type="string", dest="email")
     # Option that allows heapsize to be changed
@@ -224,7 +231,11 @@ def setup_repos():
 
     # Perform the install
     logger.exe('sudo apt-get update')
-    logger.exe('sudo apt-get update')
+    while True:
+        output = logger.exe('sudo apt-get update')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
+            break
+
     time.sleep(5)
 
 def clean_installation():
@@ -617,6 +628,21 @@ def prepare_for_raid():
     conf.set_config("AMI", "MountDirectory", mnt_point)
     conf.set_config("AMI", "CurrentStatus", "Raiding complete")
 
+def construct_core_site():
+    if conf.get_config("AMI", "Type") == "Enterprise":
+        with open('/etc/dse/hadoop/core-site.xml', 'r') as f:
+            core_site = f.read()
+
+        hadoop_tmp_dir = os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop')
+        tmp_dir = '\n <!-- AMI configuration -->\n <property>\n   <name>hadoop.tmp.dir</name>\n   <value>%s/${user.name}</value>\n </property>\n</configuration>' % hadoop_tmp_dir
+        core_site = core_site.replace('</configuration>', tmp_dir)
+
+        logger.exe('sudo mkdir -p %s' % hadoop_tmp_dir)
+        logger.exe('sudo chown -R cassandra:cassandra %s' % hadoop_tmp_dir)
+
+        with open('/etc/dse/hadoop/core-site.xml', 'w') as f:
+            f.write(core_site)
+
 def sync_clocks():
     # Confirm that NTP is installed
     logger.exe('sudo apt-get -y install ntp')
@@ -672,6 +698,7 @@ def run():
     construct_dse()
 
     prepare_for_raid()
+    construct_core_site()
 
     sync_clocks()
     additional_post_configurations()

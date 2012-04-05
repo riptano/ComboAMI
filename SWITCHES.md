@@ -17,12 +17,12 @@
 
     --username <user>
         The username provided during DSE registration
-        -p is REQUIRED in order to use this option
+        --password is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
     --password <pass>
         The password provided during DSE registration
-        -u is REQUIRED in order to use this option
+        --username is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
     --analyticsnodes <#>
@@ -42,7 +42,7 @@
 
     --cfsreplicationfactor <#>
         The CFS replication factor
-        At least these many analytics nodes REQUIRED
+        Note: --cfsreplicationfactor must be <= --analyticsnodes
         Default: 1
 
     --opscenter no
@@ -58,8 +58,6 @@
     Public Facing:
         SSH:
             22: Default SSH port
-        Cassandra:
-            9160: Cassandra client port
         DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
             8983: Portfolio Demo and Solr website port
@@ -72,6 +70,7 @@
             1024+: JMX reconnections
             7000: Cassandra intra-node port
             7199: Cassandra JMX monitoring port
+            9160: Cassandra client port
         DataStax Enterprise Specific:
             9290: Hadoop thrift port
         OpsCenter:

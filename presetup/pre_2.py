@@ -9,11 +9,19 @@ import os
 def exe(command, shellEnabled=False):
     print '[EXEC] %s' % command
     if shellEnabled:
-        process = subprocess.Popen(command, shell=True)
+        process = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     else:
-        process = subprocess.Popen(shlex.split(command))
-    process.wait()
-    return process
+        process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    output = process.communicate()
+
+    if output[0]:
+        print 'stdout:'
+        print output[0]
+    if output[1]:
+        print 'stderr:'
+        print output[1]
+
+    return output
 
 def pipe(command1, command2):
     # Helper function to execute piping commands and print traces of the commands and output for debugging/logging purposes
@@ -28,32 +36,47 @@ def install_software():
     # Setup Repositories
     pipe('echo "deb http://archive.canonical.com/ lucid partner"', 'sudo tee -a /etc/apt/sources.list.d/java.sources.list')
     exe('sudo apt-get -y update')
-    exe('sudo apt-get -y upgrade')
     time.sleep(5)
+    exe('sudo apt-get -y update')
+
+    while True:
+        output = exe('sudo apt-get -y upgrade')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
+            break
 
     # Install other recommended tools
-    exe('sudo apt-get -y install libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs')
+    while True:
+        output = exe('sudo apt-get -y install --fix-missing libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
+            break
 
     # Install these for a much faster instance startup time
-    exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')
+    while True:
+        output = exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
+            break
 
     # Install RAID setup
-    exe('sudo apt-get -y --no-install-recommends install mdadm')
+    while True:
+        output = exe('sudo apt-get -y --no-install-recommends install mdadm')
+        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
+            break
 
     # Preinstall Maven packages as a convenience
     exe('sudo -u ubuntu mvn install')
     time.sleep(5)
 
     # Preinstall Cassandra from source to get all the dependencies for convenience
+    home_path = os.getcwd()
     exe('git clone https://github.com/apache/cassandra.git')
-    with os.getcwd() as home_path:
-        os.chdir('cassandra')
-        exe('ant')
-        os.chdir(home_path)
+    os.chdir('cassandra')
+    exe('ant')
+    os.chdir(home_path)
     exe('rm -rf cassandra/')
 
-    # Remove OpenJDK
-    exe('sudo aptitude remove openjdk-6-jre-headless openjdk-6-jre-lib -y')
+    # Update Java alternatives
+    exe('sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_31/bin/java" 1')
+    exe('sudo update-alternatives --set java /opt/java/64/jdk1.6.0_31/bin/java')
 
 def setup_profiles():
     # Setup a link to the motd script that is provided in the git repository
@@ -62,7 +85,7 @@ def setup_profiles():
     with open(file_to_open, 'a') as f:
         f.write("""
     python datastax_ami/ds4_motd.py
-    export JAVA_HOME=/usr/lib/jvm/java-6-sun
+    export JAVA_HOME=/opt/java/64/jdk1.6.0_31
     """)
     exe('sudo chmod 644 ' + file_to_open)
 
@@ -81,11 +104,11 @@ def create_initd():
     initscript = """#!/bin/sh
 
     ### BEGIN INIT INFO
-    # Provides:          
+    # Provides:
     # Required-Start:    $remote_fs $syslog
-    # Required-Stop:     
+    # Required-Stop:
     # Default-Start:     2 3 4 5
-    # Default-Stop:      
+    # Default-Stop:
     # Short-Description: Start AMI Configurations on boot.
     # Description:       Enables AMI Configurations on startup.
     ### END INIT INFO

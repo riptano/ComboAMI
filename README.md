@@ -34,12 +34,12 @@ Options
 
     --username <user>
         The username provided during DSE registration
-        -p is REQUIRED in order to use this option
+        --password is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
     --password <pass>
         The password provided during DSE registration
-        -u is REQUIRED in order to use this option
+        --username is REQUIRED in order to use this option
         REQUIRED for a DSE installation
 
     --analyticsnodes <#>
@@ -59,7 +59,7 @@ Options
 
     --cfsreplicationfactor <#>
         The CFS replication factor
-        At least these many analytics nodes REQUIRED
+        Note: --cfsreplicationfactor must be <= --analyticsnodes
         Default: 1
 
     --opscenter no
@@ -77,8 +77,6 @@ Ports Needed
     Public Facing:
         SSH:
             22: Default SSH port
-        Cassandra:
-            9160: Cassandra client port
         DataStax Enterprise Specific:
             8012: Hadoop Job Tracker client port
             8983: Portfolio Demo and Solr website port
@@ -91,6 +89,7 @@ Ports Needed
             1024+: JMX reconnections
             7000: Cassandra intra-node port
             7199: Cassandra JMX monitoring port
+            9160: Cassandra client port
         DataStax Enterprise Specific:
             9290: Hadoop thrift port
         OpsCenter:
@@ -128,12 +127,12 @@ AMI.
 Upgrading
 =========
 
-1. Backup all the data on all your nodes using the snapshot utility. This provides you with the easiest way to revert any unwanted changes or incompatibilities that may arise. See http://www.datastax.com/docs/0.7/operations/scheduled_tasks#backing-up-data for more information.
+1. Backup all the data on all your nodes using the snapshot utility. This provides you with the easiest way to revert any unwanted changes or incompatibilities that may arise. See the [DataStax documentation](http://www.datastax.com/docs/1.0/operations/backup_restore) for more information.
 2. On each of your Cassandra nodes, run `sudo apt-get install [ cassandra | apache-cassandra1 | dse-full ]`, depending on which version you were currently on and want to upgrade to.
     * `cassandra` upgrades to the latest in 0.8.x release.
     * `apache-cassandra` upgrades to the latest in the 1.0.x release.
     * `dse-full` upgrades to the latest DataStax Enterprise release.
-    * If you are trying to upgrade across major versions, make sure to read NEWS.txt on the newer packages and consult http://docs.datastax.com for full details for upgrading packaged releases. Typically a new repository must be added followed by a `sudo apt-get update`.
+    * If you are trying to upgrade across major versions, make sure to read NEWS.txt on the newer packages and consult [DataStax documentation](http://www.datastax.com/docs/datastax_enterprise2.0/upgrading_dse) for full details for upgrading packaged releases. Typically a new repository must be added followed by a `sudo apt-get update`.
 3. Account for New and Changed Parameters in cassandra.yaml. If the default Cassandra configuration file has changed, you will find backups of it in the conf directory. You can use that to compare the two configurations and make appropriate changes.
 4. Make sure any client drivers – such as Hector or Pycassa clients – are compatible with your current version.
 5. Run nodetool drain to flush the commit log and then restart each Cassandra node, one at a time, monitoring the log files for any issues.

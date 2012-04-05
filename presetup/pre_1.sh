@@ -1,5 +1,5 @@
-# Using this AMI: ami-08f40561 (Instance) NEWER: 1933fe70
-# ubuntu-maverick-10.10-amd64-server-20101225 NEWER: 20111001
+# Now using these: http://uec-images.ubuntu.com/releases/maverick/release/
+# Current as of 03/29/2012
 ### Script provided by DataStax.
 
 if [ ! -f cert-*.pem ];
@@ -37,11 +37,15 @@ mv jdk-6u31-linux-x64.bin /opt/java/64/
 cd /opt/java/64
 chmod +x jdk*
 ./jdk*
+
+# Setup java alternatives
+exit
 sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_31/bin/java" 1
 sudo update-alternatives --set java /opt/java/64/jdk1.6.0_31/bin/java
-exit
+export JAVA_HOME=/opt/java/64/jdk1.6.0_31
 
 # Begin the actual priming
+git pull
 sudo python presetup/pre_2.py
 sudo chown -R ubuntu:ubuntu . 
 rm -rf ~/.bash_history 
