@@ -385,7 +385,11 @@ def construct_yaml():
     yaml = yaml.replace("cluster_name: 'Test Cluster'", "cluster_name: '{0}'".format(instance_data['clustername']))
 
     # Set auto_bootstrap: false
-    yaml += "\nauto_bootstrap: false\n"
+    if 'auto_bootstrap' in yaml:
+        p = re.compile('auto_bootstrap:.*')
+        yaml = p.sub('auto_bootstrap: false', yaml)
+    else:
+        yaml += "\nauto_bootstrap: false\n"
 
     # Construct token for an equally split ring
     logger.info('Cluster tokens: {0}'.format(config_data['tokens']))

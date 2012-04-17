@@ -94,7 +94,7 @@ def setup_profiles():
     exe('sudo chmod 777 ' + file_to_open)
     with open(file_to_open, 'w') as f:
         f.write("""
-    export JAVA_HOME=/usr/lib/jvm/java-6-sun
+    export JAVA_HOME=/opt/java/64/jdk1.6.0_31
     """)
     exe('sudo chmod 644 ' + file_to_open)
     os.chdir('/home/ubuntu')
@@ -114,7 +114,7 @@ def create_initd():
     ### END INIT INFO
 
     # Make sure variables get set
-    export JAVA_HOME=/usr/lib/jvm/java-6-sun
+    export JAVA_HOME=/opt/java/64/jdk1.6.0_31
 
     # Setup system properties
     sudo su -c 'ulimit -n 32768'

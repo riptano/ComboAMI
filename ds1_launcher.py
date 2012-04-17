@@ -80,7 +80,9 @@ def write_bin_tools():
         f.write("""#!/usr/bin/env python\nprint '''Installed DSE/C Tools:
 
         Nodetool:
-            nodetool -h `hostname` ring
+            nodetool --help
+        DSEtool:
+            dsetool --help
         Cli:
             cassandra-cli -h `hostname`
         CQL Shell:
