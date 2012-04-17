@@ -60,6 +60,17 @@ def clear_motd():
 def get_ec2_data():
     conf.set_config("AMI", "CurrentStatus", "Installation started")
 
+    # Try to get EC2 User Data
+    try:
+        req = urllib2.Request('http://instance-data/latest/user-data/')
+        instance_data['userdata'] = urllib2.urlopen(req).read()
+
+        logger.info("Started with user data set to:")
+        logger.info(instance_data['userdata'])
+    except Exception, e:
+        instance_data['userdata'] = ''
+        exit_path("No User Data was set.")
+
     # Find internal instance type
     req = urllib2.Request('http://instance-data/latest/meta-data/instance-type')
     instancetype = urllib2.urlopen(req).read()
@@ -84,17 +95,6 @@ def get_ec2_data():
     instance_data['reservationid'] = urllib2.urlopen(req).read()
     instance_data['clustername'] = instance_data['reservationid']
     # instance_data['jmx_pass'] = instance_data['reservationid']
-
-    # Try to get EC2 User Data
-    try:
-        req = urllib2.Request('http://instance-data/latest/user-data/')
-        instance_data['userdata'] = urllib2.urlopen(req).read()
-
-        logger.info("Started with user data set to:")
-        logger.info(instance_data['userdata'])
-    except Exception, e:
-        instance_data['userdata'] = ''
-        exit_path("No User Data was set.")
 
 def parse_ec2_userdata():
     # Setup parser
