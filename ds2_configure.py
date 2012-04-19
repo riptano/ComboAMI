@@ -453,7 +453,7 @@ password =
 """
 
         # Configure OpsCenter Cluster
-        opsc_cluster_conf.format(config_data['opscenterseed'])
+        opsc_cluster_conf = opsc_cluster_conf.format(config_data['opscenterseed'])
 
         with open(os.path.join(opsc_cluster_path, cluster_name), 'w') as f:
             f.write(opsc_cluster_conf)
