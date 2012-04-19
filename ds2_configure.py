@@ -414,19 +414,53 @@ def construct_yaml():
 def construct_opscenter_conf():
     try:
         with open(os.path.join(config_data['opsc_conf_path'], 'opscenterd.conf'), 'r') as f:
-            opsConf = f.read()
+            opsc_conf = f.read()
 
         # Configure OpsCenter
-        opsConf = opsConf.replace('port = 8080', 'port = 7199')
-        opsConf = opsConf.replace('interface = 127.0.0.1', 'interface = 0.0.0.0')
-        opsConf = opsConf.replace('seed_hosts = localhost', 'seed_hosts = {0}'.format(config_data['opscenterseed']))
+        opsc_conf = opsc_conf.replace('port = 8080', 'port = 7199')
+        opsc_conf = opsc_conf.replace('interface = 127.0.0.1', 'interface = 0.0.0.0')
+
+        # Deprecated
+        opsc_conf = opsc_conf.replace('seed_hosts = localhost', 'seed_hosts = {0}'.format(config_data['opscenterseed']))
 
         with open(os.path.join(config_data['opsc_conf_path'], 'opscenterd.conf'), 'w') as f:
-            f.write(opsConf)
+            f.write(opsc_conf)
 
         logger.info('opscenterd.conf configured.')
     except:
         logger.info('opscenterd.conf not configured since conf was unable to be located.')
+
+def construct_opscenter_cluster_conf():
+    opsc_cluster_path = os.path.join(config_data['opsc_conf_path'], 'clusters')
+    if not os.path.exists(opsc_cluster_path):
+        os.mkdir(opsc_cluster_path)
+
+    cluster_name = re.sub(r'[\W]+', '', re.sub(r'\s', '_', instance_data['clustername']))
+    cluster_name = cluster_name if cluster_name else 'Test_Cluster'
+    cluster_name = '%s.conf' % cluster_name
+
+    try:
+        opsc_cluster_conf = """[jmx]
+username = 
+password = 
+port = 7199
+
+[cassandra]
+username = 
+seed_hosts = {0}
+api_port = 9160
+password = 
+"""
+
+        # Configure OpsCenter Cluster
+        opsc_cluster_conf.format(config_data['opscenterseed'])
+
+        with open(os.path.join(opsc_cluster_path, cluster_name), 'w') as f:
+            f.write(opsc_cluster_conf)
+
+        logger.info('opscenter/%s.conf configured.' % cluster_name)
+    except:
+        logger.info('opscenter/%s.conf not configured since opscenter was unable to be located.' % cluster_name)
 
 def construct_env():
     with open(os.path.join(config_data['conf_path'], 'cassandra-env.sh'), 'r') as f:
@@ -698,6 +732,7 @@ def run():
     calculate_tokens()
     construct_yaml()
     construct_opscenter_conf()
+    construct_opscenter_cluster_conf()
     construct_env()
     construct_dse()
 
