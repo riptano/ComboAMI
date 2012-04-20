@@ -431,9 +431,9 @@ def construct_opscenter_conf():
         logger.info('opscenterd.conf not configured since conf was unable to be located.')
 
 def construct_opscenter_cluster_conf():
-    cluster_name = re.sub(r'[\W]+', '', re.sub(r'\s', '_', instance_data['clustername']))
-    cluster_name = cluster_name if cluster_name else 'Test_Cluster'
-    cluster_name = '%s.conf' % cluster_name
+    cluster_conf = re.sub(r'[\W]+', '', re.sub(r'\s', '_', instance_data['clustername']))
+    cluster_conf = cluster_conf if cluster_conf else 'Test_Cluster'
+    cluster_conf = '%s.conf' % cluster_conf
 
     try:
         opsc_cluster_path = os.path.join(config_data['opsc_conf_path'], 'clusters')
@@ -455,12 +455,12 @@ password =
         # Configure OpsCenter Cluster
         opsc_cluster_conf = opsc_cluster_conf.format(config_data['opscenterseed'])
 
-        with open(os.path.join(opsc_cluster_path, cluster_name), 'w') as f:
+        with open(os.path.join(opsc_cluster_path, cluster_conf), 'w') as f:
             f.write(opsc_cluster_conf)
 
-        logger.info('opscenter/%s.conf configured.' % cluster_name)
+        logger.info('opscenter/%s configured.' % cluster_conf)
     except:
-        logger.info('opscenter/%s.conf not configured since opscenter was unable to be located.' % cluster_name)
+        logger.info('opscenter/%s not configured since opscenter was unable to be located.' % cluster_conf)
 
 def construct_env():
     with open(os.path.join(config_data['conf_path'], 'cassandra-env.sh'), 'r') as f:
