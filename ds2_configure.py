@@ -703,6 +703,8 @@ def sync_clocks():
     logger.exe('sudo service ntp restart')
 
 def additional_pre_configurations():
+    logger.exe('gpg --keyserver pgp.mit.edu --recv-keys 40976EAF437D05B5', expectError=True)
+    logger.pipe('gpg --export --armor 40976EAF437D05B5', 'sudo apt-key add -')
     pass
 
 def additional_post_configurations():
