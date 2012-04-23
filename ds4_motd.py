@@ -113,9 +113,10 @@ def waiting_for_full_cluster_to_launch(nodetool_out):
 def print_opscenter_information():
     try:
         opscenter_ip = conf.get_config("OpsCenter", "DNS")
+        opscenter_port = conf.get_config("OpsCenter", "port")
         packageQuery = subprocess.Popen(shlex.split("dpkg-query -l 'opscenter'"), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
         if packageQuery:
-            print "Opscenter: http://{0}:8888/".format(opscenter_ip)
+            print "Opscenter: http://{0}:{1}/".format(opscenter_ip, opscenter_port)
             print "    Please wait 60 seconds if this is the cluster's first start..."
             print
             print

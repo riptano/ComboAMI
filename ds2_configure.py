@@ -421,7 +421,10 @@ def construct_opscenter_conf():
         # Configure OpsCenter
         opsc_conf = opsc_conf.replace('port = 8080', 'port = 7199')
         opsc_conf = opsc_conf.replace('interface = 127.0.0.1', 'interface = 0.0.0.0')
+
+        conf.set_config("OpsCenter", "port", 8888)
         if options.opscenterinterface:
+            conf.set_config("OpsCenter", "port", options.opscenterinterface)
             opsc_conf = opsc_conf.replace('port = 8888', 'port = %s' % options.opscenterinterface)
 
         # Deprecated
