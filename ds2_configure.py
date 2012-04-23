@@ -137,6 +137,8 @@ def parse_ec2_userdata():
     parser.add_option("--email", action="store", type="string", dest="email")
     # Option that allows heapsize to be changed
     parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
+    # Option that allows an interface port for OpsCenter to be set
+    parser.add_option("--opscenterinterface", action="store", type="string", dest="opscenterinterface")
 
     # Grab provided reflector through provided userdata
     global options
@@ -419,6 +421,8 @@ def construct_opscenter_conf():
         # Configure OpsCenter
         opsc_conf = opsc_conf.replace('port = 8080', 'port = 7199')
         opsc_conf = opsc_conf.replace('interface = 127.0.0.1', 'interface = 0.0.0.0')
+        if options.opscenterinterface:
+            opsc_conf = opsc_conf.replace('port = 8888', 'port = %s' % options.opscenterinterface)
 
         # Deprecated
         opsc_conf = opsc_conf.replace('seed_hosts = localhost', 'seed_hosts = {0}'.format(config_data['opscenterseed']))
