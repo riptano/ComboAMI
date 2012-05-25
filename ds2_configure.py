@@ -57,12 +57,21 @@ def clear_motd():
     logger.exe('sudo rm -rf /etc/motd')
     logger.exe('sudo touch /etc/motd')
 
+def curl_instance_data(url):
+    while True:
+        try:
+            req = urllib2.Request(url)
+            return req
+        except HTTPError:
+            logger.info("Failed to grab %s..." % url)
+            time.sleep(5)
+
 def get_ec2_data():
     conf.set_config("AMI", "CurrentStatus", "Installation started")
 
     # Try to get EC2 User Data
     try:
-        req = urllib2.Request('http://instance-data/latest/user-data/')
+        req = curl_instance_data('http://instance-data/latest/user-data/')
         instance_data['userdata'] = urllib2.urlopen(req).read()
 
         logger.info("Started with user data set to:")
@@ -72,26 +81,26 @@ def get_ec2_data():
         exit_path("No User Data was set.")
 
     # Find internal instance type
-    req = urllib2.Request('http://instance-data/latest/meta-data/instance-type')
+    req = curl_instance_data('http://instance-data/latest/meta-data/instance-type')
     instancetype = urllib2.urlopen(req).read()
 
     if instancetype == 'm1.small' or instancetype == 'm1.medium':
         exit_path("m1.small and m1.medium instances are not supported. At minimum, use an m1.large instance.")
 
     # Find internal IP address for seed list
-    req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
+    req = curl_instance_data('http://instance-data/latest/meta-data/local-ipv4')
     instance_data['internalip'] = urllib2.urlopen(req).read()
 
     # Find public hostname for JMX
-    req = urllib2.Request('http://instance-data/latest/meta-data/public-hostname')
+    req = curl_instance_data('http://instance-data/latest/meta-data/public-hostname')
     instance_data['publichostname'] = urllib2.urlopen(req).read()
 
     # Find launch index for token splitting
-    req = urllib2.Request('http://instance-data/latest/meta-data/ami-launch-index')
+    req = curl_instance_data('http://instance-data/latest/meta-data/ami-launch-index')
     instance_data['launchindex'] = int(urllib2.urlopen(req).read())
 
     # Find reservation-id for cluster-id and jmxpass
-    req = urllib2.Request('http://instance-data/latest/meta-data/reservation-id')
+    req = curl_instance_data('http://instance-data/latest/meta-data/reservation-id')
     instance_data['reservationid'] = urllib2.urlopen(req).read()
     instance_data['clustername'] = instance_data['reservationid']
     # instance_data['jmx_pass'] = instance_data['reservationid']
@@ -448,15 +457,15 @@ def construct_opscenter_cluster_conf():
             os.mkdir(opsc_cluster_path)
 
         opsc_cluster_conf = """[jmx]
-username = 
-password = 
+username =
+password =
 port = 7199
 
 [cassandra]
-username = 
+username =
 seed_hosts = {0}
 api_port = 9160
-password = 
+password =
 """
 
         # Configure OpsCenter Cluster
@@ -684,6 +693,10 @@ def construct_core_site():
 
         logger.exe('sudo mkdir -p %s' % hadoop_tmp_dir)
         logger.exe('sudo chown -R cassandra:cassandra %s' % hadoop_tmp_dir)
+
+        hadoop_ubuntu_dir = os.path.join(conf.get_config("AMI", "MountDirectory"), 'ubuntu')
+        logger.exe('sudo mkdir -p %s' % hadoop_ubuntu_dir)
+        logger.exe('sudo chown -R ubuntu:ubuntu %s' % hadoop_ubuntu_dir)
 
         with open('/etc/dse/hadoop/core-site.xml', 'w') as f:
             f.write(core_site)
