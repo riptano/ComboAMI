@@ -694,7 +694,7 @@ def construct_core_site():
         logger.exe('sudo mkdir -p %s' % hadoop_tmp_dir)
         logger.exe('sudo chown -R cassandra:cassandra %s' % hadoop_tmp_dir)
 
-        hadoop_ubuntu_dir = os.path.join(conf.get_config("AMI", "MountDirectory"), 'ubuntu')
+        hadoop_ubuntu_dir = os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop', 'ubuntu')
         logger.exe('sudo mkdir -p %s' % hadoop_ubuntu_dir)
         logger.exe('sudo chown -R ubuntu:ubuntu %s' % hadoop_ubuntu_dir)
 
