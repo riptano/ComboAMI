@@ -256,10 +256,9 @@ def clean_installation():
             logger.exe('sudo apt-get install -y cassandra=1.0.10 dsc')
             conf.set_config('AMI', 'package', 'dsc')
         else:
-            logger.exe('sudo apt-get install -y dsc1.1')
+            logger.exe('sudo apt-get install -y python-cql dsc1.1')
             conf.set_config('AMI', 'package', 'dsc1.1')
             # logger.exe('sudo apt-get install -y dsc-demos')
-            logger.exe('sudo apt-get install -y python-cql')
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
         if options.release:
