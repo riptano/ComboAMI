@@ -139,13 +139,11 @@ def print_trialing_info():
         version = "<< $HOME/datastax_ami/presetup/VERSION missing >>"
 
     substring = "Version: "
+    versionInfo = subprocess.Popen(shlex.split("dpkg -s %s" % conf.get_config("AMI", "package")), stdout=subprocess.PIPE).stdout.read()
+    versionInfo = versionInfo[versionInfo.find(substring) + len(substring) : versionInfo.find("\n", versionInfo.find(substring))].strip()
     if conf.get_config("AMI", "Type") == "Community":
-        versionInfo = subprocess.Popen(shlex.split("dpkg -s dsc"), stdout=subprocess.PIPE).stdout.read()
-        versionInfo = versionInfo[versionInfo.find(substring) + len(substring) : versionInfo.find("\n", versionInfo.find(substring))].strip()
         versionInfo = "DataStax Community version " + versionInfo
     if conf.get_config("AMI", "Type") == "Enterprise":
-        versionInfo = subprocess.Popen(shlex.split("dpkg -s dse-full"), stdout=subprocess.PIPE).stdout.read()
-        versionInfo = versionInfo[versionInfo.find(substring) + len(substring) : versionInfo.find("\n", versionInfo.find(substring))].strip()
         versionInfo = "DataStax Enterprise version " + versionInfo
 
     print """

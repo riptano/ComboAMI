@@ -254,8 +254,10 @@ def clean_installation():
     if conf.get_config("AMI", "Type") == "Community":
         if options.release == '1.0':
             logger.exe('sudo apt-get install -y cassandra=1.0.10 dsc')
+            conf.set_config('AMI', 'package', 'dsc')
         else:
             logger.exe('sudo apt-get install -y dsc1.1')
+            conf.set_config('AMI', 'package', 'dsc1.1')
             # logger.exe('sudo apt-get install -y dsc-demos')
             logger.exe('sudo apt-get install -y python-cql')
         logger.exe('sudo service cassandra stop')
@@ -264,9 +266,11 @@ def clean_installation():
             install_list = 'sudo apt-get install -y dse-full={0} dse={0} dse-demos={0} dse-hive={0} dse-libcassandra={0} dse-libhadoop={0} dse-libhive={0} dse-libpig={0} dse-pig={0}'
             if options.release.startswith('1'):
                 logger.exe(install_list.format(options.release))
+                conf.set_config('AMI', 'package', 'dse-full')
             elif options.release.startswith('2'):
                 install_list += ' dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0}'
                 logger.exe(install_list.format(options.release))
+                conf.set_config('AMI', 'package', 'dse-full')
             else:
                 exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
