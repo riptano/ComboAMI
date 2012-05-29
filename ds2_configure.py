@@ -275,6 +275,7 @@ def clean_installation():
                 exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
             logger.exe('sudo apt-get install -y dse-full')
+            conf.set_config('AMI', 'package', 'dse-full')
         logger.exe('sudo service dse stop')
 
     # Remove the presaved information from startup
