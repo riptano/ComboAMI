@@ -252,11 +252,12 @@ def setup_repos():
 def clean_installation():
     logger.info('Performing deployment install...')
     if conf.get_config("AMI", "Type") == "Community":
-        if options.release:
-            logger.exe('sudo apt-get install -y dsc=%s' % options.release)
+        if options.release == '1.0':
+            logger.exe('sudo apt-get install -y cassandra=1.0.10 dsc')
         else:
-            logger.exe('sudo apt-get install -y dsc')
-            logger.exe('sudo apt-get install -y dsc-demos')
+            logger.exe('sudo apt-get install -y dsc1.1')
+            # logger.exe('sudo apt-get install -y dsc-demos')
+            logger.exe('sudo apt-get install -y python-cql')
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
         if options.release:
