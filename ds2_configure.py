@@ -395,6 +395,7 @@ def construct_yaml():
     # Uses the EC2Snitch for Community Editions
     if conf.get_config("AMI", "Type") == "Community":
         yaml = yaml.replace('endpoint_snitch: org.apache.cassandra.locator.SimpleSnitch', 'endpoint_snitch: org.apache.cassandra.locator.Ec2Snitch')
+        yaml = yaml.replace('endpoint_snitch: SimpleSnitch', 'endpoint_snitch: Ec2Snitch')
 
     # Set cluster_name to reservationid
     instance_data['clustername'] = instance_data['clustername'].strip("'").strip('"')
