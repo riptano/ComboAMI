@@ -99,7 +99,7 @@ def calculate_offsets():
 def print_tokens(tokens=False):
     if not tokens:
         tokens = get_offset_tokens()
-    print 'Offsets: ', global_data['offsets']
+    # print 'Offsets: ', global_data['offsets']
     print json.dumps(tokens, sort_keys=True, indent=4)
 
     if 'test' in global_data:
@@ -135,7 +135,7 @@ def run(datacenters):
             i += 1
         returning_tokens = translated_tokens
 
-    print returning_tokens
+    # print returning_tokens
     return returning_tokens
 
 # ===========================
