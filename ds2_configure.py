@@ -731,7 +731,7 @@ def sync_clocks():
 def additional_pre_configurations():
     logger.exe('gpg --keyserver pgp.mit.edu --recv-keys 40976EAF437D05B5', expectError=True)
     logger.pipe('gpg --export --armor 40976EAF437D05B5', 'sudo apt-key add -')
-    logger.exe('sudo apt-get install s3cmd')
+    # logger.exe('sudo apt-get install s3cmd')
     pass
 
 def additional_post_configurations():
