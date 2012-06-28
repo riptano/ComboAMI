@@ -585,7 +585,7 @@ def mount_raid(devices):
         time.sleep(5)
         logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
         time.sleep(10)
-        logger.exe('blockdev --setra 65536 /dev/md0')
+        logger.exe('blockdev --setra 8192 /dev/md0')
 
         logger.info('Formatting the RAID0 set:')
         time.sleep(10)
