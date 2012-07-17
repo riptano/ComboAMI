@@ -738,22 +738,22 @@ def additional_post_configurations():
 
     # Setup HADOOP_HOME for ubuntu
     file_to_open = '/home/ubuntu/.profile'
-    exe('sudo chmod 777 ' + file_to_open)
+    logger.exe('sudo chmod 777 ' + file_to_open)
     with open(file_to_open, 'a') as f:
         f.write("""
     export HADOOP_HOME=/usr/share/dse/hadoop
     """)
-    exe('sudo chmod 644 ' + file_to_open)
+    logger.exe('sudo chmod 644 ' + file_to_open)
 
     # Setup HADOOP_HOME for root
     os.chdir('/root')
     file_to_open = '.profile'
-    exe('sudo chmod 777 ' + file_to_open)
+    logger.exe('sudo chmod 777 ' + file_to_open)
     with open(file_to_open, 'w') as f:
         f.write("""
     export HADOOP_HOME=/usr/share/dse/hadoop
     """)
-    exe('sudo chmod 644 ' + file_to_open)
+    logger.exe('sudo chmod 644 ' + file_to_open)
     os.chdir('/home/ubuntu')
     pass
 
