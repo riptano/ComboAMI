@@ -12,7 +12,8 @@ import conf
 
 def initial_configurations():
     # Begin configuration this is only run once in Public Packages
-    if os.path.isfile('ds2_configure.py'):
+
+    if conf.get_config("AMI", "CurrentStatus") != "Complete!":
         # Configure DataStax variables
         try:
             import ds2_configure
