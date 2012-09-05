@@ -163,8 +163,9 @@ def parse_ec2_userdata():
     if not options.searchnodes:
         options.searchnodes = 0
 
-    options.realtimenodes = (options.totalnodes - options.analyticsnodes - options.searchnodes)
-    options.seed_indexes = [0, options.realtimenodes, options.realtimenodes + options.analyticsnodes]
+    if not options.raidonly:
+        options.realtimenodes = (options.totalnodes - options.analyticsnodes - options.searchnodes)
+        options.seed_indexes = [0, options.realtimenodes, options.realtimenodes + options.analyticsnodes]
 
 def use_ec2_userdata():
     if not options:
