@@ -674,16 +674,17 @@ def prepare_for_raid():
     else:
         mnt_point = format_xfs(devices)
 
-    # Change cassandra.yaml to point to the new data directories
-    with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
-        yaml = f.read()
+    if not options.raidonly:
+        # Change cassandra.yaml to point to the new data directories
+        with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
+            yaml = f.read()
 
-    yaml = yaml.replace('/var/lib/cassandra/data', os.path.join(mnt_point, 'cassandra', 'data'))
-    yaml = yaml.replace('/var/lib/cassandra/saved_caches', os.path.join(mnt_point, 'cassandra', 'saved_caches'))
-    yaml = yaml.replace('/var/lib/cassandra/commitlog', os.path.join(mnt_point, 'cassandra', 'commitlog'))
+        yaml = yaml.replace('/var/lib/cassandra/data', os.path.join(mnt_point, 'cassandra', 'data'))
+        yaml = yaml.replace('/var/lib/cassandra/saved_caches', os.path.join(mnt_point, 'cassandra', 'saved_caches'))
+        yaml = yaml.replace('/var/lib/cassandra/commitlog', os.path.join(mnt_point, 'cassandra', 'commitlog'))
 
-    with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'w') as f:
-        f.write(yaml)
+        with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'w') as f:
+            f.write(yaml)
 
     # Never create raid array again
     conf.set_config("AMI", "RAIDAttempted", True)
