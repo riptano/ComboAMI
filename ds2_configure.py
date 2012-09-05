@@ -143,6 +143,8 @@ def parse_ec2_userdata():
 
     # Unsupported dev options
     # Option that allows for an emailed report of the startup diagnostics
+    parser.add_option("--raidonly", action="store_true", dest="raidonly")
+    # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--email", action="store", type="string", dest="email")
     # Option that allows heapsize to be changed
     parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
@@ -351,10 +353,11 @@ def get_seed_list():
             time.sleep(2 + random.randint(0, 5))
 
 def checkpoint_info():
-    logger.info("Seed list: {0}".format(config_data['seed_list']))
-    logger.info("OpsCenter: {0}".format(config_data['opscenterseed']))
-    logger.info("Options: {0}".format(options))
-    conf.set_config("AMI", "LeadingSeed", config_data['opscenterseed'])
+    if not options.raidonly:
+        logger.info("Seed list: {0}".format(config_data['seed_list']))
+        logger.info("OpsCenter: {0}".format(config_data['opscenterseed']))
+        logger.info("Options: {0}".format(options))
+        conf.set_config("AMI", "LeadingSeed", config_data['opscenterseed'])
     conf.set_config("AMI", "CurrentStatus", "Installation complete")
 
 def calculate_tokens():
@@ -768,25 +771,31 @@ def run():
     clear_motd()
     get_ec2_data()
     parse_ec2_userdata()
-    use_ec2_userdata()
 
-    confirm_authentication()
-    setup_repos()
-    clean_installation()
-    opscenter_installation()
+    if not options.raidonly:
+        use_ec2_userdata()
 
-    get_seed_list()
+        confirm_authentication()
+        setup_repos()
+        clean_installation()
+        opscenter_installation()
+
+        get_seed_list()
+
     checkpoint_info()
 
-    calculate_tokens()
-    construct_yaml()
-    construct_opscenter_conf()
-    construct_opscenter_cluster_conf()
-    construct_env()
-    construct_dse()
+    if not options.raidonly:
+        calculate_tokens()
+        construct_yaml()
+        construct_opscenter_conf()
+        construct_opscenter_cluster_conf()
+        construct_env()
+        construct_dse()
 
     prepare_for_raid()
-    construct_core_site()
+
+    if not options.raidonly:
+        construct_core_site()
 
     sync_clocks()
     additional_post_configurations()
