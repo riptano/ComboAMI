@@ -778,7 +778,10 @@ def run():
         use_ec2_userdata()
 
         confirm_authentication()
-        setup_repos()
+
+    setup_repos()
+
+    if not options.raidonly:
         clean_installation()
         opscenter_installation()
 
