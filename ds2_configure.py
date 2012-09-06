@@ -778,10 +778,7 @@ def run():
         use_ec2_userdata()
 
         confirm_authentication()
-
-    setup_repos()
-
-    if not options.raidonly:
+        setup_repos()
         clean_installation()
         opscenter_installation()
 
@@ -802,8 +799,9 @@ def run():
     if not options.raidonly:
         construct_core_site()
 
-    sync_clocks()
-    additional_post_configurations()
+        sync_clocks()
+
+        additional_post_configurations()
 
     logger.info("ds2_configure.py completed!\n")
     conf.set_config("AMI", "CurrentStatus", "Complete!")
