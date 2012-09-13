@@ -204,6 +204,24 @@ def use_ec2_userdata():
 
     if options.reflector:
         logger.info('Using reflector: {0}'.format(options.reflector))
+        
+    if not options.username:
+        logger.info('No username specified, trying local file')
+        u,p = read_credential_file()
+        options.username = u
+        options.password = p
+
+def read_credential_file():
+    try:
+        localFile = '/home/ubuntu/datastax_ami/marketplace'
+        output = logger.exe('cat '+localFile,0)
+        u,p = output[0].split('|',1)
+        return (u,p)
+    except Exception,e:
+        logger.error('No password file found on local system.')
+        return ('','')
+
+
 
 def confirm_authentication():
     if conf.get_config("AMI", "Type") == "Enterprise":
