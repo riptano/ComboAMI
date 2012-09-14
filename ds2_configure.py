@@ -211,16 +211,25 @@ def use_ec2_userdata():
         options.username = u
         options.password = p
 
-def read_credential_file():
+# read credentials from well known file on image
+def read_credentials():
+    u=''
+    p=''
+    output=''
     try:
         localFile = '/home/ubuntu/datastax_ami/marketplace'
-        output = logger.exe('cat '+localFile,0)
-        u,p = output[0].split('|',1)
+        fh = open(localFile, 'r');
+        output = fh.read()
+        output = output.rstrip()
+    except IOError,e:
+        logger.error('Error reading file:'+str(e))
+        return (u,p)
+    try:
+        u,p = output.split('|',1)
         return (u,p)
     except Exception,e:
-        logger.error('No password file found on local system.')
-        return ('','')
-
+        logger.error('Error reading file:'+str(e))
+        return (u,p)
 
 
 def confirm_authentication():
