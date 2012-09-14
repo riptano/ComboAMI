@@ -226,6 +226,7 @@ def read_credential_file():
         return (u,p)
     try:
         u,p = output.split('|',1)
+        logger.info('Found user '+u)
         return (u,p)
     except Exception,e:
         logger.error('Error reading file:'+str(e))
@@ -250,7 +251,7 @@ def confirm_authentication():
             except Exception as inst:
                 # Print error message if failed
                 if "401" in str(inst):
-                    exit_path('Authentication for DataStax Enterprise failed. Please confirm your username and password.\n')
+                    exit_path('Authentication for DataStax Enterprise with user ['+options.username+'] failed. Please confirm your username and password.\n')
         elif (options.username or options.password):
             exit_path("Both --username (-u) and --password (-p) required for DataStax Enterprise.")
 
