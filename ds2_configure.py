@@ -212,7 +212,7 @@ def use_ec2_userdata():
         options.password = p
 
 # read credentials from well known file on image
-def read_credentials():
+def read_credential_file():
     u=''
     p=''
     output=''
