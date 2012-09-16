@@ -129,7 +129,7 @@ def wait_for_seed():
 
 def launch_opscenter():
     logger.info('Starting a background process to start OpsCenter after a given delay...')
-    subprocess.Popen(shlex.split('sudo -u ubuntu python ds3_after_init.py &'))
+    subprocess.Popen(shlex.split('sudo -u ubuntu python /home/ubuntu/datastax_ami/ds3_after_init.py &'))
 
 def start_services():
     # Actually start the application
