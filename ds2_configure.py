@@ -256,7 +256,7 @@ def clean_installation():
     logger.info('Performing deployment install...')
     if conf.get_config("AMI", "Type") == "Community":
         if options.release == '1.0':
-            logger.exe('sudo apt-get install -y cassandra=1.0.10 dsc')
+            logger.exe('sudo apt-get install -y cassandra=1.0.11 dsc')
             conf.set_config('AMI', 'package', 'dsc')
         else:
             logger.exe('sudo apt-get install -y python-cql dsc1.1')
