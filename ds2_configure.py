@@ -271,7 +271,8 @@ def clean_installation():
                 conf.set_config('AMI', 'package', 'dse-full')
             elif options.release.startswith('2'):
                 install_list += ' dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0}'
-                if options.release == '2.1-2':
+                #if options.release == '2.1-2':
+                if options.release.startswith('2.1') or options.release.startswith('2.2'):
                     install_list += ' dse-libmahout={0}'
                 logger.exe(install_list.format(options.release))
                 conf.set_config('AMI', 'package', 'dse-full')
