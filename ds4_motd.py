@@ -166,9 +166,8 @@ def print_errors():
     knownErrors.append("java.io.ioexception: timedoutexception()\n")
     knownErrors.append("caused by: timedoutexception()\n")
     knownErrors.append("Error getting MD array info from /dev/md0\n".lower())
-    knownErrors.append("xss =  -ea -javaagent:/usr/share/cassandra/lib/jamm-0.2.5.jar -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -Xms1867M -Xmx1867M -Xmn200M -XX:+HeapDumpOnOutOfMemoryError -Xss128k\n".lower())
     for line in open('/home/ubuntu/datastax_ami/ami.log'):
-        if ('error' in line.lower() or '[warn]' in line.lower() or 'exception' in line.lower()) and not line.lower() in knownErrors:
+        if ('error' in line.lower() or '[warn]' in line.lower() or 'exception' in line.lower()) and not (line.lower() in knownErrors or line.startswith('xss =  ')):
             notices += line
 
     if len(notices) > 0:
