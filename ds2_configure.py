@@ -256,7 +256,7 @@ def clean_installation():
     logger.info('Performing deployment install...')
     if conf.get_config("AMI", "Type") == "Community":
         if options.release and options.release.startswith('1.0'):
-            logger.exe('sudo apt-get install -y cassandra={0} dsc'.format(options.release))
+            logger.exe('sudo apt-get install -y cassandra={0} dsc={0}'.format(options.release))
             conf.set_config('AMI', 'package', 'dsc')
         elif options.release and options.release.startswith('1.1'):
             dse_release = cassandra_release = options.release
