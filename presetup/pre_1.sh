@@ -1,4 +1,5 @@
 # Now using these: http://cloud-images.ubuntu.com/releases/precise/release-20121218/
+# Via: http://cloud-images.ubuntu.com/locator/ec2/: "instance-store amd64 LTS 12.04"
 # Current as of 12/20/2012
 ### Script provided by DataStax.
 
