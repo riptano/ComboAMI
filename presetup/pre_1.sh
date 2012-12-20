@@ -31,18 +31,18 @@ git checkout $(head -n 1 presetup/VERSION)
 
 # Install Java
 sudo su
-wget https://s3.amazonaws.com/ds-java/jdk-6u31-linux-x64.bin
+wget https://s3.amazonaws.com/ds-java/jdk-6u38-linux-x64.bin
 mkdir -p /opt/java/64
-mv jdk-6u31-linux-x64.bin /opt/java/64/
+mv jdk-6u38-linux-x64.bin /opt/java/64/
 cd /opt/java/64
 chmod +x jdk*
 ./jdk*
 
 # Setup java alternatives
 exit
-sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_31/bin/java" 1
-sudo update-alternatives --set java /opt/java/64/jdk1.6.0_31/bin/java
-export JAVA_HOME=/opt/java/64/jdk1.6.0_31
+sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_38/bin/java" 1
+sudo update-alternatives --set java /opt/java/64/jdk1.6.0_38/bin/java
+export JAVA_HOME=/opt/java/64/jdk1.6.0_38
 
 # Begin the actual priming
 git pull
