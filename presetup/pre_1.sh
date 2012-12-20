@@ -1,5 +1,5 @@
-# Now using these: http://uec-images.ubuntu.com/releases/maverick/release/
-# Current as of 03/29/2012
+# Now using these: http://cloud-images.ubuntu.com/releases/precise/release-20121218/
+# Current as of 12/20/2012
 ### Script provided by DataStax.
 
 if [ ! -f cert-*.pem ];
