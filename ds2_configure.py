@@ -304,9 +304,9 @@ def opscenter_installation():
     if instance_data['launchindex'] == 0 and options.opscenter != "no":
         logger.info('Installing OpsCenter...')
         if conf.get_config("AMI", "Type") == "Community":
-            logger.exe('sudo apt-get -y install opscenter-free')
+            logger.exe('sudo apt-get -y install opscenter-free libssl0.9.8')
         elif conf.get_config("AMI", "Type") == "Enterprise":
-            logger.exe('sudo apt-get -y install opscenter')
+            logger.exe('sudo apt-get -y install opscenter libssl0.9.8')
         logger.exe('sudo service opscenterd stop')
     elif options.opscenter == "no":
         conf.set_config("OpsCenter", "NoOpsCenter", True)
