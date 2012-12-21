@@ -1,0 +1,166 @@
+#!/usr/bin/env python
+
+import boto
+import boto.ec2
+import os
+import sys
+import time
+
+ami_dict = [
+    {
+        'region': 'us-east-1',
+        'ami': 'ami-d726abbe'
+    },
+    {
+        'region': 'us-west-1',
+        'ami': 'ami-827252c7'
+    },
+    {
+        'region': 'us-west-2',
+        'ami': 'ami-ca2ca4fa'
+    },
+    {
+        'region': 'eu-west-1',
+        'ami': 'ami-3a0f034e'
+    },
+    {
+        'region': 'ap-southeast-1',
+        'ami': 'ami-15226047'
+    },
+    {
+        'region': 'ap-southeast-2',
+        'ami': 'ami-7f7ee945'
+    },
+    {
+        'region': 'ap-northeast-1',
+        'ami': 'ami-70a91271'
+    },
+    {
+        'region': 'sa-east-1',
+        'ami': 'ami-6beb3376'
+    }
+]
+
+pem_home = '/Users/joaquin/.ec2'
+
+import ConfigParser
+config = ConfigParser.RawConfigParser()
+configfile = os.getenv('CLUSTERLAUNCHER_CONF')
+config.read(configfile)
+
+aws_access_key_id = config.get('EC2', 'aws_access_key_id')
+aws_secret_access_key = config.get('EC2', 'aws_secret_access_key')
+
+def setup_key_pairs():
+    # Create and save a key pair per region
+    for ami in ami_dict:
+        conn = boto.ec2.connect_to_region(ami['region'], aws_access_key_id=aws_access_key_id,
+                                          aws_secret_access_key=aws_secret_access_key)
+
+        try:
+            print 'Attempting to create key pair...'
+            key = conn.create_key_pair(ami['region'])
+            try:
+                print 'Attempting to save key pair...'
+                key.save(pem_home)
+            except:
+                print 'Deleting key pair...'
+                conn.delete_key_pair(ami['region'])
+                sys.exit(1)
+        except:
+            print 'Couldn\'t create key pair...'
+
+def launch():
+    # Start launching AMIs
+    reservations = []
+    for ami in ami_dict:
+        print 'Launching AMI in %s...' % (ami['region'])
+        conn = boto.ec2.connect_to_region(ami['region'], aws_access_key_id=aws_access_key_id,
+                                          aws_secret_access_key=aws_secret_access_key)
+
+        zone = ['a', 'b', 'c', 'd', 'e']
+        zone_index = 0
+        while True:
+            placement = '%s%s' % (ami['region'], zone[zone_index])
+            try:
+                reservation = conn.run_instances(ami['ami'],
+                                                 min_count=1,
+                                                 max_count=1,
+                                                 instance_type='m1.large',
+                                                 key_name=ami['region'],
+                                                 placement=placement,
+                                                 security_groups=['default'])
+                break
+            except:
+                zone_index += 1
+
+        reservations.append(reservation)
+
+    # Sleep so Amazon recognizes the new instances
+    time.sleep(5)
+    print '\n\n'
+
+    for reservation in reservations:
+        region = reservation.instances[0].placement[:-1]
+        conn = boto.ec2.connect_to_region(region, aws_access_key_id=aws_access_key_id,
+                                          aws_secret_access_key=aws_secret_access_key)
+
+        for i, instance in enumerate(reservation.instances):
+            while not instance.update() == 'running':
+                time.sleep(3)
+
+        # Tag the instances in this reservation
+        for instance in reservation.instances:
+            conn.create_tags([instance.id], {'Initializer': 'AMIBaking'})
+
+        for instance in reservation.instances:
+            scp_string = 'scp'
+            scp_string += ' -o UserKnownHostsFile=/dev/null'
+            scp_string += ' -o StrictHostKeyChecking=no'
+            scp_string += ' -i %s' % (os.path.join(pem_home, instance.placement[:-1] + '.pem'))
+            scp_string += ' %s' % (os.path.join(pem_home, 'cert-*.pem'))
+            scp_string += ' %s' % (os.path.join(pem_home, 'pk-*.pem'))
+            scp_string += ' ubuntu@%s:' % (instance.ip_address)
+
+            print scp_string
+
+    print '\n\n'
+
+    for reservation in reservations:
+        for instance in reservation.instances:
+            ssh_string = 'ssh'
+            ssh_string += ' -o UserKnownHostsFile=/dev/null'
+            ssh_string += ' -o StrictHostKeyChecking=no'
+            ssh_string += ' -i %s' % (os.path.join(pem_home, instance.placement[:-1] + '.pem'))
+            ssh_string += ' ubuntu@%s' % (instance.ip_address)
+
+            print ssh_string
+
+def terminate():
+    for ami in ami_dict:
+        conn = boto.ec2.connect_to_region(ami['region'], aws_access_key_id=aws_access_key_id,
+                                          aws_secret_access_key=aws_secret_access_key)
+        reservations = conn.get_all_instances()
+        for reservation in reservations:
+            if 'Initializer' in reservation.instances[0].tags and \
+                    reservation.instances[0].tags['Initializer'] == 'AMIBaking' and \
+                    reservation.instances[0].update() == 'running':
+
+                for instance in reservation.instances:
+                    print 'Killing instance in %s...' % (instance.placement)
+                    conn.terminate_instances([instance.id])
+
+usage = './launch_amis.py [--keypairs | --launch | --terminate]\n'
+usage += 'Description: Launches and destroys a single AMI on all regions.\n'
+
+if len(sys.argv) > 1:
+    if sys.argv[1] == '--keypairs':
+        setup_key_pairs()
+    if sys.argv[1] == '--launch':
+        launch()
+    elif sys.argv[1] == '--terminate':
+        terminate()
+    else:
+        print usage
+else:
+    print usage
