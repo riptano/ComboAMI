@@ -230,7 +230,7 @@ def confirm_authentication():
 
 def setup_repos():
     # Clear repo when filled, primarily for debugging purposes
-    logger.exe('sudo rm /etc/apt/sources.list.d/datastax.sources.list', expectError=True)
+    logger.exe('sudo rm /etc/apt/sources.list.d/datastax.sources.list', log=False, expectError=True)
 
     # Add repos
     if conf.get_config("AMI", "Type") == "Enterprise":
