@@ -605,6 +605,7 @@ def mount_raid(devices):
         response = ' '.join(response.split(' ')[0:-1])
         with open('/etc/mdadm/mdadm.conf', 'a') as f:
             f.write(response)
+        logger.exe('sudo update-initramfs -u')
 
         time.sleep(10)
         conf.set_config('AMI', 'raid_readahead', 512)
