@@ -599,7 +599,13 @@ def mount_raid(devices):
 
         logger.pipe('echo DEVICE {0}'.format(partion_list), 'sudo tee /etc/mdadm/mdadm.conf')
         time.sleep(5)
-        logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
+
+        # New parsing and elimination of the name= field due to 12.04's new RAID'ing methods
+        response = logger.exe('sudo mdadm --examine --scan')[0]
+        response = ' '.join(response.split(' ')[0:-1])
+        with open('/etc/mdadm/mdadm.conf', 'a') as f:
+            f.write(response)
+
         time.sleep(10)
         conf.set_config('AMI', 'raid_readahead', 512)
         logger.exe('sudo blockdev --setra %s /dev/md0' % (conf.get_config('AMI', 'raid_readahead')))
