@@ -601,7 +601,8 @@ def mount_raid(devices):
         time.sleep(5)
         logger.pipe('mdadm --detail --scan', 'sudo tee -a /etc/mdadm/mdadm.conf')
         time.sleep(10)
-        logger.exe('blockdev --setra 512 /dev/md0')
+        conf.set_config('AMI', 'raid_readahead', 512)
+        logger.exe('sudo blockdev --setra %s /dev/md0' % (conf.get_config('AMI', 'raid_readahead')))
 
         logger.info('Formatting the RAID0 set:')
         time.sleep(10)

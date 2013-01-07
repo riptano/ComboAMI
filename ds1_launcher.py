@@ -108,6 +108,10 @@ def restart_tasks():
     # Disable swap
     logger.exe('sudo swapoff --all')
 
+    # Ensure the correct blockdev readahead since this sometimes resets after restarts
+    if conf.get_config('AMI', 'raid_readahead'):
+        logger.exe('sudo blockdev --setra %s /dev/md0' % (conf.get_config('AMI', 'raid_readahead')), expectError=True)
+
 def wait_for_seed():
     # Wait for the seed node to come online
     req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
