@@ -31,6 +31,7 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
 
 
     # Setup credentials
+    # AWSID as found here: https://portal.aws.amazon.com/gp/aws/manageYourAccount. Example: xxxx-xxxx-xxxx
     AWSID=<YOUR INFORMATION GOES HERE>
     ACCESSKEYID=<YOUR INFORMATION GOES HERE>
     SECRETACCESSKEY=<YOUR INFORMATION GOES HERE>
@@ -41,16 +42,16 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     VERSION=$(head -1 /home/ubuntu/datastax_ami/presetup/VERSION)
     AMINAME=datastax_clustering_ami_$VERSION
     S3BUCKET=datastax
-    AMITITLE='"DataStax Auto-Clustering AMI $VERSION"'
+    AMITITLE="DataStax Auto-Clustering AMI $VERSION"
     DESCRIPTION='"Provides a way to automatically launch a configurable DataStax Enterprise or DataStax Community cluster by simply starting a group of instances."'
     MANIFEST=/mnt/$AMINAME.manifest.xml
 
     rm -rf ~/.bash_history && history -c && ec2-bundle-vol -p $AMINAME -d /mnt -k $PK_PEM -c $CERT_PEM -u $AWSID -r x86_64
 
-    REGION=us-east-1;       yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
+    REGION=US;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=us-west-1;       yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=us-west-2;       yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
-    REGION=eu-west-1;       yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
+    REGION=EU;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=ap-southeast-1;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=ap-southeast-2;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=ap-northeast-1;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
@@ -58,17 +59,17 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
 
     echo """
     cd ~/.ec2/
-    ec2-register $S3BUCKET-us-east-1/$AMINAME.manifest.xml -region us-east-1 -n $AMITITLE -d $DESCRIPTION
-    ec2-register $S3BUCKET-us-west-1/$AMINAME.manifest.xml -region us-west-1 -n $AMITITLE -d $DESCRIPTION
-    ec2-register $S3BUCKET-us-west-2/$AMINAME.manifest.xml -region us-west-2 -n $AMITITLE -d $DESCRIPTION
-    ec2-register $S3BUCKET-eu-west-1/$AMINAME.manifest.xml -region eu-west-1 -n $AMITITLE -d $DESCRIPTION
-    ec2-register $S3BUCKET-ap-southeast-1/$AMINAME.manifest.xml -region ap-southeast-1 -n $AMITITLE -d $DESCRIPTION
-    ec2-register $S3BUCKET-ap-southeast-2/$AMINAME.manifest.xml -region ap-southeast-2 -n $AMITITLE -d $DESCRIPTION
-    ec2-register $S3BUCKET-ap-northeast-1/$AMINAME.manifest.xml -region ap-northeast-1 -n $AMITITLE -d $DESCRIPTION
-    ec2-register $S3BUCKET-sa-east-1/$AMINAME.manifest.xml -region sa-east-1 -n $AMITITLE -d $DESCRIPTION
+    ec2-register $S3BUCKET-us-east-1/$AMINAME.manifest.xml -region us-east-1 -n '"$AMITITLE"' -d $DESCRIPTION
+    ec2-register $S3BUCKET-us-west-1/$AMINAME.manifest.xml -region us-west-1 -n '"$AMITITLE"' -d $DESCRIPTION
+    ec2-register $S3BUCKET-us-west-2/$AMINAME.manifest.xml -region us-west-2 -n '"$AMITITLE"' -d $DESCRIPTION
+    ec2-register $S3BUCKET-eu-west-1/$AMINAME.manifest.xml -region eu-west-1 -n '"$AMITITLE"' -d $DESCRIPTION
+    ec2-register $S3BUCKET-ap-southeast-1/$AMINAME.manifest.xml -region ap-southeast-1 -n '"$AMITITLE"' -d $DESCRIPTION
+    ec2-register $S3BUCKET-ap-southeast-2/$AMINAME.manifest.xml -region ap-southeast-2 -n '"$AMITITLE"' -d $DESCRIPTION
+    ec2-register $S3BUCKET-ap-northeast-1/$AMINAME.manifest.xml -region ap-northeast-1 -n '"$AMITITLE"' -d $DESCRIPTION
+    ec2-register $S3BUCKET-sa-east-1/$AMINAME.manifest.xml -region sa-east-1 -n '"$AMITITLE"' -d $DESCRIPTION
 
     # Duplicate this line and change to add internal-only permissions
-    ec2-modify-image-attribute -l -region us-east-1 -a EMPLOYEEAWSID \$(ec2-describe-images -region us-east-1 | grep $AMITITLE | cut -f2)
+    ec2-modify-image-attribute -l -region us-east-1 -a EMPLOYEEAWSID \$(ec2-describe-images -region us-east-1 | grep '"$AMITITLE"' | cut -f2)
 
     """ && rm -rf ~/.bash_history && history -c
 
