@@ -397,7 +397,8 @@ def calculate_tokens():
         config_data['tokens'] = tokentoolv2.run(datacenters)
     else:
         number_of_tokens = options.realtimenodes
-        config_data['tokens'] = [(((2**64 / number_of_tokens) * i) - 2**63) for i in range(number_of_tokens)]
+        tokens = [(((2**64 / number_of_tokens) * i) - 2**63) for i in range(number_of_tokens)]
+        config_data['tokens'] = {0: tokens}
 
 def construct_yaml():
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
