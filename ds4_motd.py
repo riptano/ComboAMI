@@ -106,8 +106,8 @@ def waiting_for_full_cluster_to_launch(nodetool_out):
             break
         if time.time() - start_time > 60:
             break
+        nodetool_out = subprocess.Popen(shlex.split(config_data['nodetool_statement']), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
 
-    nodetool_out = subprocess.Popen(shlex.split(config_data['nodetool_statement']), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
     print nodetool_out
 
 def print_opscenter_information():
