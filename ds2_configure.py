@@ -262,15 +262,18 @@ def clean_installation():
         if options.release and options.release.startswith('1.0'):
             logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc={0}'.format(options.release))
             conf.set_config('AMI', 'package', 'dsc')
+            conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         elif options.release and options.release.startswith('1.1'):
             dse_release = cassandra_release = options.release
             if dse_release == '1.1.6':
                 dse_release = '1.1.6-1'
             logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc1.1={1}'.format(cassandra_release, dse_release))
             conf.set_config('AMI', 'package', 'dsc1.1')
+            conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         else:
             logger.exe('sudo apt-get install -y python-cql dsc12')
             conf.set_config('AMI', 'package', 'dsc12')
+            conf.set_config('Cassandra', 'partitioner', 'murmur')
             # logger.exe('sudo apt-get install -y dsc-demos')
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
@@ -279,17 +282,20 @@ def clean_installation():
             if options.release.startswith('1'):
                 logger.exe(install_list.format(options.release))
                 conf.set_config('AMI', 'package', 'dse-full')
+                conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
             elif options.release.startswith('2'):
                 install_list += ' dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0}'
                 if options.release.startswith('2.1') or options.release.startswith('2.2'):
                     install_list += ' dse-libmahout={0}'
                 logger.exe(install_list.format(options.release))
                 conf.set_config('AMI', 'package', 'dse-full')
+                conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
             else:
                 exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
             logger.exe('sudo apt-get install -y dse-full')
             conf.set_config('AMI', 'package', 'dse-full')
+            conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         logger.exe('sudo service dse stop')
 
     # Remove the presaved information from startup
@@ -384,10 +390,14 @@ def calculate_tokens():
 
     # config_data['tokens'] = tokens
 
-    import tokentoolv2
+    if conf.get_config('Cassandra', 'partitioner') == 'random_partitioner':
+        import tokentoolv2
 
-    datacenters = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
-    config_data['tokens'] = tokentoolv2.run(datacenters)
+        datacenters = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
+        config_data['tokens'] = tokentoolv2.run(datacenters)
+    else:
+        number_of_tokens = options.realtimenodes
+        config_data['tokens'] = [(((2**64 / number_of_tokens) * i) - 2**63) for i in range(number_of_tokens)]
 
 def construct_yaml():
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
