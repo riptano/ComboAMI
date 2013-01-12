@@ -28,8 +28,6 @@ config_data['conf_path'] = os.path.expanduser("/etc/cassandra/")
 config_data['opsc_conf_path'] = os.path.expanduser("/etc/opscenter/")
 options = False
 
-tokens = {}
-
 def exit_path(errorMsg, append_msg=False):
     if not append_msg:
         # Remove passwords from printing: -p
@@ -395,10 +393,11 @@ def calculate_tokens():
 
         datacenters = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
         config_data['tokens'] = tokentoolv2.run(datacenters)
-    else:
-        number_of_tokens = options.realtimenodes
-        tokens = [(((2**64 / number_of_tokens) * i) - 2**63) for i in range(number_of_tokens)]
-        config_data['tokens'] = {0: tokens}
+    # else:
+    #     # Used to calculate tokens for murmur partitioners. But vnodes are used instead.
+    #     number_of_tokens = options.realtimenodes
+    #     tokens = [(((2**64 / number_of_tokens) * i) - 2**63) for i in range(number_of_tokens)]
+    #     config_data['tokens'] = {0: tokens}
 
 def construct_yaml():
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
@@ -435,20 +434,25 @@ def construct_yaml():
     else:
         yaml += "\nauto_bootstrap: false\n"
 
-    # Construct token for an equally split ring
-    logger.info('Cluster tokens: {0}'.format(config_data['tokens']))
+    if conf.get_config('Cassandra', 'partitioner') == 'random_partitioner':
+        # Construct token for an equally split ring
+        logger.info('Cluster tokens: {0}'.format(config_data['tokens']))
 
-    if instance_data['launchindex'] < options.seed_indexes[1]:
-        token = config_data['tokens'][0][instance_data['launchindex']]
+        if instance_data['launchindex'] < options.seed_indexes[1]:
+            token = config_data['tokens'][0][instance_data['launchindex']]
 
-    if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
-        token = config_data['tokens'][1][instance_data['launchindex'] - options.realtimenodes]
+        if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
+            token = config_data['tokens'][1][instance_data['launchindex'] - options.realtimenodes]
 
-    if options.seed_indexes[2] <= instance_data['launchindex']:
-        token = config_data['tokens'][2][instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes]
+        if options.seed_indexes[2] <= instance_data['launchindex']:
+            token = config_data['tokens'][2][instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes]
 
-    p = re.compile( 'initial_token:.*')
-    yaml = p.sub( 'initial_token: {0}'.format(token), yaml)
+        p = re.compile( 'initial_token:.*')
+        yaml = p.sub('initial_token: {0}'.format(token), yaml)
+
+    elif conf.get_config('Cassandra', 'partitioner') == 'murmur':
+        p = re.compile( '# num_tokens:.*')
+        yaml = p.sub('num_tokens: 256', yaml)
 
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'w') as f:
         f.write(yaml)
