@@ -258,7 +258,10 @@ def clean_installation():
     logger.info('Performing deployment install...')
     if conf.get_config("AMI", "Type") == "Community":
         if options.release and options.release.startswith('1.0'):
-            logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc={0}'.format(options.release))
+            cassandra_release = options.release
+            if cassandra_release == '1.0.11-1':
+                cassandra_release = '1.0.11'
+            logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc={1}'.format(cassandra_release, options.release))
             conf.set_config('AMI', 'package', 'dsc')
             conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         elif options.release and options.release.startswith('1.1'):
