@@ -12,10 +12,7 @@ import urllib2
 import conf
 
 config_data = {}
-if conf.get_config('Cassandra', 'partitioner') == 'random_partitioner':
-    config_data['nodetool_statement'] = 'nodetool -h localhost ring'
-elif conf.get_config('Cassandra', 'partitioner') == 'murmur':
-    config_data['nodetool_statement'] = 'nodetool status'
+config_data['nodetool_statement'] = 'nodetool -h localhost ring'
 
 def ami_error_handling():
     if conf.get_config("AMI", "Error"):
@@ -111,6 +108,9 @@ def waiting_for_full_cluster_to_launch(nodetool_out):
             break
         if time.time() - start_time > 60:
             break
+
+        if conf.get_config('Cassandra', 'partitioner') == 'murmur':
+            config_data['nodetool_statement'] = 'nodetool status'
         nodetool_out = subprocess.Popen(shlex.split(config_data['nodetool_statement']), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
 
     print nodetool_out
