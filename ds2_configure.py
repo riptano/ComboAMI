@@ -140,7 +140,7 @@ def parse_ec2_userdata():
     parser.add_option("--opscenter", action="store", type="string", dest="opscenter")
     # Option that specifies an alternative reflector.php
     parser.add_option("--reflector", action="store", type="string", dest="reflector")
-    
+
     parser.add_option("--javaversion", action="store", type="string", dest="javaversion")
 
     # Unsupported dev options
@@ -178,7 +178,7 @@ def use_ec2_userdata():
 
     if options.totalnodes - options.analyticsnodes - options.searchnodes < 0:
         exit_path("Total nodes assigned > total available nodes")
-        
+
     if options.javaversion:
         if options.javaversion.lower() == '1.7':
             conf.set_config("AMI", "JavaType", "1.7")
@@ -186,7 +186,7 @@ def use_ec2_userdata():
             conf.set_config("AMI", "JavaType", "1.6")
     else:
         conf.set_config("AMI", "JavaType", "1.6")
-        
+
     if options.version:
         if options.version.lower() == "community":
             conf.set_config("AMI", "Type", "Community")
@@ -821,30 +821,30 @@ def install_java():
     else:
         url = "http://java.com/en/download/manual_v6.jsp"
         majorversion = "6"
-        
+
     f = urllib2.urlopen(url)
     t = f.read()
-    
+
     #regex to find java minor version
     vr = re.compile("(?<=Update )\d+(?=.*)")
     m = vr.search(t)
     minorversion = m.group()
-    
+
     arch = "64"
     if arch == "64":
         # regex to find download link
         dlr= re.compile('(?<=Linux x64\" href=\")\S+(?=\".*)')
     else:
         dlr= re.compile('(?<=Linux\" href=\")\S+(?=\".*)')
-        
+
     m = dlr.search(t)
     downloadlink = m.group()
-    
+
     path = "/opt/java/" + arch + "/"
     cwd = os.curdir
     logger.exe("sudo mkdir -p " + path);
     os.chdir(path)
-    
+
     if conf.get_config("AMI", "JavaType") == "1.7":
         outputfilename = "jre1.7.tar.gz"
     else:
@@ -860,10 +860,10 @@ def install_java():
 
     logger.exe('sudo update-alternatives --install "/usr/bin/java" "java" "' + path + 'jre1.' + majorversion + '.0_' + minorversion + '/bin/java" 1')
     logger.exe('sudo update-alternatives --set "java" "' + path + 'jre1.' + majorversion + '.0_' + minorversion + '/bin/java"')
-    
+
     os.chdir(cwd)
 
-        
+
 def run():
     # Remove script files
     logger.exe('sudo rm ds2_configure.py')
