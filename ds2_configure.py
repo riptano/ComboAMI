@@ -141,8 +141,6 @@ def parse_ec2_userdata():
     # Option that specifies an alternative reflector.php
     parser.add_option("--reflector", action="store", type="string", dest="reflector")
 
-    parser.add_option("--javaversion", action="store", type="string", dest="javaversion")
-
     # Unsupported dev options
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--raidonly", action="store_true", dest="raidonly")
@@ -152,6 +150,11 @@ def parse_ec2_userdata():
     parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
     # Option that allows an interface port for OpsCenter to be set
     parser.add_option("--opscenterinterface", action="store", type="string", dest="opscenterinterface")
+
+    # Community options
+    # https://github.com/riptano/ComboAMI/pull/9
+    # Option that allows for keeping the javaversion up to date by installing at runtime. Includes option for 1.6 or 1.7.
+    parser.add_option("--javaversion", action="store", type="string", dest="javaversion")
 
     # Grab provided reflector through provided userdata
     global options
@@ -184,8 +187,6 @@ def use_ec2_userdata():
             conf.set_config("AMI", "JavaType", "1.7")
         else:
             conf.set_config("AMI", "JavaType", "1.6")
-    else:
-        conf.set_config("AMI", "JavaType", "1.6")
 
     if options.version:
         if options.version.lower() == "community":
@@ -878,7 +879,8 @@ def run():
         use_ec2_userdata()
 
         confirm_authentication()
-        install_java()
+        if options.javaversion:
+            install_java()
         setup_repos()
         clean_installation()
         opscenter_installation()
