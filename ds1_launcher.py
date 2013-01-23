@@ -136,6 +136,9 @@ def launch_opscenter():
     subprocess.Popen(shlex.split('sudo -u ubuntu python /home/ubuntu/datastax_ami/ds3_after_init.py &'))
 
 def start_services():
+    # Wait for system setup changes to settle
+    time.sleep(5)
+
     # Actually start the application
     if conf.get_config("AMI", "Type") == "Community" or conf.get_config("AMI", "Type") == "False":
         logger.info('Starting DataStax Community...')
