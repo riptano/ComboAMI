@@ -11,6 +11,11 @@ import urllib2
 
 import conf
 
+# RLS 20121105 add gzip and StringIO to support Multipart Mime Userdata
+import gzip
+import StringIO
+from email.parser import Parser
+
 config_data = {}
 config_data['nodetool_statement'] = 'nodetool -h localhost ring'
 
@@ -45,7 +50,7 @@ def get_user_data(req):
 	if is_multipart_mime(data):
 		message = Parser().parsestr(data)
 		for part in message.walk():
-			if (part.get_content_type() == 'text/plain'):
+			if (part.get_content_type() == 'text/plaintext'):
 				match = re.search('totalnodes', part.get_payload())
 				if (match): return part.get_payload()
 	else:
