@@ -23,10 +23,45 @@ def ami_error_handling():
         print
         sys.exit(1)
 
+###################################################################
+## 20121105 - RLS - add functions to handle gzip multipart userdata
+##
+def read_instance_data(req):
+	data = urllib2.urlopen(req).read()
+	try:
+		stream = StringIO.StringIO(data)
+		gzipper = gzip.GzipFile(fileobj=stream)
+		return gzipper.read()
+	except IOError:
+		stream = StringIO.StringIO(data)
+		return stream.read()
+
+def is_multipart_mime(data):
+	match = re.search('Content-Type: multipart', data)
+	if match: return True
+
+def get_user_data(req):
+	data = read_instance_data(req)
+	if is_multipart_mime(data):
+		message = Parser().parsestr(data)
+		for part in message.walk():
+			if (part.get_content_type() == 'text/plain'):
+				match = re.search('totalnodes', part.get_payload())
+				if (match): return part.get_payload()
+	else:
+		return data
+##
+## end
+###################################################################
+
 def print_userdata():
     try:
         req = urllib2.Request('http://instance-data/latest/user-data/')
-        config_data['userdata'] = urllib2.urlopen(req).read()
+        #
+        # 20121105 - RLS
+        #
+        #config_data['userdata'] = urllib2.urlopen(req).read()
+        config_data['userdata'] = get_user_data(req)
 
         # Remove passwords from printing: -p
         p = re.search('(-p\s+)(\S*)', config_data['userdata'])

@@ -14,6 +14,9 @@ import time
 import traceback
 import urllib2
 import urllib
+# RLS 20121105 add gzip and StringIO to support Multipart Mime Userdata
+import gzip
+import StringIO
 
 from optparse import OptionParser
 
@@ -65,13 +68,48 @@ def curl_instance_data(url):
             logger.info("Failed to grab %s..." % url)
             time.sleep(5)
 
+###################################################################
+## 20121105 - RLS - add functions to handle gzip multipart userdata
+##
+def read_instance_data(req):
+	data = urllib2.urlopen(req).read()
+	try:
+		stream = StringIO.StringIO(data)
+		gzipper = gzip.GzipFile(fileobj=stream)
+		return gzipper.read()
+	except IOError:
+		stream = StringIO.StringIO(data)
+		return stream.read()
+
+def is_multipart_mime(data):
+	match = re.search('Content-Type: multipart', data)
+	if match: return True
+
+def get_user_data(req):
+	data = read_instance_data(req)
+	if is_multipart_mime(data):
+		message = Parser().parsestr(data)
+		for part in message.walk():
+			if (part.get_content_type() == 'text/plain'):
+				match = re.search('totalnodes', part.get_payload())
+				if (match): return part.get_payload()
+	else:
+		return data
+##
+## end
+###################################################################
+
+
 def get_ec2_data():
     conf.set_config("AMI", "CurrentStatus", "Installation started")
 
     # Try to get EC2 User Data
     try:
         req = curl_instance_data('http://instance-data/latest/user-data/')
-        instance_data['userdata'] = urllib2.urlopen(req).read()
+        #
+        # 20121105 - RLS
+        #instance_data['userdata'] = urllib2.urlopen(req).read()
+        instance_data['userdata'] = get_user_data(req)
 
         logger.info("Started with user data set to:")
         logger.info(instance_data['userdata'])
