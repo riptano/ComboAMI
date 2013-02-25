@@ -153,6 +153,7 @@ def run():
     initial_configurations()
     write_bin_tools()
     restart_tasks()
-    wait_for_seed()
-    launch_opscenter()
-    start_services()
+    if conf.get_config("AMI", "LeadingSeed"):
+        wait_for_seed()
+        launch_opscenter()
+        start_services()
