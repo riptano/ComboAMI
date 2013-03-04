@@ -414,7 +414,9 @@ def get_seed_list():
             time.sleep(2 + random.randint(0, 5))
 
 def checkpoint_info():
-    if not options.raidonly:
+    if options.raidonly:
+        conf.set_config("AMI", "RaidOnly", "True")
+    else:
         logger.info("Seed list: {0}".format(config_data['seed_list']))
         logger.info("OpsCenter: {0}".format(config_data['opscenterseed']))
         logger.info("Options: {0}".format(options))

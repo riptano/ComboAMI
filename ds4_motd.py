@@ -213,9 +213,10 @@ def run():
     print_userdata()
 
     waiting_for_status()
-    waiting_for_nodetool()
-    nodetool_out = check_for_one_up_node()
-    waiting_for_full_cluster_to_launch(nodetool_out)
+    if not conf.get_config("AMI", "RaidOnly"):
+        waiting_for_nodetool()
+        nodetool_out = check_for_one_up_node()
+        waiting_for_full_cluster_to_launch(nodetool_out)
 
     print_opscenter_information()
     print_tools()
