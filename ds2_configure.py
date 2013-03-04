@@ -5,7 +5,6 @@ import exceptions
 import glob
 import json
 import os
-import pwd
 import random
 import re
 import shlex
@@ -691,11 +690,8 @@ def mount_raid(devices):
     logger.exe('sudo mkdir {0}'.format(mnt_point))
     logger.exe('sudo mount -a')
     logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra')))
-    try:
-        pwd.getpwnam('cassandra')
+    if not conf.get_config("AMI", "RaidOnly"):
         logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
-    except KeyError:
-        pass
 
     logger.info('Showing RAID0 details:')
     logger.exe('cat /proc/mdstat')
