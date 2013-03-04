@@ -110,6 +110,9 @@ def waiting_for_nodetool():
 
     retcode = 0
     while True:
+        if conf.get_config('Cassandra', 'partitioner') == 'murmur':
+            config_data['nodetool_statement'] = 'nodetool status'
+
         retcode = subprocess.call(shlex.split(config_data['nodetool_statement']), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if (int(retcode) != 3):
             break
@@ -138,8 +141,6 @@ def waiting_for_full_cluster_to_launch(nodetool_out):
         if time.time() - start_time > 60:
             break
 
-        if conf.get_config('Cassandra', 'partitioner') == 'murmur':
-            config_data['nodetool_statement'] = 'nodetool status'
         nodetool_out = subprocess.Popen(shlex.split(config_data['nodetool_statement']), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
 
     print nodetool_out
