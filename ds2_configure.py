@@ -307,8 +307,8 @@ def clean_installation():
             conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         elif options.release and options.release.startswith('1.1'):
             dse_release = cassandra_release = options.release
-            if dse_release == '1.1.6':
-                dse_release = '1.1.6-1'
+            if dse_release in ['1.1.6', '1.1.7', '1.1.9']:
+                dse_release = dse_release+'-1'
             logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc1.1={1}'.format(cassandra_release, dse_release))
             conf.set_config('AMI', 'package', 'dsc1.1')
             conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
