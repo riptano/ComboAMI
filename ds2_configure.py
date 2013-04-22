@@ -789,12 +789,26 @@ def construct_core_site():
         logger.exe('sudo mkdir -p %s' % hadoop_tmp_dir)
         logger.exe('sudo chown -R cassandra:cassandra %s' % hadoop_tmp_dir)
 
-        hadoop_ubuntu_dir = os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop', 'ubuntu')
+        hadoop_ubuntu_dir = os.path.join(hadoop_tmp_dir, 'ubuntu')
         logger.exe('sudo mkdir -p %s' % hadoop_ubuntu_dir)
         logger.exe('sudo chown -R ubuntu:ubuntu %s' % hadoop_ubuntu_dir)
 
         with open('/etc/dse/hadoop/core-site.xml', 'w') as f:
             f.write(core_site)
+
+def construct_mapred_site():
+    if conf.get_config("AMI", "Type") == "Enterprise":
+        with open('/etc/dse/hadoop/mapred-site.xml', 'r') as f:
+            mapred_site = f.read()
+
+        mapred_local_dir = os.path.join(conf.get_config("AMI", "MountDirectory"), 'hadoop', 'mapredlocal')
+        mapred_site = mapred_site.replace('/tmp/mapredlocal', mapred_local_dir)
+
+        logger.exe('sudo mkdir -p %s' % mapred_local_dir)
+        logger.exe('sudo chown -R cassandra:cassandra %s' % mapred_local_dir)
+
+        with open('/etc/dse/hadoop/mapred-site.xml', 'w') as f:
+            f.write(mapred_site)
 
 def sync_clocks():
     # Confirm that NTP is installed
@@ -933,6 +947,7 @@ def run():
 
     if not options.raidonly:
         construct_core_site()
+        construct_mapred_site()
 
         sync_clocks()
 
