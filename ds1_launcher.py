@@ -41,22 +41,22 @@ def initial_configurations():
 def fix_profile():
     # Setup a link to the motd script that is provided in the git repository
     file_to_open = '/home/ubuntu/.profile'
-    exe('sudo chmod 777 ' + file_to_open)
+    logger.exe('sudo chmod 777 ' + file_to_open)
     with open(file_to_open) as f:
         profile = f.read()
         f.seek(0)
         f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
-    exe('sudo chmod 644 ' + file_to_open)
+    logger.exe('sudo chmod 644 ' + file_to_open)
 
     last_dir = os.getcwd()
     os.chdir('/root')
     file_to_open = '.profile'
-    exe('sudo chmod 777 ' + file_to_open)
+    logger.exe('sudo chmod 777 ' + file_to_open)
     with open(file_to_open) as f:
         profile = f.read()
         f.seek(0)
         f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
-    exe('sudo chmod 644 ' + file_to_open)
+    logger.exe('sudo chmod 644 ' + file_to_open)
     os.chdir(last_dir)
 
 def write_bin_tools():
