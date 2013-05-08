@@ -48,14 +48,6 @@ def fix_profile():
         f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
     logger.exe('sudo chmod 644 ' + file_to_open)
 
-    file_to_open = '/root/.profile'
-    logger.exe('sudo chmod 777 ' + file_to_open)
-    with open(file_to_open, 'r+') as f:
-        profile = f.read()
-        f.seek(0)
-        f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
-    logger.exe('sudo chmod 644 ' + file_to_open)
-
 def write_bin_tools():
     with open('/usr/bin/datastax_support', 'w') as f:
         f.write("""#!/usr/bin/env python\nprint '''DataStax Support Links:
