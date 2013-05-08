@@ -42,7 +42,7 @@ def fix_profile():
     # Setup a link to the motd script that is provided in the git repository
     file_to_open = '/home/ubuntu/.profile'
     logger.exe('sudo chmod 777 ' + file_to_open)
-    with open(file_to_open) as f:
+    with open(file_to_open, 'r+') as f:
         profile = f.read()
         f.seek(0)
         f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
@@ -52,7 +52,7 @@ def fix_profile():
     os.chdir('/root')
     file_to_open = '.profile'
     logger.exe('sudo chmod 777 ' + file_to_open)
-    with open(file_to_open) as f:
+    with open(file_to_open, 'r+') as f:
         profile = f.read()
         f.seek(0)
         f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
