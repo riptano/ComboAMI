@@ -10,6 +10,17 @@ import urllib2
 import logger
 import conf
 
+# Temporary fix until next rebake
+def fix_profile():
+    # Setup a link to the motd script that is provided in the git repository
+    file_to_open = '/home/ubuntu/.profile'
+    logger.exe('sudo chmod 777 ' + file_to_open)
+    with open(file_to_open, 'r+') as f:
+        profile = f.read()
+        f.seek(0)
+        f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
+    logger.exe('sudo chmod 644 ' + file_to_open)
+
 def initial_configurations():
     # Begin configuration this is only run once in Public Packages
 
@@ -36,17 +47,6 @@ def initial_configurations():
         logger.exe('sudo chown -hR cassandra:cassandra /mnt/cassandra', False)
     else:
         logger.info('Skipping initial configurations.')
-
-# Temporary fix until next rebake
-def fix_profile():
-    # Setup a link to the motd script that is provided in the git repository
-    file_to_open = '/home/ubuntu/.profile'
-    logger.exe('sudo chmod 777 ' + file_to_open)
-    with open(file_to_open, 'r+') as f:
-        profile = f.read()
-        f.seek(0)
-        f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
-    logger.exe('sudo chmod 644 ' + file_to_open)
 
 def write_bin_tools():
     with open('/usr/bin/datastax_support', 'w') as f:
@@ -161,8 +161,8 @@ def start_services():
 
 
 def run():
-    initial_configurations()
     fix_profile()
+    initial_configurations()
     write_bin_tools()
     restart_tasks()
     if conf.get_config("AMI", "LeadingSeed"):
