@@ -180,7 +180,7 @@ def parse_ec2_userdata():
     # Option that allows an interface port for OpsCenter to be set
     parser.add_option("--opscenterinterface", action="store", type="string", dest="opscenterinterface")
     # Option that allows a custom reservation id to be set
-    parser.add_option("--customresevation", action="store", type="string", dest="customresevation")
+    parser.add_option("--customreservation", action="store", type="string", dest="customreservation")
 
     # Community options
     # https://github.com/riptano/ComboAMI/pull/9
@@ -240,8 +240,8 @@ def use_ec2_userdata():
         logger.info('Using cluster name: {0}'.format(options.clustername))
         instance_data['clustername'] = options.clustername
 
-    if options.customresevation:
-        instance_data['reservationid'] = options.customresevation
+    if options.customreservation:
+        instance_data['reservationid'] = options.customreservation
 
     logger.info('Using cluster size: {0}'.format(options.totalnodes))
     conf.set_config("Cassandra", "TotalNodes", options.totalnodes)
