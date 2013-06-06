@@ -929,7 +929,12 @@ def run():
 
     additional_pre_configurations()
     clear_motd()
-    get_ec2_data()
+
+    try:
+        get_ec2_data()
+    except HTTPError:
+        exit_path("Clusters within a VPC are not supported.")
+
     parse_ec2_userdata()
 
     if not options.raidonly:
