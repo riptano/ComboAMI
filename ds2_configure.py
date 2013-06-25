@@ -65,7 +65,7 @@ def curl_instance_data(url):
         try:
             req = urllib2.Request(url)
             return req
-        except HTTPError:
+        except urllib2.HTTPError:
             logger.info("Failed to grab %s..." % url)
             time.sleep(5)
 
@@ -932,7 +932,7 @@ def run():
 
     try:
         get_ec2_data()
-    except HTTPError:
+    except urllib2.HTTPError:
         exit_path("Clusters within a VPC are not supported.")
 
     parse_ec2_userdata()
