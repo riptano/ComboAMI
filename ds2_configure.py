@@ -99,7 +99,7 @@ def get_ec2_data():
 
     # Try to get EC2 User Data
     try:
-        req = curl_instance_data('http://instance-data/latest/user-data/')
+        req = curl_instance_data('http://169.254.169.254/latest/user-data/')
         instance_data['userdata'] = get_user_data(req)
 
         logger.info("Started with user data set to:")
