@@ -344,7 +344,7 @@ def clean_installation():
                 conf.set_config('AMI', 'package', 'dse-full')
                 conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
             elif options.release.startswith('3'):
-                install_list += ' dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0} dse-libmahout={0}'
+                install_list += ' dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0} dse-libmahout={0} dse-libhadoop-native={0}'
                 logger.exe(install_list.format(options.release))
                 conf.set_config('AMI', 'package', 'dse-full')
                 if options.release.startswith('3.0'):
