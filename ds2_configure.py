@@ -347,7 +347,10 @@ def clean_installation():
                 install_list += ' dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0} dse-libmahout={0}'
                 logger.exe(install_list.format(options.release))
                 conf.set_config('AMI', 'package', 'dse-full')
-                conf.set_config('Cassandra', 'partitioner', 'murmur')
+                if options.release.startswith('3.0'):
+                    conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
+                else:
+                    conf.set_config('Cassandra', 'partitioner', 'murmur')
             else:
                 exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
