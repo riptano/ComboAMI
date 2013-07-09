@@ -348,7 +348,7 @@ def clean_installation():
         else:
             logger.exe('sudo apt-get install -y dse-full')
             conf.set_config('AMI', 'package', 'dse-full')
-            conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
+            conf.set_config('Cassandra', 'partitioner', 'murmur')
         logger.exe('sudo service dse stop')
 
     # Remove the presaved information from startup
