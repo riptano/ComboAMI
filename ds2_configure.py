@@ -323,10 +323,12 @@ def clean_installation():
             logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc12={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc12')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
+            conf.set_config('Cassandra', 'vnodes', True)
         else:
             logger.exe('sudo apt-get install -y python-cql dsc12')
             conf.set_config('AMI', 'package', 'dsc12')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
+            conf.set_config('Cassandra', 'vnodes', True)
             # logger.exe('sudo apt-get install -y dsc-demos')
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
@@ -351,12 +353,14 @@ def clean_installation():
                     conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
                 else:
                     conf.set_config('Cassandra', 'partitioner', 'murmur')
+                    conf.set_config('Cassandra', 'vnodes', False)
             else:
                 exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
             logger.exe('sudo apt-get install -y dse-full')
             conf.set_config('AMI', 'package', 'dse-full')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
+            conf.set_config('Cassandra', 'vnodes', False)
         logger.exe('sudo service dse stop')
 
     # Remove the presaved information from startup
@@ -516,8 +520,24 @@ def construct_yaml():
         yaml = p.sub('initial_token: {0}'.format(token), yaml)
 
     elif conf.get_config('Cassandra', 'partitioner') == 'murmur':
-        p = re.compile( '# num_tokens:.*')
-        yaml = p.sub('num_tokens: 256', yaml)
+        if conf.get_config('Cassandra', 'vnodes'):
+            p = re.compile( '# num_tokens:.*')
+            yaml = p.sub('num_tokens: 256', yaml)
+        else:
+            if instance_data['launchindex'] < options.seed_indexes[1]:
+                tokens = [((2**64 / 6) * i) - 2**63 for i in range(options.realtimenodes)]
+                token = str(tokens[instance_data['launchindex']])
+
+            if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
+                tokens = [((2**64 / 6) * i) - 2**63 for i in range(options.analyticsnodes)]
+                token = str(tokens[instance_data['launchindex'] - options.realtimenodes] + 10000)
+
+            if options.seed_indexes[2] <= instance_data['launchindex']:
+                tokens = [((2**64 / 6) * i) - 2**63 for i in range(options.searchnodes)]
+                token = str(tokens[instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes] + 20000)
+
+            p = re.compile( 'initial_token:.*')
+            yaml = p.sub('initial_token: {0}'.format(token), yaml)
 
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'w') as f:
         f.write(yaml)
