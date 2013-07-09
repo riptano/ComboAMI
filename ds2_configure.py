@@ -323,12 +323,12 @@ def clean_installation():
             logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc12={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc12')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
-            conf.set_config('Cassandra', 'vnodes', True)
+            conf.set_config('Cassandra', 'vnodes', 'True')
         else:
             logger.exe('sudo apt-get install -y python-cql dsc12')
             conf.set_config('AMI', 'package', 'dsc12')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
-            conf.set_config('Cassandra', 'vnodes', True)
+            conf.set_config('Cassandra', 'vnodes', 'True')
             # logger.exe('sudo apt-get install -y dsc-demos')
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
@@ -353,14 +353,14 @@ def clean_installation():
                     conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
                 else:
                     conf.set_config('Cassandra', 'partitioner', 'murmur')
-                    conf.set_config('Cassandra', 'vnodes', False)
+                    conf.set_config('Cassandra', 'vnodes', 'False')
             else:
                 exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
             logger.exe('sudo apt-get install -y dse-full')
             conf.set_config('AMI', 'package', 'dse-full')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
-            conf.set_config('Cassandra', 'vnodes', False)
+            conf.set_config('Cassandra', 'vnodes', 'False')
         logger.exe('sudo service dse stop')
 
     # Remove the presaved information from startup
@@ -520,7 +520,7 @@ def construct_yaml():
         yaml = p.sub('initial_token: {0}'.format(token), yaml)
 
     elif conf.get_config('Cassandra', 'partitioner') == 'murmur':
-        if conf.get_config('Cassandra', 'vnodes'):
+        if conf.get_config('Cassandra', 'vnodes') == 'True':
             p = re.compile( '# num_tokens:.*')
             yaml = p.sub('num_tokens: 256', yaml)
         else:
