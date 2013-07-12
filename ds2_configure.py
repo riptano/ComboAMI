@@ -961,7 +961,7 @@ def run():
     try:
         get_ec2_data()
     except urllib2.HTTPError:
-        exit_path("Clusters within a VPC are not supported.")
+        exit_path("Clusters within a VPC or backed by Spot Instances are not supported.")
 
     parse_ec2_userdata()
 
