@@ -728,8 +728,13 @@ def mount_raid(devices):
     logger.exe('sudo mkdir {0}'.format(mnt_point))
     logger.exe('sudo mount -a')
     logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra')))
-    if not conf.get_config("AMI", "RaidOnly"):
-        logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
+    if conf.get_config("AMI", "RaidOnly"):
+        logger.pipe('yes', 'sudo adduser --no-create-home --disabled-password cassandra')
+    logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
+
+    # Create symlink for Cassandra
+    logger.exe('sudo rm -rf /var/lib/cassandra')
+    logger.exe('sudo ln -s {0} /var/lib/cassandra'.format(os.path.join(mnt_point, 'cassandra')))
 
     logger.info('Showing RAID0 details:')
     logger.exe('cat /proc/mdstat')
