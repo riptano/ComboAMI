@@ -735,6 +735,7 @@ def mount_raid(devices):
     # Create symlink for Cassandra
     logger.exe('sudo rm -rf /var/lib/cassandra')
     logger.exe('sudo ln -s {0} /var/lib/cassandra'.format(os.path.join(mnt_point, 'cassandra')))
+    logger.exe('sudo chown -R cassandra:cassandra /var/lib/cassandra')
 
     logger.info('Showing RAID0 details:')
     logger.exe('cat /proc/mdstat')
