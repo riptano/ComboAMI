@@ -730,6 +730,10 @@ def mount_raid(devices):
     logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra')))
     if conf.get_config("AMI", "RaidOnly"):
         logger.pipe('yes', 'sudo adduser --no-create-home --disabled-password cassandra')
+        while True:
+            output = logger.exe('id cassandra')
+            if not output[1] and not 'no such user' in output[0].lower():
+                break
     logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
 
     # Create symlink for Cassandra
