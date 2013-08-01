@@ -525,15 +525,15 @@ def construct_yaml():
             yaml = p.sub('num_tokens: 256', yaml)
         else:
             if instance_data['launchindex'] < options.seed_indexes[1]:
-                tokens = [((2**64 / 6) * i) - 2**63 for i in range(options.realtimenodes)]
+                tokens = [((2**64 / options.realtimenodes) * i) - 2**63 for i in range(options.realtimenodes)]
                 token = str(tokens[instance_data['launchindex']])
 
             if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
-                tokens = [((2**64 / 6) * i) - 2**63 for i in range(options.analyticsnodes)]
+                tokens = [((2**64 / options.analyticsnodes) * i) - 2**63 for i in range(options.analyticsnodes)]
                 token = str(tokens[instance_data['launchindex'] - options.realtimenodes] + 10000)
 
             if options.seed_indexes[2] <= instance_data['launchindex']:
-                tokens = [((2**64 / 6) * i) - 2**63 for i in range(options.searchnodes)]
+                tokens = [((2**64 / options.searchnodes) * i) - 2**63 for i in range(options.searchnodes)]
                 token = str(tokens[instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes] + 20000)
 
             p = re.compile( 'initial_token:.*')
