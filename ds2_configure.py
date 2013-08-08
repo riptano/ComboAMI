@@ -210,8 +210,8 @@ def use_ec2_userdata():
     if not options.totalnodes:
         exit_path("Missing required --totalnodes (-n) switch.")
 
-    if options.totalnodes - options.analyticsnodes - options.searchnodes < 0:
-        exit_path("Total nodes assigned > total available nodes")
+    if (options.analyticsnodes + options.searchnodes) > options.totalnodes:
+        exit_path("Total nodes assigned (--analyticsnodes + --searchnodes) > total available nodes (--totalnodes)")
 
     if options.javaversion:
         if options.javaversion.lower() == '1.7':
