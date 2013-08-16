@@ -734,6 +734,7 @@ def mount_raid(devices):
             output = logger.exe('id cassandra')
             if not output[1] and not 'no such user' in output[0].lower():
                 break
+            time.sleep(1)
     logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
 
     # Create symlink for Cassandra
