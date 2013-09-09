@@ -301,13 +301,16 @@ def setup_repos():
     time.sleep(5)
 
 def setup_java_7():
+    # As taken from: http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
+
     logger.pipe('yes', 'sudo add-apt-repository ppa:webupd8team/java')
     logger.exe('sudo apt-get update')
     logger.pipe('sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true', 'sudo /usr/bin/debconf-set-selections')
     logger.exe('sudo apt-get install -y oracle-java7-installer')
     logger.exe('sudo apt-get install -y oracle-java7-set-default')
     logger.exe('sudo update-java-alternatives -s java-7-oracle')
-    logger.exe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> ~/.profile')
+    logger.exe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /root/.profile')
+    logger.exe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /home/ubuntu/.profile')
 
 def clean_installation():
     logger.info('Performing deployment install...')
