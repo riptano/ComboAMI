@@ -301,7 +301,7 @@ def setup_repos():
     time.sleep(5)
 
 def setup_java_7():
-    logger.exe('sudo add-apt-repository ppa:webupd8team/java')
+    logger.pipe('yes', 'sudo add-apt-repository ppa:webupd8team/java')
     logger.exe('sudo apt-get update')
     logger.pipe('sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true', 'sudo /usr/bin/debconf-set-selections')
     logger.exe('sudo apt-get install oracle-java7-installer')
