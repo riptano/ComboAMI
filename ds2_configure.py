@@ -300,6 +300,14 @@ def setup_repos():
 
     time.sleep(5)
 
+def setup_java_7():
+    logger.exe('sudo add-apt-repository ppa:webupd8team/java')
+    logger.exe('sudo apt-get update')
+    logger.pipe('sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true', 'sudo /usr/bin/debconf-set-selections')
+    logger.exe('sudo apt-get install oracle-java7-installer')
+    logger.exe('sudo apt-get install oracle-java7-set-default')
+    logger.exe('sudo update-java-alternatives -s java-7-oracle')
+
 def clean_installation():
     logger.info('Performing deployment install...')
     if conf.get_config("AMI", "Type") == "Community":
@@ -331,11 +339,13 @@ def clean_installation():
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
+            setup_java_7()
         else:
             logger.exe('sudo apt-get install -y python-cql dsc20')
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
+            setup_java_7()
             # logger.exe('sudo apt-get install -y dsc-demos')
         logger.exe('sudo service cassandra stop')
     elif conf.get_config("AMI", "Type") == "Enterprise":
