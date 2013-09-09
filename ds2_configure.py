@@ -309,8 +309,8 @@ def setup_java_7():
     logger.exe('sudo apt-get install -y oracle-java7-installer')
     logger.exe('sudo apt-get install -y oracle-java7-set-default')
     logger.exe('sudo update-java-alternatives -s java-7-oracle')
-    logger.exe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /root/.profile')
-    logger.exe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /home/ubuntu/.profile')
+    logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /root/.profile')
+    logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /home/ubuntu/.profile')
 
 def clean_installation():
     logger.info('Performing deployment install...')
