@@ -315,7 +315,8 @@ def setup_java_7():
 
     with tempfile.NamedTemporaryFile() as f:
         f.write('$JAVA_HOME updated for the Java7 installation required by Cassandra 2.0+\n')
-        f.write('Please reconnect to this instance to properly have $JAVA_HOME set by the new .profile.\n')
+        f.write('Please reconnect to this instance to properly have $JAVA_HOME set\n')
+        f.write('by the new ~/.profile.')
         f.flush()
         os.fsync(f.fileno())
         logger.exe('wall %s' % f.name)
