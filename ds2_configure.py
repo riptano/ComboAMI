@@ -314,9 +314,11 @@ def setup_java_7():
     logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /home/ubuntu/.profile')
 
     with tempfile.NamedTemporaryFile() as f:
+        f.write('========================================================================\n')
         f.write('$JAVA_HOME updated for the Java7 installation required by Cassandra 2.0+\n')
         f.write('Please reconnect to this instance to properly have $JAVA_HOME set\n')
-        f.write('by the new ~/.profile.')
+        f.write('by the new ~/.profile.\n')
+        f.write('========================================================================\n')
         f.flush()
         os.fsync(f.fileno())
         logger.exe('wall %s' % f.name)
