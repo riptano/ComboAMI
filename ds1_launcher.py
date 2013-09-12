@@ -159,6 +159,28 @@ def start_services():
         logger.info('Starting DataStax Enterprise...')
         logger.exe('sudo service dse restart')
 
+    # Ensure that cassandra doesn't die shortly after first boot
+    # I've seen issues with a device not being available... but this is after the full raid
+    if not conf.get_config("AMI", "CompletedFirstBoot"):
+        start_time = time.time()
+        logger.info('Checking for 15 seconds to ensure Cassandra stays up...')
+        while time.time() - start_time < 15:
+            cassandra_running = False
+            for line in os.popen('ps xa'):
+                if 'cassandra' in line:
+                    cassandra_running = True
+
+            if not cassandra_running:
+                # Restart the application
+                if conf.get_config("AMI", "Type") == "Community" or conf.get_config("AMI", "Type") == "False":
+                    logger.info('Restarting DataStax Community...')
+                    logger.exe('sudo service cassandra restart')
+
+                elif conf.get_config("AMI", "Type") == "Enterprise":
+                    logger.info('Restarting DataStax Enterprise...')
+                    logger.exe('sudo service dse restart')
+                time.sleep(3)
+            time.sleep(1)
 
 def run():
     fix_profile()
