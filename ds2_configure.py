@@ -311,6 +311,10 @@ def setup_java_7():
     logger.exe('sudo update-java-alternatives -s java-7-oracle')
     logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /root/.profile')
     logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /home/ubuntu/.profile')
+    logger.exe('wall <<EOD\n'
+               '$JAVA_HOME updated for the Java7 installation required by Cassandra 2.0+\n'
+               'Please reconnect to this instance to properly have $JAVA_HOME set by the new .profile.\n'
+               'EOD')
 
 def clean_installation():
     logger.info('Performing deployment install...')
