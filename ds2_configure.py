@@ -645,8 +645,7 @@ def construct_env():
             logger.warn('The correct settings for --heapsize are: "MAX_HEAP_SIZE,HEAP_NEWSIZE".\n')
             logger.warn('Ignoring heapsize settings and continuing.')
 
-    cassandra_env = cassandra_env.replace('JVM_OPTS="$JVM_OPTS -Xss128k"', '# Updated by the AMI for the newest JVM\nJVM_OPTS="$JVM_OPTS -Xss256k"')
-    cassandra_env = cassandra_env.replace('JVM_OPTS="$JVM_OPTS -Xss180k"', '# Updated by the AMI for the newest JVM\nJVM_OPTS="$JVM_OPTS -Xss256k"')
+    cassandra_env = cassandra_env.replace('JVM_OPTS="$JVM_OPTS -Xss128k"', '# Updated by the AMI for the newest JVM\nJVM_OPTS="$JVM_OPTS -Xss180k"')
 
     with open(os.path.join(config_data['conf_path'], 'cassandra-env.sh'), 'w') as f:
         f.write(cassandra_env)
