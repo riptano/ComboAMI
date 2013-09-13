@@ -321,7 +321,7 @@ def setup_java_7():
         f.write('========================================================================\n')
         f.flush()
         os.fsync(f.fileno())
-        logger.exe('wall %s' % f.name)
+        logger.exe('wall %s' % f.name, expectError=True)
 
 def clean_installation():
     logger.info('Performing deployment install...')
