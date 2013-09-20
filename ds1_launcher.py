@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 ### Script provided by DataStax.
 
+import grp
 import os
+import pwd
 import subprocess
 import shlex
 import time
@@ -45,6 +47,40 @@ def initial_configurations():
         logger.exe('sudo chown -hR ubuntu:ubuntu /home/ubuntu')
         logger.exe('sudo chown -hR cassandra:cassandra /raid0/cassandra', False)
         logger.exe('sudo chown -hR cassandra:cassandra /mnt/cassandra', False)
+
+        # Ensure permissions
+        directory_list = [
+            ('/home/ubuntu', 'ubuntu', 'ubuntu'),
+            ('/raid0/cassandra', 'cassandra', 'cassandra'),
+            ('/mnt/cassandra', 'cassandra', 'cassandra')
+        ]
+
+        for directory in directory_list:
+            if os.path.isdir(directory[0]):
+                attempt = 0
+                max_attempts = 10
+                permissions_set = False
+
+                while attempt < max_attempts:
+                    stat_info = os.stat(directory[0])
+                    uid = stat_info.st_uid
+                    gid = stat_info.st_gid
+
+                    user = pwd.getpwuid(uid)[0]
+                    group = grp.getgrgid(gid)[0]
+
+                    if user == directory[1] and group == directory[2]:
+                        permissions_set = True
+                        break
+
+                    attempt += 1
+                    time.sleep(1)
+
+                if not permissions_set:
+                    logger.warn('Permissions not set correctly. Please run manually:')
+                    logger.warn('sudo chown -hR %s:%s %s' % (directory[1], directory[2], directory[0]))
+                    logger.warn('sudo service dse restart')
+
     else:
         logger.info('Skipping initial configurations.')
 
