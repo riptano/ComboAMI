@@ -57,11 +57,13 @@ def initial_configurations():
 
         for directory in directory_list:
             if os.path.isdir(directory[0]):
+                logger.info('Checking permissions for: %s' % directory[0])
                 attempt = 0
                 max_attempts = 10
                 permissions_set = False
 
                 while attempt < max_attempts:
+                    logger.info('Attempt #%s' % attempt)
                     stat_info = os.stat(directory[0])
                     uid = stat_info.st_uid
                     gid = stat_info.st_gid
@@ -80,6 +82,8 @@ def initial_configurations():
                     logger.warn('Permissions not set correctly. Please run manually:')
                     logger.warn('sudo chown -hR %s:%s %s' % (directory[1], directory[2], directory[0]))
                     logger.warn('sudo service dse restart')
+                else:
+                    logger.info('Permissions set for %s as %s:%s' % (directory[0], user, group))
 
     else:
         logger.info('Skipping initial configurations.')
