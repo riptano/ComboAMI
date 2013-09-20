@@ -11,7 +11,7 @@ import time
 
 from exceptions import SystemExit
 
-configfile = 'ami.log'
+configfile = '/home/ubuntu/datastax_ami/ami.log'
 
 def appendLog(text):
     with open(configfile, "a") as f:
