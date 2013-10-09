@@ -206,9 +206,8 @@ def start_services():
         logger.info('Checking for 15 seconds to ensure Cassandra stays up...')
         while time.time() - start_time < 15:
             cassandra_running = False
-            for line in os.popen('ps xa'):
-                if 'cassandra' in line:
-                    cassandra_running = True
+            if not logger.exe('nodetool info', expectError=True)[1]:
+                cassandra_running = True
 
             if not cassandra_running:
                 # Restart the application
