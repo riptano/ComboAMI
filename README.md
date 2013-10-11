@@ -7,7 +7,7 @@ Community or DataStax Enterprise cluster up and running on EC2.
 Quickstart
 ==========
 
-Use `cassandralauncher` as found and documented here: 
+Use `cassandralauncher` as found and documented here:
 https://github.com/joaquincasares/cassandralauncher
 
 This will ensure all options are processed correctly and easily.
@@ -54,7 +54,7 @@ Options
 
     --release <release_version>
         Allows for the installation of a previous DSE version
-        Example: 1.0.2-1
+        Example: 1.0.2
         Default: Ignored
 
     --cfsreplicationfactor <#>
