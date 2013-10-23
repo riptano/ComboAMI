@@ -100,7 +100,7 @@ def get_ec2_data():
 
     # Try to get EC2 User Data
     try:
-        req = curl_instance_data('http://instance-data/latest/user-data/')
+        req = curl_instance_data('http://169.254.169.254/latest/user-data/')
         instance_data['userdata'] = get_user_data(req)
 
         logger.info("Started with user data set to:")
@@ -110,7 +110,7 @@ def get_ec2_data():
         exit_path("No User Data was set.")
 
     # Find internal instance type
-    req = curl_instance_data('http://instance-data/latest/meta-data/instance-type')
+    req = curl_instance_data('http://169.254.169.254/latest/meta-data/instance-type')
     instancetype = urllib2.urlopen(req).read()
     logger.info("Using instance type: %s" % instancetype)
 
@@ -118,19 +118,19 @@ def get_ec2_data():
         exit_path("m1.small and m1.medium instances are not supported. At minimum, use an m1.large instance.")
 
     # Find internal IP address for seed list
-    req = curl_instance_data('http://instance-data/latest/meta-data/local-ipv4')
+    req = curl_instance_data('http://169.254.169.254/latest/meta-data/local-ipv4')
     instance_data['internalip'] = urllib2.urlopen(req).read()
 
     # Find public hostname for JMX
-    req = curl_instance_data('http://instance-data/latest/meta-data/public-hostname')
+    req = curl_instance_data('http://169.254.169.254/latest/meta-data/public-hostname')
     instance_data['publichostname'] = urllib2.urlopen(req).read()
 
     # Find launch index for token splitting
-    req = curl_instance_data('http://instance-data/latest/meta-data/ami-launch-index')
+    req = curl_instance_data('http://169.254.169.254/latest/meta-data/ami-launch-index')
     instance_data['launchindex'] = int(urllib2.urlopen(req).read())
 
     # Find reservation-id for cluster-id and jmxpass
-    req = curl_instance_data('http://instance-data/latest/meta-data/reservation-id')
+    req = curl_instance_data('http://169.254.169.254/latest/meta-data/reservation-id')
     instance_data['reservationid'] = urllib2.urlopen(req).read()
     instance_data['clustername'] = instance_data['reservationid']
     # instance_data['jmx_pass'] = instance_data['reservationid']
