@@ -54,7 +54,7 @@ def get_user_data(req):
 
 def print_userdata():
     try:
-        req = urllib2.Request('http://instance-data/latest/user-data/')
+        req = urllib2.Request('http://169.254.169.254/latest/user-data/')
         config_data['userdata'] = get_user_data(req)
 
         # Remove passwords from printing: -p

@@ -43,16 +43,16 @@ def exe(command, external_log=False):
 
 def get_ec2_data():
     # Collect EC2 variables
-    req = urllib2.Request('http://instance-data/latest/meta-data/reservation-id')
+    req = urllib2.Request('http://169.254.169.254/latest/meta-data/reservation-id')
     config_data['reservationid'] = urllib2.urlopen(req).read()
 
-    req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
+    req = urllib2.Request('http://169.254.169.254/latest/meta-data/local-ipv4')
     config_data['internalip'] = urllib2.urlopen(req).read()
 
-    req = urllib2.Request('http://instance-data/latest/meta-data/public-hostname')
+    req = urllib2.Request('http://169.254.169.254/latest/meta-data/public-hostname')
     config_data['publichostname'] = urllib2.urlopen(req).read()
 
-    req = urllib2.Request('http://instance-data/latest/meta-data/ami-launch-index')
+    req = urllib2.Request('http://169.254.169.254/latest/meta-data/ami-launch-index')
     config_data['launchindex'] = int(urllib2.urlopen(req).read())
 
 def get_email_auth():
