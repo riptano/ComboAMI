@@ -165,7 +165,7 @@ def restart_tasks():
 
 def wait_for_seed():
     # Wait for the seed node to come online
-    req = urllib2.Request('http://instance-data/latest/meta-data/local-ipv4')
+    req = urllib2.Request('http://169.254.169.254/latest/meta-data/local-ipv4')
     internalip = urllib2.urlopen(req).read()
 
     if internalip != conf.get_config("AMI", "LeadingSeed"):
