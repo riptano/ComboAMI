@@ -174,6 +174,8 @@ def parse_ec2_userdata():
     # Unsupported dev options
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--raidonly", action="store_true", dest="raidonly")
+    # Option that installs java7 on a basic AMI
+    parser.add_option("--java7", action="store_true", dest="java7")
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--email", action="store", type="string", dest="email")
     # Option that allows heapsize to be changed
@@ -304,24 +306,28 @@ def setup_repos():
 def setup_java_7():
     # As taken from: http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
 
-    logger.pipe('yes', 'sudo add-apt-repository ppa:webupd8team/java')
-    logger.exe('sudo apt-get update')
-    logger.pipe('sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true', 'sudo /usr/bin/debconf-set-selections')
-    logger.exe('sudo apt-get install -y oracle-java7-installer')
-    logger.exe('sudo apt-get install -y oracle-java7-set-default')
-    logger.exe('sudo update-java-alternatives -s java-7-oracle')
-    logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /root/.profile')
-    logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /home/ubuntu/.profile')
+    if conf.get_config('AMI', 'java7') != 'True':
 
-    with tempfile.NamedTemporaryFile() as f:
-        f.write('========================================================================\n')
-        f.write('$JAVA_HOME updated for the Java7 installation required by Cassandra 2.0+\n')
-        f.write('Please reconnect to this instance to properly have $JAVA_HOME set\n')
-        f.write('by the new ~/.profile.\n')
-        f.write('========================================================================\n')
-        f.flush()
-        os.fsync(f.fileno())
-        logger.exe('wall %s' % f.name, expectError=True)
+        logger.pipe('yes', 'sudo add-apt-repository ppa:webupd8team/java')
+        logger.exe('sudo apt-get update')
+        logger.pipe('sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true', 'sudo /usr/bin/debconf-set-selections')
+        logger.exe('sudo apt-get install -y oracle-java7-installer')
+        logger.exe('sudo apt-get install -y oracle-java7-set-default')
+        logger.exe('sudo update-java-alternatives -s java-7-oracle')
+        logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /root/.profile')
+        logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /home/ubuntu/.profile')
+
+        with tempfile.NamedTemporaryFile() as f:
+            f.write('========================================================================\n')
+            f.write('$JAVA_HOME updated for the Java7 installation required by Cassandra 2.0+\n')
+            f.write('Please reconnect to this instance to properly have $JAVA_HOME set\n')
+            f.write('by the new ~/.profile.\n')
+            f.write('========================================================================\n')
+            f.flush()
+            os.fsync(f.fileno())
+            logger.exe('wall %s' % f.name, expectError=True)
+
+        conf.set_config('AMI', 'java7', 'True')
 
 def clean_installation():
     logger.info('Performing deployment install...')
@@ -1040,6 +1046,9 @@ def run():
         sync_clocks()
 
         additional_post_configurations()
+
+    if options.java7:
+        setup_java_7()
 
     logger.info("ds2_configure.py completed!\n")
     conf.set_config("AMI", "CurrentStatus", "Complete!")
