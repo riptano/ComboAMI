@@ -213,10 +213,12 @@ def start_services():
                 # Restart the application
                 if conf.get_config("AMI", "Type") == "Community" or conf.get_config("AMI", "Type") == "False":
                     logger.info('Restarting DataStax Community...')
+                    logger.exe('sudo service datastax-agent restart')
                     logger.exe('sudo service cassandra restart')
 
                 elif conf.get_config("AMI", "Type") == "Enterprise":
                     logger.info('Restarting DataStax Enterprise...')
+                    logger.exe('sudo service datastax-agent restart')
                     logger.exe('sudo service dse restart')
                 time.sleep(3)
             time.sleep(1)
