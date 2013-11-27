@@ -336,33 +336,33 @@ def clean_installation():
             cassandra_release = options.release
             if cassandra_release == '1.0.11-1':
                 cassandra_release = '1.0.11'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc={1}'.format(cassandra_release, options.release))
+            logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc={1}'.format(cassandra_release, options.release))
             conf.set_config('AMI', 'package', 'dsc')
             conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         elif options.release and options.release.startswith('1.1'):
             dsc_release = cassandra_release = options.release
             if not dsc_release in ['1.1.1', '1.1.2', '1.1.3', '1.1.5']:
                 dsc_release = dsc_release + '-1'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc1.1={1}'.format(cassandra_release, dsc_release))
+            logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc1.1={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc1.1')
             conf.set_config('Cassandra', 'partitioner', 'random_partitioner')
         elif options.release and options.release.startswith('1.2'):
             dsc_release = cassandra_release = options.release
             dsc_release = dsc_release + '-1'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc12={1}'.format(cassandra_release, dsc_release))
+            logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc12={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc12')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
         elif options.release and options.release.startswith('2.0'):
             dsc_release = cassandra_release = options.release
             dsc_release = dsc_release + '-1'
-            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc20={1}'.format(cassandra_release, dsc_release))
+            logger.exe('sudo apt-get install -y python-cql cassandra={0} dsc20={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
             setup_java_7()
         else:
-            logger.exe('sudo apt-get install -y python-cql datastax-agent dsc20')
+            logger.exe('sudo apt-get install -y python-cql dsc20')
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
@@ -703,15 +703,6 @@ def construct_dse():
         with open('/etc/default/dse', 'w') as f:
             f.write(dse_default)
 
-def construct_agent():
-    logger.exe('sudo mkdir -p /var/lib/datastax/conf')
-    logger.exe('sudo chown ubuntu:ubuntu /var/lib/datastax/conf')
-
-    with open('/var/lib/datastax/conf/address.yaml') as f:
-        f.write('stomp_interface: %s' % config_data['opscenterseed'])
-
-    logger.exe('sudo chown cassandra:cassandra /var/lib/datastax/conf')
-
 def mount_raid(devices):
     # Make sure the devices are umounted, then run fdisk on each device
     logger.info('Clear "invalid flag 0x0000 of partition table 4" by issuing a write, then running fdisk on each device...')
@@ -1045,7 +1036,6 @@ def run():
         construct_opscenter_cluster_conf()
         construct_env()
         construct_dse()
-        construct_agent()
 
     prepare_for_raid()
 
