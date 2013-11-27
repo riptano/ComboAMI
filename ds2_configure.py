@@ -706,14 +706,14 @@ def construct_dse():
         logger.info('/etc/default/dse configured.')
 
 def construct_agent():
-    logger.exe('sudo mkdir -p /var/lib/datastax/conf')
-    logger.exe('sudo chown ubuntu:ubuntu /var/lib/datastax/conf')
+    logger.exe('sudo mkdir -p /var/lib/datastax-agent/conf')
+    logger.exe('sudo chown ubuntu:ubuntu /var/lib/datastax-agent/conf')
 
-    with open('/var/lib/datastax/conf/address.yaml', 'w') as f:
+    with open('/var/lib/datastax-agent/conf/address.yaml', 'w') as f:
         f.write('stomp_interface: %s' % config_data['opscenterseed'])
 
-    logger.exe('cat /var/lib/datastax/conf/address.yaml')
-    logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax/conf')
+    logger.exe('cat /var/lib/datastax-agent/conf/address.yaml')
+    logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax-agent/conf')
     logger.info('address.yaml configured.')
 
 def mount_raid(devices):
