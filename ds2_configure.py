@@ -712,6 +712,7 @@ def construct_agent():
     with open('/var/lib/datastax/conf/address.yaml', 'w') as f:
         f.write('stomp_interface: %s' % config_data['opscenterseed'])
 
+    logger.exe('cat /var/lib/datastax/conf/address.yaml')
     logger.exe('sudo chown cassandra:cassandra /var/lib/datastax/conf')
     logger.info('address.yaml configured.')
 
