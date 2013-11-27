@@ -85,6 +85,7 @@ def check_and_launch_opscenter():
         logger.exe('sudo service opscenterd restart')
         conf.set_config("AMI", "CompletedFirstBoot", True)
 
+
 def email_report(subject, message):
     msg = MIMEMultipart()
     msg['Subject'] = subject
@@ -145,7 +146,9 @@ def check_and_send_emails():
 
 def run():
     print '[INFO] Waiting 60 seconds to restart opscenter, setup demos, and possibly send emails...'
-    time.sleep(60)
+    time.sleep(40)
+    logger.exe('sudo service datastax-agent restart')
+    time.sleep(20)
 
     get_ec2_data()
     get_email_auth()
