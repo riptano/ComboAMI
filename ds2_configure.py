@@ -707,7 +707,7 @@ def construct_agent():
     logger.exe('sudo mkdir -p /var/lib/datastax/conf')
     logger.exe('sudo chown ubuntu:ubuntu /var/lib/datastax/conf')
 
-    with open('/var/lib/datastax/conf/address.yaml') as f:
+    with open('/var/lib/datastax/conf/address.yaml', 'w') as f:
         f.write('stomp_interface: %s' % config_data['opscenterseed'])
 
     logger.exe('sudo chown cassandra:cassandra /var/lib/datastax/conf')
