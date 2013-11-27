@@ -85,6 +85,8 @@ def check_and_launch_opscenter():
         logger.exe('sudo service opscenterd restart')
         conf.set_config("AMI", "CompletedFirstBoot", True)
 
+    logger.exe('sudo service datastax-agent restart')
+
 def email_report(subject, message):
     msg = MIMEMultipart()
     msg['Subject'] = subject
