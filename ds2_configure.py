@@ -713,7 +713,7 @@ def construct_agent():
         f.write('stomp_interface: %s' % config_data['opscenterseed'])
 
     logger.exe('cat /var/lib/datastax/conf/address.yaml')
-    logger.exe('sudo chown cassandra:cassandra /var/lib/datastax/conf')
+    logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax/conf')
     logger.info('address.yaml configured.')
 
 def mount_raid(devices):
