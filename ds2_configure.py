@@ -703,6 +703,8 @@ def construct_dse():
         with open('/etc/default/dse', 'w') as f:
             f.write(dse_default)
 
+        logger.info('/etc/default/dse configured.')
+
 def construct_agent():
     logger.exe('sudo mkdir -p /var/lib/datastax/conf')
     logger.exe('sudo chown ubuntu:ubuntu /var/lib/datastax/conf')
@@ -711,6 +713,7 @@ def construct_agent():
         f.write('stomp_interface: %s' % config_data['opscenterseed'])
 
     logger.exe('sudo chown cassandra:cassandra /var/lib/datastax/conf')
+    logger.info('address.yaml configured.')
 
 def mount_raid(devices):
     # Make sure the devices are umounted, then run fdisk on each device
