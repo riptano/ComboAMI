@@ -762,7 +762,7 @@ def mount_raid(devices):
         logger.exe('sudo update-initramfs -u')
 
         time.sleep(10)
-        conf.set_config('AMI', 'raid_readahead', 512)
+        conf.set_config('AMI', 'raid_readahead', 128)
         logger.exe('sudo blockdev --setra %s /dev/md0' % (conf.get_config('AMI', 'raid_readahead')))
 
         logger.info('Formatting the RAID0 set:')
