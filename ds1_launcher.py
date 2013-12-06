@@ -175,6 +175,10 @@ def wait_for_seed():
 
         while True:
             nodetool_out = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+
+            # get rid of substring included in new jvm options printout that was causing an infinite loop
+            nodetool_out = nodetool_out.replace('+HeapDumpOnOutOfMemoryError', '')
+
             if (nodetool_out.lower().find("error") == -1 and nodetool_out.lower().find("up") and len(nodetool_out) > 0):
                 logger.info("Seed node now online!")
                 time.sleep(5)
