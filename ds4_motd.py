@@ -119,9 +119,14 @@ def waiting_for_nodetool():
 
 def check_for_one_up_node():
     stopped_error_msg = False
-    while True:
+    start_time = time.time()
+    while time.time() - start_time < 60:
         ami_error_handling()
         nodetool_out = subprocess.Popen(shlex.split(config_data['nodetool_statement']), stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read()
+
+        # get rid of substring included in new jvm options printout that was causing an infinite loop
+        nodetool_out = nodetool_out.replace('+HeapDumpOnOutOfMemoryError', '')
+
         if (nodetool_out.lower().find("error") == -1 and nodetool_out.lower().find("up") and len(nodetool_out) > 0):
             if not stopped_error_msg:
                 if config_data['waiting_for_status']:
@@ -129,6 +134,7 @@ def check_for_one_up_node():
                 stopped_error_msg = True
             else:
                 break
+
     return nodetool_out
 
 def waiting_for_full_cluster_to_launch(nodetool_out):
