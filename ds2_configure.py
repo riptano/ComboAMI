@@ -123,7 +123,12 @@ def get_ec2_data():
 
     # Find public hostname for JMX
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/public-hostname')
-    instance_data['publichostname'] = urllib2.urlopen(req).read()
+    try:
+        instance_data['publichostname'] = urllib2.urlopen(req).read()
+    except:
+        # For VPC's and certain setups, this metadata may not be available
+        # In these cases, use the internal IP address
+        instance_data['publichostname'] = instance_data['internalip']
 
     # Find launch index for token splitting
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/ami-launch-index')
