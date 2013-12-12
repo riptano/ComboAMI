@@ -113,6 +113,7 @@ def get_ec2_data():
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/instance-type')
     instancetype = urllib2.urlopen(req).read()
     logger.info("Using instance type: %s" % instancetype)
+    logger.info("meta-data:instance-type: %s" % instancetype)
 
     if instancetype == 'm1.small' or instancetype == 'm1.medium':
         exit_path("m1.small and m1.medium instances are not supported. At minimum, use an m1.large instance.")
@@ -120,23 +121,29 @@ def get_ec2_data():
     # Find internal IP address for seed list
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/local-ipv4')
     instance_data['internalip'] = urllib2.urlopen(req).read()
+    logger.info("meta-data:local-ipv4: %s" % instance_data['internalip'])
 
     # Find public hostname for JMX
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/public-hostname')
     try:
         instance_data['publichostname'] = urllib2.urlopen(req).read()
+        logger.info("meta-data:public-hostname: %s" % instance_data['publichostname'])
     except:
         # For VPC's and certain setups, this metadata may not be available
         # In these cases, use the internal IP address
         instance_data['publichostname'] = instance_data['internalip']
+        logger.info("meta-data:public-hostname: <same as local-ipv4>")
 
     # Find launch index for token splitting
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/ami-launch-index')
     instance_data['launchindex'] = int(urllib2.urlopen(req).read())
+    logger.info("meta-data:ami-launch-index: %s" % instance_data['launchindex'])
 
     # Find reservation-id for cluster-id and jmxpass
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/reservation-id')
     instance_data['reservationid'] = urllib2.urlopen(req).read()
+    logger.info("meta-data:reservation-id: %s" % instance_data['reservationid'])
+
     instance_data['clustername'] = instance_data['reservationid']
     # instance_data['jmx_pass'] = instance_data['reservationid']
 
