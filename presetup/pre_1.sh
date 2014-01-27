@@ -10,7 +10,7 @@ then
 fi
 
 # Download and install repo keys
-gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
+gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 2B5C1B00
 gpg --export --armor 2B5C1B00 | sudo apt-key add -
 wget -O - http://installer.datastax.com/downloads/ubuntuarchive.repo_key | sudo apt-key add -
 wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
