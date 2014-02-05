@@ -1,6 +1,6 @@
 # Now using these: http://cloud-images.ubuntu.com/releases/precise/release-20121218/
-# Via: http://cloud-images.ubuntu.com/locator/ec2/: "instance-store amd64 LTS 12.04"
-# Current as of 12/20/2012
+# Via: http://cloud-images.ubuntu.com/locator/ec2/: "12.04 LTS amd64 ebs|hvm"
+# Current as of 1/29/2014
 ### Script provided by DataStax.
 
 if [ ! -f cert-*.pem ];
@@ -16,7 +16,7 @@ wget -O - http://installer.datastax.com/downloads/ubuntuarchive.repo_key | sudo 
 wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 
 # Prime for Java installation
-sudo echo "sun-java6-bin shared/accepted-sun-dlj-v1-1 boolean true" | sudo debconf-set-selections
+sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 
 # Install Git
 sudo apt-get -y update
@@ -31,19 +31,14 @@ cd datastax_ami
 git checkout $(head -n 1 presetup/VERSION)
 
 # Install Java
-sudo su
-wget https://s3.amazonaws.com/ds-java/jdk-6u38-linux-x64.bin
-mkdir -p /opt/java/64
-mv jdk-6u38-linux-x64.bin /opt/java/64/
-cd /opt/java/64
-chmod +x jdk*
-./jdk*
+# http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
+sudo add-apt-repository -y ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install -y oracle-java7-installer
 
 # Setup java alternatives
-exit
-sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_38/bin/java" 1
-sudo update-alternatives --set java /opt/java/64/jdk1.6.0_38/bin/java
-export JAVA_HOME=/opt/java/64/jdk1.6.0_38
+sudo update-java-alternatives -s java-7-oracle
+export JAVA_HOME=/usr/lib/jvm/java-7-oracle
 
 # Begin the actual priming
 git pull

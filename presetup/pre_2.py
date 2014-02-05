@@ -34,7 +34,6 @@ def pipe(command1, command2):
 
 def install_software():
     # Setup Repositories
-    pipe('echo "deb http://archive.canonical.com/ lucid partner"', 'sudo tee -a /etc/apt/sources.list.d/java.sources.list')
     exe('sudo apt-get -y update')
     time.sleep(5)
     exe('sudo apt-get -y update')
@@ -46,15 +45,16 @@ def install_software():
 
     # Install other recommended tools
     while True:
-        output = exe('sudo apt-get -y install --fix-missing libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs')
+        output = exe('sudo apt-get -y install --fix-missing libjna-java htop emacs23-nox sysstat iftop binutils pssh pbzip2 xfsprogs zip unzip ruby openssl libopenssl-ruby curl maven2 ant liblzo2-dev ntp subversion python-pip tree unzip ruby xfsprogs dstat')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
     # Install these for a much faster instance startup time
-    while True:
-        output = exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')
-        if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
-            break
+    # TODO: Confirm the new list of deps
+    # while True:
+    #     output = exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')
+    #     if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
+    #         break
 
     # Install RAID setup
     while True:
@@ -74,12 +74,6 @@ def install_software():
     os.chdir(home_path)
     exe('rm -rf cassandra/')
 
-    # TODO: UPDATE THESE PATHS ON THE NEXT BAKE
-    # Update Java alternatives
-    exe('sudo update-alternatives --install "/usr/bin/java" "java" "/opt/java/64/jdk1.6.0_38/bin/java" 1')
-    exe('sudo update-alternatives --set java /opt/java/64/jdk1.6.0_38/bin/java')
-
-# Fixed in ds1:setup_profile() for AMI 2.4
 def setup_profiles():
     # Setup a link to the motd script that is provided in the git repository
     file_to_open = '/home/ubuntu/.profile'
@@ -87,7 +81,7 @@ def setup_profiles():
     with open(file_to_open, 'a') as f:
         f.write("""
     python datastax_ami/ds4_motd.py
-    export JAVA_HOME=/opt/java/64/jdk1.6.0_38
+    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
     """)
     exe('sudo chmod 644 ' + file_to_open)
 
@@ -96,7 +90,7 @@ def setup_profiles():
     exe('sudo chmod 777 ' + file_to_open)
     with open(file_to_open, 'w') as f:
         f.write("""
-    export JAVA_HOME=/opt/java/64/jdk1.6.0_38
+    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
     """)
     exe('sudo chmod 644 ' + file_to_open)
     os.chdir('/home/ubuntu')
@@ -116,10 +110,9 @@ def create_initd():
     ### END INIT INFO
 
     # Make sure variables get set
-    export JAVA_HOME=/opt/java/64/jdk1.6.0_38
+    export JAVA_HOME=/usr/lib/jvm/java-7-oracle
 
     # Setup system properties
-    sudo su -c 'ulimit -n 32768'
     echo 1 | sudo tee /proc/sys/vm/overcommit_memory
 
     # Clear old ami.log
@@ -136,10 +129,35 @@ def create_initd():
     # Setup AMI Script to start on boot
     exe('sudo update-rc.d -f start-ami-script.sh start 99 2 3 4 5 .')
 
-def fix_too_many_open_files():
-    # Setup limits.conf
-    pipe('echo "* soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
-    pipe('echo "* hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
+def setup_limits_conf():
+    # for packaged installs
+    pipe('echo "cassandra - memlock unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    pipe('echo "cassandra - nofile 100000"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    pipe('echo "cassandra - nproc 32768"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    pipe('echo "cassandra - as unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+
+    # for tarballs (not required here)
+    # pipe('echo "* - memlock unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    # pipe('echo "* - nofile 100000"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    # pipe('echo "* - nproc 32768"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    # pipe('echo "* - as unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+
+    # for Ubuntu
+    pipe('echo "root - memlock unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    pipe('echo "root - nofile 100000"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    pipe('echo "root - nproc 32768"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+    pipe('echo "root - as unlimited"', 'sudo tee -a /etc/security/limits.d/cassandra.conf')
+
+    # for CentOS (not required here)
+    # pipe('echo "* - nproc 32768"', 'sudo tee -a /etc/security/limits.d/90-nproc.conf')
+
+
+def setup_sysctl():
+    pipe('echo "vm.max_map_count = 131072"', 'sudo tee -a /etc/sysctl.conf')
+
+    # to activate the change immediately
+    exe('sudo sysctl -p')
+
 
 def clear_commands():
     # Clear everything on the way out.
@@ -162,7 +180,8 @@ def allow_keyless_ssh():
 install_software()
 setup_profiles()
 create_initd()
-fix_too_many_open_files()
+setup_limits_conf()
+setup_sysctl()
 clear_commands()
 
 # allow_keyless_ssh()

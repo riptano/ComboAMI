@@ -878,6 +878,9 @@ def prepare_for_raid():
         yaml = yaml.replace('/var/lib/cassandra/saved_caches', os.path.join(mnt_point, 'cassandra', 'saved_caches'))
         yaml = yaml.replace('/var/lib/cassandra/commitlog', os.path.join(mnt_point, 'cassandra', 'commitlog'))
 
+        # Increase phi_convict_threshold to account for EC2 noise
+        yaml = yaml.replace('# phi_convict_threshold: 8', 'phi_convict_threshold: 12')
+
         with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'w') as f:
             f.write(yaml)
 

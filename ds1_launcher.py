@@ -12,17 +12,6 @@ import urllib2
 import logger
 import conf
 
-# Temporary fix until next rebake
-def fix_profile():
-    # Setup a link to the motd script that is provided in the git repository
-    file_to_open = '/home/ubuntu/.profile'
-    logger.exe('sudo chmod 777 ' + file_to_open)
-    with open(file_to_open, 'r+') as f:
-        profile = f.read()
-        f.seek(0)
-        f.write(profile.replace('jdk1.6.0_31', 'jdk1.6.0_38'))
-    logger.exe('sudo chmod 644 ' + file_to_open)
-
 def initial_configurations():
     # Begin configuration this is only run once in Public Packages
 
@@ -37,11 +26,12 @@ def initial_configurations():
             logger.exception('ds1_launcher.py')
 
 
+        # TODO: Confirm that this section isn't needed anymore
         # Set ulimit hard limits
-        logger.pipe('echo "* soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
-        logger.pipe('echo "* hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
-        logger.pipe('echo "root soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
-        logger.pipe('echo "root hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
+        # logger.pipe('echo "* soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
+        # logger.pipe('echo "* hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
+        # logger.pipe('echo "root soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
+        # logger.pipe('echo "root hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
 
         # Change permission back to being ubuntu's and cassandra's
         logger.exe('sudo chown -hR ubuntu:ubuntu /home/ubuntu')
@@ -153,7 +143,7 @@ def write_bin_tools():
 def restart_tasks():
     logger.info("AMI Type: " + str(conf.get_config("AMI", "Type")))
 
-    # Create /raid0
+    # Mount all attached drives
     logger.exe('sudo mount -a')
 
     # Disable swap
@@ -226,7 +216,6 @@ def start_services():
             time.sleep(1)
 
 def run():
-    fix_profile()
     initial_configurations()
     write_bin_tools()
     restart_tasks()
