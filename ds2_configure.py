@@ -220,7 +220,10 @@ def parse_ec2_userdata():
 
 def use_ec2_userdata():
     if not options:
-        exit_path("EC2 User Data must be set for the DataStax AMI to run.")
+        logger.info("No userdata found. Starting 1 node clusters, by default.")
+        options.totalnodes = 1
+        options.clustername = "Test Cluster - No AMI Parameters"
+        options.version = "Community"
 
     if not options.totalnodes:
         exit_path("Missing required --totalnodes (-n) switch.")
