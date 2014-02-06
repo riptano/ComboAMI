@@ -1,6 +1,6 @@
 # Now using these: http://cloud-images.ubuntu.com/releases/precise/release-20121218/
 # Via: http://cloud-images.ubuntu.com/locator/ec2/: "12.04 LTS amd64 ebs|hvm"
-# Current as of 1/29/2014
+# Current as of 2/5/2014
 ### Script provided by DataStax.
 
 if [ ! -f cert-*.pem ];
