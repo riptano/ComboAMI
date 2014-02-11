@@ -9,6 +9,11 @@ then
     exit
 fi
 
+# Update the Kernel to 2.8 for Ubuntu 12.04 LTS (Can remove on 14.04 LTS)
+sudo apt-get install -y linux-image-generic-lts-raring
+sudo apt-get install -y linux-headers-generic-lts-raring
+sudo shutdown -r now
+
 # Download and install repo keys
 gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 2B5C1B00
 gpg --export --armor 2B5C1B00 | sudo apt-key add -
