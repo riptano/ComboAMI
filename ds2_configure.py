@@ -788,7 +788,7 @@ def mount_raid(devices):
 
     # Configure fstab and mount the new RAID0 device
     mnt_point = '/raid0'
-    logger.pipe("echo '/dev/md0\t{0}\txfs\tdefaults,nobootwait,noatime\t0\t0'".format(mnt_point), 'sudo tee -a /etc/fstab')
+    logger.pipe("echo '/dev/md0\t{0}\txfs\tdefaults,nobootwait\t0\t0'".format(mnt_point), 'sudo tee -a /etc/fstab')
     logger.exe('sudo mkdir {0}'.format(mnt_point))
     logger.exe('sudo mount -a')
     logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra')))
@@ -831,7 +831,7 @@ def format_xfs(devices):
 
     # Configure fstab and mount the new formatted device
     mnt_point = '/mnt'
-    logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait,noatime\t0\t0'".format(partitions[0], mnt_point), 'sudo tee -a /etc/fstab')
+    logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait\t0\t0'".format(partitions[0], mnt_point), 'sudo tee -a /etc/fstab')
     logger.exe('sudo mkdir {0}'.format(mnt_point), False)
     logger.exe('sudo mount -a')
     logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra')))
