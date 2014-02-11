@@ -115,8 +115,8 @@ def get_ec2_data():
     logger.info("Using instance type: %s" % instancetype)
     logger.info("meta-data:instance-type: %s" % instancetype)
 
-    if instancetype == 'm1.small' or instancetype == 'm1.medium':
-        exit_path("m1.small and m1.medium instances are not supported. At minimum, use an m1.large instance.")
+    if instancetype in ['t1.micro', 'm1.small', 'm1.medium']:
+        exit_path("t1.micro, m1.small, and m1.medium instances are not supported. At minimum, use an m1.large instance.")
 
     # Find internal IP address for seed list
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/local-ipv4')
