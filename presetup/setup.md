@@ -16,7 +16,7 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     cd
 
     # Setup EC2 AMI Tools
-    curl http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.zip > ec2-ami-tools.zip
+    curl http://s3.amazonaws.com/aws-dev-support/beta/ec2-ami-tools-1.4.0.10.zip > ec2-ami-tools.zip
     mkdir ec2
     cp ec2-ami-tools.zip ec2
     cd ec2
@@ -46,12 +46,21 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     DESCRIPTION='"Provides a way to automatically launch a configurable DataStax Enterprise or DataStax Community cluster by simply starting a group of instances."'
     MANIFEST=/mnt/$AMINAME.manifest.xml
 
+    /bin/rm -f /var/cache/apt/archives/*deb
+
+
+    # Bundle PV instances
     rm -rf ~/.bash_history && history -c && ec2-bundle-vol -p $AMINAME -d /mnt -k $PK_PEM -c $CERT_PEM -u $AWSID -r x86_64
 
-    REGION=US;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
+    # Bundle HVM instances
+    sed -i 's;ro console=hvc0;ro console=ttyS0 xen_emul_unplug=unnecessary;' /boot/grub/menu.lst
+    rm -rf ~/.bash_history && history -c && ec2-bundle-vol -p $AMINAME -d /mnt -k $PK_PEM -c $CERT_PEM -u $AWSID -r x86_64 -P mbr
+
+
+    REGION=US;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-us-east-1 --location $REGION
     REGION=us-west-1;       yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=us-west-2;       yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
-    REGION=EU;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
+    REGION=EU;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-eu-west-1 --location $REGION
     REGION=ap-southeast-1;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=ap-southeast-2;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=ap-northeast-1;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
@@ -59,6 +68,8 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
 
     echo """
     cd ~/.ec2/
+
+    # Register PV instances
     ec2-register $S3BUCKET-us-east-1/$AMINAME.manifest.xml -region us-east-1 -n '"$AMITITLE"' -d $DESCRIPTION
     ec2-register $S3BUCKET-us-west-1/$AMINAME.manifest.xml -region us-west-1 -n '"$AMITITLE"' -d $DESCRIPTION
     ec2-register $S3BUCKET-us-west-2/$AMINAME.manifest.xml -region us-west-2 -n '"$AMITITLE"' -d $DESCRIPTION
@@ -67,6 +78,16 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     ec2-register $S3BUCKET-ap-southeast-2/$AMINAME.manifest.xml -region ap-southeast-2 -n '"$AMITITLE"' -d $DESCRIPTION
     ec2-register $S3BUCKET-ap-northeast-1/$AMINAME.manifest.xml -region ap-northeast-1 -n '"$AMITITLE"' -d $DESCRIPTION
     ec2-register $S3BUCKET-sa-east-1/$AMINAME.manifest.xml -region sa-east-1 -n '"$AMITITLE"' -d $DESCRIPTION
+
+    # Register HVM instances (add --sriov simple once Enhanced Networking works)
+    ec2-register $S3BUCKET-us-east-1/$AMINAME.manifest.xml -region us-east-1 -n '"$AMITITLE"' -d $DESCRIPTION --virtualization-type hvm
+    ec2-register $S3BUCKET-us-west-1/$AMINAME.manifest.xml -region us-west-1 -n '"$AMITITLE"' -d $DESCRIPTION --virtualization-type hvm
+    ec2-register $S3BUCKET-us-west-2/$AMINAME.manifest.xml -region us-west-2 -n '"$AMITITLE"' -d $DESCRIPTION --virtualization-type hvm
+    ec2-register $S3BUCKET-eu-west-1/$AMINAME.manifest.xml -region eu-west-1 -n '"$AMITITLE"' -d $DESCRIPTION --virtualization-type hvm
+    ec2-register $S3BUCKET-ap-southeast-1/$AMINAME.manifest.xml -region ap-southeast-1 -n '"$AMITITLE"' -d $DESCRIPTION --virtualization-type hvm
+    ec2-register $S3BUCKET-ap-southeast-2/$AMINAME.manifest.xml -region ap-southeast-2 -n '"$AMITITLE"' -d $DESCRIPTION --virtualization-type hvm
+    ec2-register $S3BUCKET-ap-northeast-1/$AMINAME.manifest.xml -region ap-northeast-1 -n '"$AMITITLE"' -d $DESCRIPTION --virtualization-type hvm
+    ec2-register $S3BUCKET-sa-east-1/$AMINAME.manifest.xml -region sa-east-1 -n '"$AMITITLE"' -d $DESCRIPTION --virtualization-type hvm
 
     # Duplicate this line and change to add internal-only permissions
     ec2-modify-image-attribute -l -region us-east-1 -a EMPLOYEEAWSID \$(ec2-describe-images -region us-east-1 | grep '"$AMITITLE"' | cut -f2)
