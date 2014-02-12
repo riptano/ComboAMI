@@ -82,6 +82,7 @@ def setup_profiles():
         f.write("""
     python datastax_ami/ds4_motd.py
     export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+    export HADOOP_HOME=/usr/share/dse/hadoop
     """)
     exe('sudo chmod 644 ' + file_to_open)
 
@@ -91,6 +92,7 @@ def setup_profiles():
     with open(file_to_open, 'w') as f:
         f.write("""
     export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+    export HADOOP_HOME=/usr/share/dse/hadoop
     """)
     exe('sudo chmod 644 ' + file_to_open)
     os.chdir('/home/ubuntu')
