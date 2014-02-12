@@ -658,6 +658,34 @@ def construct_agent():
     logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax-agent/conf')
     logger.info('address.yaml configured.')
 
+
+def create_cassandra_directories(mnt_point, device):
+    logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait\t0\t0'".format(device, mnt_point), 'sudo tee -a /etc/fstab')
+
+    logger.exe('sudo mkdir {0}'.format(mnt_point))
+    logger.exe('sudo mount -a')
+    logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra', 'logs')))
+
+    if conf.get_config("AMI", "RaidOnly"):
+        logger.pipe('yes','sudo adduser --no-create-home --disabled-password cassandra')
+        while True:
+            output = logger.exe('id cassandra')
+            if not output[1] and not 'no such user' in output[0].lower():
+                break
+            time.sleep(1)
+    logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
+
+    # Create symlink for Cassandra data
+    logger.exe('sudo rm -rf /var/lib/cassandra')
+    logger.exe('sudo ln -s {0} /var/lib/cassandra'.format(os.path.join(mnt_point, 'cassandra')))
+    logger.exe('sudo chown -R cassandra:cassandra /var/lib/cassandra')
+
+    # Create symlink for Cassandra logs
+    logger.exe('sudo rm -rf /var/log/cassandra')
+    logger.exe('sudo ln -s {0} /var/log/cassandra'.format(os.path.join(mnt_point, 'cassandra', 'logs')))
+    logger.exe('sudo chown -R cassandra:cassandra /var/log/cassandra')
+
+
 def mount_raid(devices):
     # Make sure the devices are umounted, then run fdisk on each device
     logger.info('Clear "invalid flag 0x0000 of partition table 4" by issuing a write, then running fdisk on each device...')
@@ -718,23 +746,7 @@ def mount_raid(devices):
 
     # Configure fstab and mount the new RAID0 device
     mnt_point = '/raid0'
-    logger.pipe("echo '/dev/md0\t{0}\txfs\tdefaults,nobootwait\t0\t0'".format(mnt_point), 'sudo tee -a /etc/fstab')
-    logger.exe('sudo mkdir {0}'.format(mnt_point))
-    logger.exe('sudo mount -a')
-    logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra')))
-    if conf.get_config("AMI", "RaidOnly"):
-        logger.pipe('yes', 'sudo adduser --no-create-home --disabled-password cassandra')
-        while True:
-            output = logger.exe('id cassandra')
-            if not output[1] and not 'no such user' in output[0].lower():
-                break
-            time.sleep(1)
-    logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
-
-    # Create symlink for Cassandra
-    logger.exe('sudo rm -rf /var/lib/cassandra')
-    logger.exe('sudo ln -s {0} /var/lib/cassandra'.format(os.path.join(mnt_point, 'cassandra')))
-    logger.exe('sudo chown -R cassandra:cassandra /var/lib/cassandra')
+    create_cassandra_directories(mnt_point=mnt_point, device='/dev/md0')
 
     logger.info('Showing RAID0 details:')
     logger.exe('cat /proc/mdstat')
@@ -761,15 +773,13 @@ def format_xfs(devices):
 
     # Configure fstab and mount the new formatted device
     mnt_point = '/mnt'
-    logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait\t0\t0'".format(partitions[0], mnt_point), 'sudo tee -a /etc/fstab')
-    logger.exe('sudo mkdir {0}'.format(mnt_point), False)
-    logger.exe('sudo mount -a')
-    logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra')))
-    logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
+    create_cassandra_directories(mnt_point=mnt_point, device=partitions[0])
+
     return mnt_point
 
 def prepare_for_raid():
-    # Only create raid0 once. Mount all times in init.d script. A failsafe against deleting this file.
+    # Only create raid0 once. Mount all times in init.d script.
+    # A failsafe against resurrecting this file.
     if conf.get_config("AMI", "RAIDAttempted"):
         return
 
@@ -810,6 +820,7 @@ def prepare_for_raid():
         yaml = yaml.replace('/var/lib/cassandra/data', os.path.join(mnt_point, 'cassandra', 'data'))
         yaml = yaml.replace('/var/lib/cassandra/saved_caches', os.path.join(mnt_point, 'cassandra', 'saved_caches'))
         yaml = yaml.replace('/var/lib/cassandra/commitlog', os.path.join(mnt_point, 'cassandra', 'commitlog'))
+        yaml = yaml.replace('/var/log/cassandra', os.path.join(mnt_point, 'cassandra', 'logs'))
 
         # Increase phi_convict_threshold to account for EC2 noise
         yaml = yaml.replace('# phi_convict_threshold: 8', 'phi_convict_threshold: 12')
