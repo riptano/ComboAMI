@@ -465,7 +465,7 @@ def construct_yaml():
 
     # Set rpc_address
     p = re.compile('rpc_address:.*')
-    yaml = p.sub('rpc_address: 0.0.0.0', yaml)
+    yaml = p.sub('rpc_address: {0}'.format(instance_data['internalip']), yaml)
 
     # Uses the EC2Snitch for Community Editions
     if conf.get_config("AMI", "Type") == "Community":
