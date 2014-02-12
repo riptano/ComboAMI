@@ -878,7 +878,7 @@ def sync_clocks():
     # Create a list of ntp server pools
     server_list = ""
     for i in range(0, 4):
-        server_list += "server {0}.north-america.pool.ntp.org\n".format(i)
+        server_list += "server {0}.pool.ntp.org\n".format(i)
 
     # Overwrite the single ubuntu ntp server with the server pools
     ntp_conf = ntp_conf.replace('server ntp.ubuntu.com', server_list)
