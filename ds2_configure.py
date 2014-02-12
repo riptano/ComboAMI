@@ -123,7 +123,7 @@ def get_ec2_data():
     instance_data['internalip'] = urllib2.urlopen(req).read()
     logger.info("meta-data:local-ipv4: %s" % instance_data['internalip'])
 
-    # Find public hostname for JMX
+    # Find public hostname
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/public-hostname')
     try:
         instance_data['publichostname'] = urllib2.urlopen(req).read()
@@ -145,17 +145,11 @@ def get_ec2_data():
     logger.info("meta-data:reservation-id: %s" % instance_data['reservationid'])
 
     instance_data['clustername'] = instance_data['reservationid']
-    # instance_data['jmx_pass'] = instance_data['reservationid']
 
 def parse_ec2_userdata():
     # Setup parser
     parser = OptionParser()
 
-    # Development options
-    # Option that specifies the cluster's name
-    parser.add_option("--dev", action="store", type="string", dest="dev")
-
-    # Letters available: ...
     # Option that requires either: Enterprise or Community
     parser.add_option("--version", action="store", type="string", dest="version")
     # Option that specifies how the ring will be divided
@@ -186,8 +180,6 @@ def parse_ec2_userdata():
     # Unsupported dev options
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--raidonly", action="store_true", dest="raidonly")
-    # Option that installs java7 on a basic AMI
-    parser.add_option("--java7", action="store_true", dest="java7")
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--email", action="store", type="string", dest="email")
     # Option that allows heapsize to be changed
@@ -196,11 +188,6 @@ def parse_ec2_userdata():
     parser.add_option("--opscenterinterface", action="store", type="string", dest="opscenterinterface")
     # Option that allows a custom reservation id to be set
     parser.add_option("--customreservation", action="store", type="string", dest="customreservation")
-
-    # Community options
-    # https://github.com/riptano/ComboAMI/pull/9
-    # Option that allows for keeping the javaversion up to date by installing at runtime. Includes option for 1.6 or 1.7.
-    parser.add_option("--javaversion", action="store", type="string", dest="javaversion")
 
     # Grab provided reflector through provided userdata
     global options
@@ -231,12 +218,6 @@ def use_ec2_userdata():
     if (options.analyticsnodes + options.searchnodes) > options.totalnodes:
         exit_path("Total nodes assigned (--analyticsnodes + --searchnodes) > total available nodes (--totalnodes)")
 
-    if options.javaversion:
-        if options.javaversion.lower() == '1.7':
-            conf.set_config("AMI", "JavaType", "1.7")
-        else:
-            conf.set_config("AMI", "JavaType", "1.6")
-
     if options.version:
         if options.version.lower() == "community":
             conf.set_config("AMI", "Type", "Community")
@@ -248,7 +229,7 @@ def use_ec2_userdata():
         exit_path("Missing required --version (-v) switch.")
 
     if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.analyticsnodes or options.searchnodes):
-        exit_path('CFS Replication, Vanilla Nodes, and adding an Analytic Node settings can only be set in DataStax Enterprise installs.')
+        exit_path('CFS Replication, Analytics Nodes, and Search Node settings can only be set in DataStax Enterprise installs.')
 
     if options.email:
         logger.info('Setting up diagnostic email using: {0}'.format(options.email))
@@ -291,23 +272,15 @@ def confirm_authentication():
             exit_path("Both --username (-u) and --password (-p) required for DataStax Enterprise.")
 
 def setup_repos():
-    # Clear repo when filled, primarily for debugging purposes
-    logger.exe('sudo rm /etc/apt/sources.list.d/datastax.sources.list', log=False, expectError=True)
-
     # Add repos
     if conf.get_config("AMI", "Type") == "Enterprise":
-        logger.pipe('echo "deb http://{0}:{1}@debian.datastax.com/enterprise stable main"'.format(options.username, options.password), 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        logger.pipe('echo "deb http://{0}:{1}@debian.datastax.com/enterprise stable main"'.format(options.username, options.password), 'sudo tee /etc/apt/sources.list.d/datastax.sources.list')
     else:
-        logger.pipe('echo "deb http://debian.datastax.com/community stable main"', 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
+        logger.pipe('echo "deb http://debian.datastax.com/community stable main"', 'sudo tee /etc/apt/sources.list.d/datastax.sources.list')
 
     # Add repokeys
-    logger.pipe('curl -s http://installer.datastax.com/downloads/ubuntuarchive.repo_key', 'sudo apt-key add -')
     logger.pipe('curl -s http://opscenter.datastax.com/debian/repo_key', 'sudo apt-key add -')
     logger.pipe('curl -s http://debian.datastax.com/debian/repo_key', 'sudo apt-key add -')
-
-    if options.dev:
-        logger.pipe('echo "deb {0} maverick main"'.format(options.dev.split(',')[0]), 'sudo tee -a /etc/apt/sources.list.d/datastax.sources.list')
-        logger.pipe('curl -s {0}'.format(options.dev.split(',')[1]), 'sudo apt-key add -')
 
     # Perform the install
     logger.exe('sudo apt-get update')
@@ -317,32 +290,6 @@ def setup_repos():
             break
 
     time.sleep(5)
-
-def setup_java_7():
-    # As taken from: http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
-
-    if conf.get_config('AMI', 'java7') != 'True':
-
-        logger.pipe('yes', 'sudo add-apt-repository ppa:webupd8team/java')
-        logger.exe('sudo apt-get update')
-        logger.pipe('sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true', 'sudo /usr/bin/debconf-set-selections')
-        logger.exe('sudo apt-get install -y oracle-java7-installer')
-        logger.exe('sudo apt-get install -y oracle-java7-set-default')
-        logger.exe('sudo update-java-alternatives -s java-7-oracle')
-        logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /root/.profile')
-        logger.pipe('echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle"', 'tee -a /home/ubuntu/.profile')
-
-        with tempfile.NamedTemporaryFile() as f:
-            f.write('========================================================================\n')
-            f.write('$JAVA_HOME updated for the Java7 installation required by Cassandra 2.0+\n')
-            f.write('Please reconnect to this instance to properly have $JAVA_HOME set\n')
-            f.write('by the new ~/.profile.\n')
-            f.write('========================================================================\n')
-            f.flush()
-            os.fsync(f.fileno())
-            logger.exe('wall %s' % f.name, expectError=True)
-
-        conf.set_config('AMI', 'java7', 'True')
 
 def clean_installation():
     logger.info('Performing deployment install...')
@@ -375,15 +322,13 @@ def clean_installation():
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
-            setup_java_7()
         else:
             logger.exe('sudo apt-get install -y python-cql datastax-agent dsc20')
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
-            setup_java_7()
-            # logger.exe('sudo apt-get install -y dsc-demos')
         logger.exe('sudo service cassandra stop')
+
     elif conf.get_config("AMI", "Type") == "Enterprise":
         if options.release:
             install_list = 'sudo apt-get install -y dse-full={0} dse={0} dse-demos={0} dse-hive={0} dse-libcassandra={0} dse-libhadoop={0} dse-libhive={0} dse-libpig={0} dse-pig={0}'
@@ -497,26 +442,11 @@ def checkpoint_info():
     conf.set_config("AMI", "CurrentStatus", "Installation complete")
 
 def calculate_tokens():
-    # MAXRANGE = (2**127)
-
-    # tokens = {}
-    # for dc in range(len(datacenters)):
-    #     tokens[dc] = {}
-    #     for i in range(datacenters[dc]):
-    #         tokens[dc][i] = (i * MAXRANGE / datacenters[dc]) + dc * 1000
-
-    # config_data['tokens'] = tokens
-
     if conf.get_config('Cassandra', 'partitioner') == 'random_partitioner':
         import tokentoolv2
 
         datacenters = [options.realtimenodes, options.analyticsnodes, options.searchnodes]
         config_data['tokens'] = tokentoolv2.run(datacenters)
-    # else:
-    #     # Used to calculate tokens for murmur partitioners. But vnodes are used instead.
-    #     number_of_tokens = options.realtimenodes
-    #     tokens = [(((2**64 / number_of_tokens) * i) - 2**63) for i in range(number_of_tokens)]
-    #     config_data['tokens'] = {0: tokens}
 
 def construct_yaml():
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'r') as f:
@@ -657,7 +587,7 @@ def construct_env():
     # Clear commented line
     cassandra_env = cassandra_env.replace('# JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname=<public name>"', 'JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname=<public name>"')
 
-    # Set JMX hostname and password file
+    # Set JMX hostname
     settings = 'JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname={0}"\n'.format(instance_data['internalip'])
 
     # Perform the replacement
@@ -947,85 +877,13 @@ def sync_clocks():
 
     # Restart the service
     logger.exe('sudo service ntp restart')
+    logger.exe('sudo ntpdate pool.ntp.org')
 
 def additional_pre_configurations():
-    logger.exe('gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 40976EAF437D05B5', expectError=True)
-    logger.pipe('gpg --export --armor 40976EAF437D05B5', 'sudo apt-key add -')
     pass
 
 def additional_post_configurations():
-    logger.exe('sudo apt-get install s3cmd')
-
-    # Setup HADOOP_HOME for ubuntu
-    file_to_open = '/home/ubuntu/.profile'
-    logger.exe('sudo chmod 777 ' + file_to_open)
-    with open(file_to_open, 'a') as f:
-        f.write("""
-    export HADOOP_HOME=/usr/share/dse/hadoop
-    """)
-    logger.exe('sudo chmod 644 ' + file_to_open)
-
-    # Setup HADOOP_HOME for root
-    os.chdir('/root')
-    file_to_open = '.profile'
-    logger.exe('sudo chmod 777 ' + file_to_open)
-    with open(file_to_open, 'w') as f:
-        f.write("""
-    export HADOOP_HOME=/usr/share/dse/hadoop
-    """)
-    logger.exe('sudo chmod 644 ' + file_to_open)
-    os.chdir('/home/ubuntu')
     pass
-
-def install_java():
-    logger.info('Performing deployment install...')
-    if conf.get_config("AMI", "JavaType") == "1.7":
-        url = "http://www.java.com/en/download/manual.jsp"
-        majorversion = "7"
-    else:
-        url = "http://java.com/en/download/manual_v6.jsp"
-        majorversion = "6"
-
-    f = urllib2.urlopen(url)
-    t = f.read()
-
-    #regex to find java minor version
-    vr = re.compile("(?<=Update )\d+(?=.*)")
-    m = vr.search(t)
-    minorversion = m.group()
-
-    arch = "64"
-    if arch == "64":
-        # regex to find download link
-        dlr= re.compile('(?<=Linux x64\" href=\")\S+(?=\".*)')
-    else:
-        dlr= re.compile('(?<=Linux\" href=\")\S+(?=\".*)')
-
-    m = dlr.search(t)
-    downloadlink = m.group()
-
-    path = "/opt/java/" + arch + "/"
-    cwd = os.curdir
-    logger.exe("sudo mkdir -p " + path);
-    os.chdir(path)
-
-    if conf.get_config("AMI", "JavaType") == "1.7":
-        outputfilename = "jre1.7.tar.gz"
-    else:
-        outputfilename = "jre1.6.bin"
-
-    urllib.urlretrieve(downloadlink, path + outputfilename)
-
-    if conf.get_config("AMI", "JavaType") == "1.7":
-        logger.exe("sudo tar -zxvf " + path + outputfilename)
-    else:
-        logger.exe("sudo chmod +x " + path + outputfilename)
-        logger.exe("sudo " + path + outputfilename)
-
-    logger.exe('sudo update-alternatives --install "/usr/bin/java" "java" "' + path + 'jre1.' + majorversion + '.0_' + minorversion + '/bin/java" 1')
-    logger.exe('sudo update-alternatives --set "java" "' + path + 'jre1.' + majorversion + '.0_' + minorversion + '/bin/java"')
-
-    os.chdir(cwd)
 
 
 def run():
@@ -1039,7 +897,7 @@ def run():
     try:
         get_ec2_data()
     except urllib2.HTTPError:
-        exit_path("Clusters within a VPC or backed by Spot Instances are not supported.")
+        exit_path("Clusters backed by Spot Instances are not supported.")
 
     parse_ec2_userdata()
 
@@ -1047,8 +905,6 @@ def run():
         use_ec2_userdata()
 
         confirm_authentication()
-        if options.javaversion:
-            install_java()
         setup_repos()
         clean_installation()
         opscenter_installation()
@@ -1075,9 +931,6 @@ def run():
         sync_clocks()
 
         additional_post_configurations()
-
-    if options.java7:
-        setup_java_7()
 
     logger.info("ds2_configure.py completed!\n")
     conf.set_config("AMI", "CurrentStatus", "Complete!")
