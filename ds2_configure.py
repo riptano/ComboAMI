@@ -134,6 +134,17 @@ def get_ec2_data():
         instance_data['publichostname'] = instance_data['internalip']
         logger.info("meta-data:public-hostname: <same as local-ipv4>")
 
+    # # Find public IP
+    # req = curl_instance_data('http://169.254.169.254/latest/meta-data/public-ipv4')
+    # try:
+    #     instance_data['publicip'] = urllib2.urlopen(req).read()
+    #     logger.info("meta-data:public-ipv4: %s" % instance_data['publicip'])
+    # except:
+    #     # For VPC's and certain setups, this metadata may not be available
+    #     # In these cases, use the internal IP address
+    #     instance_data['publicip'] = instance_data['internalip']
+    #     logger.info("meta-data:public-ipv4: <same as local-ipv4>")
+
     # Find launch index for token splitting
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/ami-launch-index')
     instance_data['launchindex'] = int(urllib2.urlopen(req).read())
