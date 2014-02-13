@@ -72,7 +72,10 @@ def print_userdata():
         print config_data['userdata']
         print
     except:
-        print "No cluster configurations set."
+        print
+        print "No cluster configurations set. Using the default options:"
+        print '--totalnodes 1 --version Community --clustername "Test Cluster - No AMI Parameters"'
+        print
 
 def waiting_for_status():
     config_data['waiting_for_status'] = False
