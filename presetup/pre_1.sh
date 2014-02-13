@@ -10,8 +10,8 @@ then
 fi
 
 # Update the Kernel to 2.8 for Ubuntu 12.04 LTS (Can remove on 14.04 LTS)
-sudo apt-get install -y linux-image-generic-lts-raring
-sudo apt-get install -y linux-headers-generic-lts-raring
+sudo apt-get -y update
+sudo apt-get install -y linux-image-generic-lts-raring linux-headers-generic-lts-raring
 sudo shutdown -r now
 
 # Download and install repo keys
@@ -27,7 +27,6 @@ wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 
 # Install Git
-sudo apt-get -y update
 sudo apt-get -y install git
 
 # Git these files on to the server's home directory
@@ -42,8 +41,7 @@ git checkout $(head -n 1 presetup/VERSION)
 # http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
 sudo add-apt-repository -y ppa:webupd8team/java
 sudo apt-get update
-sudo apt-get install -y oracle-java7-installer
-sudo apt-get install -y oracle-java7-set-default
+sudo apt-get install -y oracle-java7-installer oracle-java7-set-default
 
 # Setup java alternatives
 sudo update-java-alternatives -s java-7-oracle
