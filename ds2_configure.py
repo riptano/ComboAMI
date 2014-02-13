@@ -301,6 +301,7 @@ def setup_repos():
 
 def clean_installation():
     logger.info('Performing deployment install...')
+    exit_path('test')
     if conf.get_config("AMI", "Type") == "Community":
         if options.release and options.release.startswith('1.0'):
             cassandra_release = options.release
