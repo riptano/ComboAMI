@@ -106,8 +106,8 @@ def get_ec2_data():
         logger.info("Started with user data set to:")
         logger.info(instance_data['userdata'])
     except Exception, e:
-        instance_data['userdata'] = ''
-        exit_path("No User Data was set.")
+        instance_data['userdata'] = '--totalnodes 1 --version Community --clustername "Test Cluster - No AMI Parameters"'
+        logger.info("No userdata found. Starting 1 node clusters, by default.")
 
     # Find internal instance type
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/instance-type')
@@ -218,10 +218,7 @@ def parse_ec2_userdata():
 
 def use_ec2_userdata():
     if not options:
-        logger.info("No userdata found. Starting 1 node clusters, by default.")
-        options.totalnodes = 1
-        options.clustername = "Test Cluster - No AMI Parameters"
-        options.version = "Community"
+        exit_path("No parsed options found.")
 
     if not options.totalnodes:
         exit_path("Missing required --totalnodes (-n) switch.")
