@@ -899,10 +899,16 @@ def sync_clocks():
     logger.exe('sudo service ntp restart')
     logger.exe('sudo ntpdate pool.ntp.org')
 
+def get_repo_key(key_hash):
+    while True:
+        output = logger.exe('gpg --keyserver hkp://pool.sks-keyservers.net:80 --recv-keys %s' % key_hash)
+        if 'processed: 1' in output[1]:
+            break
+
 def additional_pre_configurations():
-    logger.exe('gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys C2518248EEA14886')
+    get_repo_key('C2518248EEA14886')
     logger.pipe('gpg --export --armor C2518248EEA14886', 'sudo apt-key add -')
-    logger.exe('gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 40976EAF437D05B5')
+    get_repo_key('40976EAF437D05B5')
     logger.pipe('gpg --export --armor 40976EAF437D05B5', 'sudo apt-key add -')
 
 def additional_post_configurations():
