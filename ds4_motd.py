@@ -175,7 +175,7 @@ def print_tools():
     print "Support:"
     print "    Run: datastax_support"
 
-def print_trialing_info():
+def print_trailing_info():
     try:
         with open('/home/ubuntu/datastax_ami/presetup/VERSION', 'r') as f:
             version = f.readline().strip()
@@ -230,7 +230,7 @@ def run():
 
     print_opscenter_information()
     print_tools()
-    print_trialing_info()
+    print_trailing_info()
     print_errors()
 
 run()
