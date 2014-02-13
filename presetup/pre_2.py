@@ -49,13 +49,6 @@ def install_software():
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
-    # Install these for a much faster instance startup time
-    # TODO: Confirm the new list of deps
-    # while True:
-    #     output = exe('sudo apt-get -y install ca-certificates-java icedtea-6-jre-cacao java-common jsvc libavahi-client3 libavahi-common-data libavahi-common3 libcommons-daemon-java libcups2 libjna-java libjpeg62 liblcms1 libnspr4-0d libnss3-1d tzdata-java')
-    #     if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
-    #         break
-
     # Install RAID setup
     while True:
         output = exe('sudo apt-get -y --no-install-recommends install mdadm')
