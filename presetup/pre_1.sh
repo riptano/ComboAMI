@@ -20,6 +20,8 @@ gpg --export --armor 2B5C1B00 | sudo apt-key add -
 # Ubuntu Archives key
 gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 40976EAF437D05B5
 gpg --export --armor 40976EAF437D05B5 | sudo apt-key add -
+gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys C2518248EEA14886
+gpg --export --armor C2518248EEA14886 | sudo apt-key add -
 wget -O - http://installer.datastax.com/downloads/ubuntuarchive.repo_key | sudo apt-key add -
 wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 
