@@ -899,12 +899,13 @@ def sync_clocks():
         f.write(ntp_conf)
 
     # Restart the service
-    logger.exe('sudo service ntp restart')
+    logger.exe('sudo service ntp stop')
     logger.exe('sudo ntpdate pool.ntp.org')
+    logger.exe('sudo service ntp start')
 
 def get_repo_key(key_hash):
     while True:
-        output = logger.exe('gpg --keyserver hkp://pool.sks-keyservers.net:80 --recv-keys %s' % key_hash)
+        output = logger.exe('gpg --keyserver hkp://pool.sks-keyservers.net:80 --recv-keys %s' % key_hash, expectError=True)
         if 'processed: 1' in output[1]:
             break
 
