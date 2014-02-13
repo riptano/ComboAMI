@@ -901,6 +901,8 @@ def sync_clocks():
 def additional_pre_configurations():
     logger.exe('gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys C2518248EEA14886')
     logger.pipe('gpg --export --armor C2518248EEA14886', 'sudo apt-key add -')
+    logger.exe('gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 40976EAF437D05B5')
+    logger.pipe('gpg --export --armor 40976EAF437D05B5', 'sudo apt-key add -')
 
 def additional_post_configurations():
     pass
