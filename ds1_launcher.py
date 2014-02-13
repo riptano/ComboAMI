@@ -193,6 +193,9 @@ def start_services():
         logger.info('Starting DataStax Enterprise...')
         logger.exe('sudo service dse restart')
 
+    # Wait 30 seconds for the Cassandra services to fully boot
+    time.sleep(30)
+
     # Ensure that cassandra doesn't die shortly after first boot
     # I've seen issues with a device not being available... but this is after the full raid
     if not conf.get_config("AMI", "CompletedFirstBoot"):
