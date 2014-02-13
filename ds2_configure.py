@@ -384,7 +384,7 @@ def clean_installation():
 def opscenter_installation():
     if instance_data['launchindex'] == 0 and options.opscenter != "no":
         logger.info('Installing OpsCenter...')
-        logger.exe('sudo apt-get -y install opscenter libssl0.9.8')
+        logger.exe('sudo apt-get install -y opscenter libssl0.9.8')
         logger.exe('sudo service opscenterd stop')
     elif options.opscenter == "no":
         conf.set_config("OpsCenter", "NoOpsCenter", True)
@@ -673,18 +673,29 @@ def construct_agent():
 
 def create_cassandra_directories(mnt_point, device):
     logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait\t0\t0'".format(device, mnt_point), 'sudo tee -a /etc/fstab')
-
     logger.exe('sudo mkdir {0}'.format(mnt_point))
     logger.exe('sudo mount -a')
-    logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra', 'logs')))
 
     if conf.get_config("AMI", "RaidOnly"):
-        logger.pipe('yes','sudo adduser --no-create-home --disabled-password cassandra')
-        while True:
-            output = logger.exe('id cassandra')
-            if not output[1] and not 'no such user' in output[0].lower():
-                break
-            time.sleep(1)
+        output = logger.exe('id cassandra')
+        if not output[1] and not 'no such user' in output[0].lower():
+            logger.pipe('yes','sudo adduser --no-create-home --disabled-password cassandra')
+            while True:
+                output = logger.exe('id cassandra')
+                if not output[1] and not 'no such user' in output[0].lower():
+                    break
+                time.sleep(1)
+
+        output = logger.exe('id opscenter-agent')
+        if not output[1] and not 'no such user' in output[0].lower():
+            logger.pipe('yes','sudo adduser --no-create-home --disabled-password opscenter-agent')
+            while True:
+                output = logger.exe('id opscenter-agent')
+                if not output[1] and not 'no such user' in output[0].lower():
+                    break
+                time.sleep(1)
+
+    logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'cassandra', 'logs')))
     logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
 
     # Create symlink for Cassandra data
@@ -696,6 +707,19 @@ def create_cassandra_directories(mnt_point, device):
     logger.exe('sudo rm -rf /var/log/cassandra')
     logger.exe('sudo ln -s {0} /var/log/cassandra'.format(os.path.join(mnt_point, 'cassandra', 'logs')))
     logger.exe('sudo chown -R cassandra:cassandra /var/log/cassandra')
+
+    # Create symlink for OpsCenter logs
+    if instance_data['launchindex'] == 0 and options.opscenter != "no":
+        logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'opscenter', 'logs')))
+        logger.exe('sudo rm -rf /var/log/opscenter')
+        logger.exe('sudo ln -s {0} /var/log/opscenter'.format(os.path.join(mnt_point, 'opscenter', 'logs')))
+        logger.exe('sudo chown -R root:root {0}'.format(os.path.join(mnt_point, 'opscenter')))
+
+    # Create symlink for DataStax Agent logs
+    logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'datastax-agent', 'logs')))
+    logger.exe('sudo rm -rf /var/log/datastax-agent')
+    logger.exe('sudo ln -s {0} /var/log/datastax-agent'.format(os.path.join(mnt_point, 'datastax-agent', 'logs')))
+    logger.exe('sudo chown -R opscenter-agent:opscenter-agent {0}'.format(os.path.join(mnt_point, 'datastax-agent')))
 
 
 def mount_raid(devices):
