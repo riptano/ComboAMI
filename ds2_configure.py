@@ -301,6 +301,10 @@ def setup_repos():
 
 def clean_installation():
     logger.info('Performing deployment install...')
+
+    # TODO: Handle this case better in pre-baking code
+    logger.exe('sudo mv /etc/security/limits.d/cassandra.conf /etc/security/limits.d/cassandra.conf.bak')
+
     if conf.get_config("AMI", "Type") == "Community":
         if options.release and options.release.startswith('1.0'):
             cassandra_release = options.release
