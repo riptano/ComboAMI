@@ -902,7 +902,8 @@ def sync_clocks():
     logger.exe('sudo ntpdate pool.ntp.org')
 
 def additional_pre_configurations():
-    pass
+    logger.exe('gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys C2518248EEA14886')
+    logger.pipe('gpg --export --armor C2518248EEA14886', 'sudo apt-key add -')
 
 def additional_post_configurations():
     pass

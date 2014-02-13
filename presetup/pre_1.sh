@@ -14,16 +14,14 @@ sudo apt-get -y update
 sudo apt-get install -y linux-image-generic-lts-raring linux-headers-generic-lts-raring
 sudo shutdown -r now
 
-# Download and install repo keys
-gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 2B5C1B00
-gpg --export --armor 2B5C1B00 | sudo apt-key add -
+# Download and install repo keys (doesn't seem to get baked)
+# gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 2B5C1B00
+# gpg --export --armor 2B5C1B00 | sudo apt-key add -
 # Ubuntu Archives key
-gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 40976EAF437D05B5
-gpg --export --armor 40976EAF437D05B5 | sudo apt-key add -
-gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys C2518248EEA14886
-gpg --export --armor C2518248EEA14886 | sudo apt-key add -
-wget -O - http://installer.datastax.com/downloads/ubuntuarchive.repo_key | sudo apt-key add -
-wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+# gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 40976EAF437D05B5
+# gpg --export --armor 40976EAF437D05B5 | sudo apt-key add -
+# wget -O - http://installer.datastax.com/downloads/ubuntuarchive.repo_key | sudo apt-key add -
+# wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
 
 # Prime for Java installation
 sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
