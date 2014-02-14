@@ -712,12 +712,16 @@ def create_cassandra_directories(mnt_point, device):
         logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'opscenter', 'logs')))
         logger.exe('sudo rm -rf /var/log/opscenter')
         logger.exe('sudo ln -s {0} /var/log/opscenter'.format(os.path.join(mnt_point, 'opscenter', 'logs')))
+        logger.exe('sudo chown -R root:root /var/log/opscenter')
         logger.exe('sudo chown -R root:root {0}'.format(os.path.join(mnt_point, 'opscenter')))
 
     # Create symlink for DataStax Agent logs
     logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'datastax-agent', 'logs')))
     logger.exe('sudo rm -rf /var/log/datastax-agent')
     logger.exe('sudo ln -s {0} /var/log/datastax-agent'.format(os.path.join(mnt_point, 'datastax-agent', 'logs')))
+    logger.exe('sudo chown -R opscenter-agent:opscenter-agent /var/log/datastax-agent')
+
+    logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
     logger.exe('sudo chown -R opscenter-agent:opscenter-agent {0}'.format(os.path.join(mnt_point, 'datastax-agent')))
 
 
