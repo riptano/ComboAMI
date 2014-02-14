@@ -789,7 +789,7 @@ def mount_raid(devices):
     logger.exe('sudo mdadm --detail /dev/md0')
 
     # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html
-    logger.exe('echo "30720" > /proc/sys/dev/raid/speed_limit_min')
+    logger.pipe('echo "30720"', 'sudo tee /proc/sys/dev/raid/speed_limit_min')
 
     return mnt_point
 
