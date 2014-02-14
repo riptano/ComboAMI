@@ -10,6 +10,8 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
 # Baking Script (ebs-backed)
 
     cd
+    sudo chown -R ubuntu:ubuntu datastax_ami
+
     sudo rm *.pem
 
     sudo /bin/rm -f /var/cache/apt/archives/*deb
@@ -21,8 +23,10 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
 
 # Baking Script (instance-stores)
 
-    # Get to the `root` user
     cd
+    sudo chown -R ubuntu:ubuntu datastax_ami
+
+    # Get to the `root` user
     sudo mv *.pem /mnt
     sudo su
     cd
