@@ -12,7 +12,11 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     cd
     sudo rm *.pem
 
-    /bin/rm -f /var/cache/apt/archives/*deb
+    sudo /bin/rm -f /var/cache/apt/archives/*deb
+    sudo su
+        rm -rf ~/.bash_history
+        history -c
+        exit
     rm -rf ~/.bash_history && history -c
 
 # Baking Script (instance-stores)
