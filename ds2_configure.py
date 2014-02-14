@@ -844,7 +844,8 @@ def prepare_for_raid():
 
     # Create a list of devices
     devices = glob.glob('/dev/xvd*')
-    devices.remove('/dev/xvda1')
+    if '/dev/xvda1' in devices:
+        devices.remove('/dev/xvda1')
     devices.sort()
     logger.info('Unformatted devices: {0}'.format(devices))
 
