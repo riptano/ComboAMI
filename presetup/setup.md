@@ -7,7 +7,15 @@ cert-*.pem and pk-*.pem files to the instances. Use the ssh strings to ssh in.
 
 Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
 
-# Baking Script
+# Baking Script (ebs-backed)
+
+    cd
+    sudo rm *.pem
+
+    /bin/rm -f /var/cache/apt/archives/*deb
+    rm -rf ~/.bash_history && history -c
+
+# Baking Script (instance-stores)
 
     # Get to the `root` user
     cd
