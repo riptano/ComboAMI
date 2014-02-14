@@ -673,7 +673,6 @@ def construct_agent():
 
 def create_cassandra_directories(mnt_point, device):
     logger.pipe("echo '{0}\t{1}\txfs\tdefaults,nobootwait\t0\t0'".format(device, mnt_point), 'sudo tee -a /etc/fstab')
-    logger.exe('sudo mkdir {0}'.format(mnt_point))
     logger.exe('sudo mount -a')
 
     if conf.get_config("AMI", "RaidOnly"):
@@ -782,12 +781,16 @@ def mount_raid(devices):
 
     # Configure fstab and mount the new RAID0 device
     mnt_point = '/raid0'
+    logger.exe('sudo mkdir {0}'.format(mnt_point))
     create_cassandra_directories(mnt_point=mnt_point, device='/dev/md0')
 
     logger.info('Showing RAID0 details:')
     logger.exe('cat /proc/mdstat')
-    logger.exe('echo "15000" > /proc/sys/dev/raid/speed_limit_min')
     logger.exe('sudo mdadm --detail /dev/md0')
+
+    # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html
+    logger.exe('echo "30720" > /proc/sys/dev/raid/speed_limit_min')
+
     return mnt_point
 
 def format_xfs(devices):
