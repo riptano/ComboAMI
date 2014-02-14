@@ -720,6 +720,8 @@ def create_cassandra_directories(mnt_point, device):
     logger.exe('sudo rm -rf /var/log/datastax-agent')
     logger.exe('sudo ln -s {0} /var/log/datastax-agent'.format(os.path.join(mnt_point, 'datastax-agent', 'logs')))
     logger.exe('sudo chown -R opscenter-agent:opscenter-agent /var/log/datastax-agent')
+    logger.exe('sudo touch /var/log/datastax-agent/agent.log')
+    logger.exe('sudo touch /var/log/datastax-agent/startup.log')
 
     logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
     logger.exe('sudo chown -R opscenter-agent:opscenter-agent {0}'.format(os.path.join(mnt_point, 'datastax-agent')))
