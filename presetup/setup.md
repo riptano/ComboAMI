@@ -65,6 +65,9 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     rm -rf ~/.bash_history && history -c && ec2-bundle-vol -p $AMINAME -d /mnt -k $PK_PEM -c $CERT_PEM -u $AWSID -r x86_64
 
     # Bundle HVM instances
+    sudo apt-get install -y gdisk kpartx grub
+    /bin/rm -f /var/cache/apt/archives/*deb
+
     AMINAME=datastax_clustering_ami_$VERSION_hvm
     MANIFEST=/mnt/$AMINAME.manifest.xml
     sed -i 's;ro console=hvc0;ro console=ttyS0 xen_emul_unplug=unnecessary;' /boot/grub/menu.lst
