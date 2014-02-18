@@ -21,6 +21,20 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
         exit
     rm -rf ~/.bash_history && history -c
 
+    # Setup MetaData
+    VERSION=$(head -1 /home/ubuntu/datastax_ami/presetup/VERSION)
+    AMINAME=datastax_clustering_ami_${VERSION}_pv
+    EC2_INSTANCE_ID="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`"
+    AMITITLE="DataStax Auto-Clustering AMI $VERSION"
+    DESCRIPTION='"Provides a way to automatically launch a configurable DataStax Enterprise or DataStax Community cluster by simply starting a group of instances."'
+    REGION=`curl http://169.254.169.254/latest/dynamic/instance-identity/document|grep region|awk -F\" '{print $4}'`
+
+    echo """
+    # Register PV ebs-backed instances
+
+    ec2-create-image $EC2_INSTANCE_ID --region $REGION -n '"$AMITITLE"-pv' -d $DESCRIPTION -b /dev/sdb=ephemeral0 -b /dev/sdc=ephemeral1 -b /dev/sdd=ephemeral2 -b /dev/sde=ephemeral3 -b /dev/sdf=ephemeral4 -b /dev/sdg=ephemeral5 -b /dev/sdh=ephemeral6 -b /dev/sdi=ephemeral7  -b /dev/sdj=ephemeral8 -b /dev/sdk=ephemeral9 -b /dev/sdl=ephemeral10 -b /dev/sdm=ephemeral11 -b /dev/sdn=ephemeral12 -b /dev/sdo=ephemeral13 -b /dev/sdp=ephemeral14 -b /dev/sdq=ephemeral15 -b /dev/sdr=ephemeral16 -b /dev/sds=ephemeral17 -b /dev/sdt=ephemeral18 -b /dev/sdu=ephemeral19 -b /dev/sdv=ephemeral20 -b /dev/sdw=ephemeral21 -b /dev/sdx=ephemeral22 -b /dev/sdy=ephemeral23
+    """
+
 # Baking Script (instance-stores)
 
     cd
@@ -77,11 +91,17 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     sed -i 's;ro console=hvc0;ro console=ttyS0 xen_emul_unplug=unnecessary;' /boot/grub/menu.lst
     rm -rf ~/.bash_history && history -c && ec2-bundle-vol -p $AMINAME -d /mnt -k $PK_PEM -c $CERT_PEM -u $AWSID -r x86_64 -P mbr
 
+    # Needed because ec2-ami-tools beta doesn't work across regions
+    curl http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.zip > ec2-ami-tools-stable.zip
+    unzip ec2-ami-tools-stable.zip
+    rm current
+    ln -s ec2-ami-tools-1.4.0.9 current
+
 
     REGION=US;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-us-east-1 --location $REGION
     REGION=us-west-1;       yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=us-west-2;       yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
-    REGION=EU;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-eu-west-1 --location $REGION
+    REGION=EU;              yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-eu-west --location $REGION
     REGION=ap-southeast-1;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=ap-southeast-2;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
     REGION=ap-northeast-1;  yes | ec2-upload-bundle -m $MANIFEST -a $ACCESSKEYID -s $SECRETACCESSKEY -b $S3BUCKET-$REGION --location $REGION
@@ -90,7 +110,7 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     echo """
     cd ~/.ec2/
 
-    # Register PV instances
+    # Register PV ephemeral-backed instances
     ec2-register $S3BUCKET-us-east-1/$AMINAME.manifest.xml -region us-east-1 -n '"$AMITITLE"-pv' -d $DESCRIPTION
     ec2-register $S3BUCKET-us-west-1/$AMINAME.manifest.xml -region us-west-1 -n '"$AMITITLE"-pv' -d $DESCRIPTION
     ec2-register $S3BUCKET-us-west-2/$AMINAME.manifest.xml -region us-west-2 -n '"$AMITITLE"-pv' -d $DESCRIPTION
@@ -104,7 +124,7 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     ec2-register $S3BUCKET-us-east-1/$AMINAME.manifest.xml -region us-east-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
     ec2-register $S3BUCKET-us-west-1/$AMINAME.manifest.xml -region us-west-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
     ec2-register $S3BUCKET-us-west-2/$AMINAME.manifest.xml -region us-west-2 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
-    ec2-register $S3BUCKET-eu-west-1/$AMINAME.manifest.xml -region eu-west-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
+    ec2-register $S3BUCKET-eu-west/$AMINAME.manifest.xml -region eu-west-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
     ec2-register $S3BUCKET-ap-southeast-1/$AMINAME.manifest.xml -region ap-southeast-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
     ec2-register $S3BUCKET-ap-southeast-2/$AMINAME.manifest.xml -region ap-southeast-2 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
     ec2-register $S3BUCKET-ap-northeast-1/$AMINAME.manifest.xml -region ap-northeast-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
