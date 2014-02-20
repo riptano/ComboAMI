@@ -172,7 +172,7 @@ def parse_ec2_userdata():
 
     # Option that specifies how the number of Analytics nodes
     parser.add_option("--analyticsnodes", action="store", type="int", dest="analyticsnodes")
-    # Option that specifies how the number of Analytics nodes
+    # Option that specifies how the number of Search nodes
     parser.add_option("--searchnodes", action="store", type="int", dest="searchnodes")
 
     # Option that specifies the CassandraFS replication factor
