@@ -58,4 +58,5 @@ rm -rf ~/.bash_history
 history -c
 
 
+
 # git pull && rm -rf ~/.bash_history && history -c
