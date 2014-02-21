@@ -14,12 +14,6 @@ sudo apt-get -y update
 sudo apt-get install -y linux-image-generic-lts-raring linux-headers-generic-lts-raring
 sudo shutdown -r now
 
-# Download and install repo keys (won't get baked)
-# gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys 2B5C1B00
-# gpg --export --armor 2B5C1B00 | sudo apt-key add -
-# wget -O - http://installer.datastax.com/downloads/ubuntuarchive.repo_key | sudo apt-key add -
-# wget -O - http://debian.datastax.com/debian/repo_key | sudo apt-key add -
-
 # Prime for Java installation
 sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 

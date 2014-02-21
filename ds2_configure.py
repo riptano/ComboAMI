@@ -938,17 +938,12 @@ def sync_clocks():
     logger.exe('sudo ntpdate pool.ntp.org')
     logger.exe('sudo service ntp start')
 
-def get_repo_key(key_hash):
-    while True:
-        output = logger.exe('gpg --keyserver hkp://pool.sks-keyservers.net:80 --recv-keys %s' % key_hash, expectError=True)
-        if 'processed: 1' in output[1]:
-            break
 
 def additional_pre_configurations():
-    get_repo_key('C2518248EEA14886')
-    logger.pipe('gpg --export --armor C2518248EEA14886', 'sudo apt-key add -')
-    get_repo_key('40976EAF437D05B5')
-    logger.pipe('gpg --export --armor 40976EAF437D05B5', 'sudo apt-key add -')
+    # Get required keys for Ubuntu
+    logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.gpg')
+    logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.gpg')
+
 
 def additional_post_configurations():
     pass
