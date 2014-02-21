@@ -462,13 +462,14 @@ def get_seed_list():
             response = urllib2.urlopen(req).read()
             response = json.loads(response)
 
-            status =  "[INFO] {0} Received {1} of {2} responses from:        {0}".format(
+            status =  "{0} Reflector: Received {1} of {2} responses from: {3}".format(
                             time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()),
                             response['number_of_returned_ips'],
                             expected_responses,
                             response['seeds']
                       )
-            conf.set_config("AMI", "CurrentStatus", status)
+            conf.set_config("AMI", "CurrentStatus", "[INFO] %s" % status)
+            logger.info(status)
 
             if response['number_of_returned_ips'] == expected_responses:
                 conf.set_config("OpsCenter", "DNS", response['opscenter_dns'])
