@@ -10,66 +10,70 @@ import time
 pv_dict = [
     {
         'region': 'ap-northeast-1',
-        'ami': 'ami-f72e45f6'
+        'ami': 'ami-f381f5f2'
     },
     {
         'region': 'ap-southeast-1',
-        'ami': 'ami-bc7325ee'
+        'ami': 'ami-3c39686e'
     },
     {
         'region': 'eu-west-1',
-        'ami': 'ami-aa56a1dd'
+        'ami': 'ami-808675f7'
     },
     {
         'region': 'sa-east-1',
-        'ami': 'ami-d55bfbc8'
+        'ami': 'ami-1da90a00'
     },
     {
         'region': 'us-east-1',
-        'ami': 'ami-83dee0ea'
+        'ami': 'ami-59a4a230'
     },
     {
         'region': 'us-west-1',
-        'ami': 'ami-c45f6281'
+        'ami': 'ami-660c3023'
     },
     {
         'region': 'ap-southeast-2',
-        'ami': 'ami-e577e9df'
+        'ami': 'ami-09f26b33'
     },
     {
         'region': 'us-west-2',
-        'ami': 'ami-d0d8b8e0'
+        'ami': 'ami-fa9cf1ca'
     }
 ]
 
 hvm_dict = [
     {
         'region': 'ap-northeast-1',
-        'ami': 'ami-f92e45f8'
+        'ami': 'ami-6586f264'
     },
     {
         'region': 'ap-southeast-1',
-        'ami': 'ami-a07325f2'
+        'ami': 'ami-56396804'
     },
     {
         'region': 'eu-west-1',
-        'ami': 'ami-9656a1e1'
+        'ami': 'ami-0caf5c7b'
+    },
+    {
+        'region': 'sa-east-1',
+        'ami': 'ami-dbaa09c6'
     },
     {
         'region': 'us-east-1',
-        'ami': 'ami-99dee0f0'
+        'ami': 'ami-a9dddbc0'
     },
     {
         'region': 'us-west-1',
-        'ami': 'ami-c65f6283'
+        'ami': 'ami-c0192585'
     },
     {
         'region': 'ap-southeast-2',
-        'ami': 'ami-db77e9e1'
+        'ami': 'ami-15f26b2f'
     },
     {
         'region': 'us-west-2',
-        'ami': 'ami-d4d8b8e4'
+        'ami': 'ami-88b0ddb8'
     }
 ]
 
