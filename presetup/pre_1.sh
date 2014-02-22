@@ -45,7 +45,7 @@ sudo python presetup/pre_2.py
 # Fix booting issues on hs1.8xlarge
 find /lib/modules |grep 'raid[456]' | sudo xargs -i rm -rf {} && sudo depmod -a
 sudo update-initramfs -k all -c
-gunzip -c /boot/initrd.img-3.8.0-35-generic | cpio --list | grep raid
+gunzip -c /boot/initrd.img-3.8.0-36-generic | cpio --list | grep raid
 
 sudo chown -R ubuntu:ubuntu . 
 rm -rf ~/.bash_history 
