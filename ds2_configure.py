@@ -733,7 +733,7 @@ def mount_raid(devices):
     formatCommands = "echo 'n\np\n1\n\n\nt\nfd\nw'"
     for device in devices:
         logger.info('Confirming devices are not mounted:')
-        logger.exe('sudo umount {0}'.format(device), False)
+        logger.exe('sudo umount {0}'.format(device), expectError=True)
         logger.pipe("echo 'w'", 'sudo fdisk -c -u {0}'.format(device))
         logger.pipe(formatCommands, 'sudo fdisk -c -u {0}'.format(device))
 
@@ -749,7 +749,7 @@ def mount_raid(devices):
     partion_list = ''
     for partition in partitions:
         logger.info('Confirming partitions are not mounted:')
-        logger.exe('sudo umount ' + partition, False)
+        logger.exe('sudo umount ' + partition, expectError=True)
     partion_list = ' '.join(partitions).strip()
 
     logger.info('Creating the RAID0 set:')
@@ -804,7 +804,7 @@ def format_xfs(devices):
     # Make sure the device is umounted, then run fdisk on the device
     logger.info('Clear "invalid flag 0x0000 of partition table 4" by issuing a write, then running fdisk on the device...')
     formatCommands = "echo 'd\nn\np\n1\n\n\nt\n83\nw'"
-    logger.exe('sudo umount {0}'.format(devices[0]))
+    logger.exe('sudo umount {0}'.format(devices[0]), expectError=True)
     logger.pipe("echo 'w'", 'sudo fdisk -c -u {0}'.format(devices[0]))
     logger.pipe(formatCommands, 'sudo fdisk -c -u {0}'.format(devices[0]))
 
