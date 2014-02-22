@@ -144,10 +144,10 @@ def launch():
     for ami in pv_dict:
         launch_helper(ami, reservations, 'm1.large')
     for ami in hvm_dict:
-        launch_helper(ami, reservations, 'i2.xlarge')
+        launch_helper(ami, reservations, 'm3.large')
 
     # Sleep so Amazon recognizes the new instances
-    time.sleep(5)
+    time.sleep(15)
     print '\n\n'
 
     for reservation in reservations:
@@ -160,12 +160,15 @@ def launch():
             while not instance.update() == 'running':
                 time.sleep(3)
 
+        time.sleep(3)
+
         # Tag the instances in this reservation
         for instance in reservation.instances:
             conn.create_tags([instance.id], {'Initializer': 'AMIBaking'})
 
+        i = 0
         for instance in reservation.instances:
-            scp_string = 'scp'
+            scp_string = '    scp'
             scp_string += ' -o UserKnownHostsFile=/dev/null'
             scp_string += ' -o StrictHostKeyChecking=no'
             scp_string += ' -i %s' % (
@@ -176,11 +179,16 @@ def launch():
 
             print scp_string
 
+            # Add spaces for clarity
+            if i % 5:
+                print
+            i += 1
+
     print '\n\n'
 
     for reservation in reservations:
         for instance in reservation.instances:
-            ssh_string = 'ssh'
+            ssh_string = '    ssh'
             ssh_string += ' -o UserKnownHostsFile=/dev/null'
             ssh_string += ' -o StrictHostKeyChecking=no'
             ssh_string += ' -i %s' % (
