@@ -811,7 +811,8 @@ def format_xfs(devices):
     # Create a list of partitions to RAID
     logger.exe('sudo fdisk -l')
     partitions = glob.glob('/dev/xvd*[0-9]')
-    partitions.remove('/dev/xvda1')
+    if '/dev/xvda1' in partitions:
+        partitions.remove('/dev/xvda1')
     partitions.sort()
 
     logger.info('Formatting the new partition:')
