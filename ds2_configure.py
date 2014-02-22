@@ -287,8 +287,7 @@ def setup_repos():
         logger.pipe('echo "deb http://debian.datastax.com/community stable main"', 'sudo tee /etc/apt/sources.list.d/datastax.sources.list')
 
     # Add repokeys
-    logger.pipe('curl -s http://opscenter.datastax.com/debian/repo_key', 'sudo apt-key add -')
-    logger.pipe('curl -s http://debian.datastax.com/debian/repo_key', 'sudo apt-key add -')
+    logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/DataStax.gpg')
 
     # Perform the install
     logger.exe('sudo apt-get update')
