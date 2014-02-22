@@ -276,7 +276,7 @@ def confirm_authentication():
                 # Print error message if failed
                 if "401" in str(inst):
                     exit_path('Authentication for DataStax Enterprise failed. Please confirm your username and password.\n')
-        elif (options.username or options.password):
+        elif not options.username or not options.password:
             exit_path("Both --username (-u) and --password (-p) required for DataStax Enterprise.")
 
 def setup_repos():
