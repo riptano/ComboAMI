@@ -123,15 +123,15 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     ec2-register $S3BUCKET-ap-northeast-1/$AMINAME.manifest.xml -region ap-northeast-1 -n '"$AMITITLE"-pv' -d $DESCRIPTION
     ec2-register $S3BUCKET-sa-east-1/$AMINAME.manifest.xml -region sa-east-1 -n '"$AMITITLE"-pv' -d $DESCRIPTION
 
-    # Register HVM instances (add --sriov simple once Enhanced Networking works)
-    ec2-register $S3BUCKET-us-east-1/$AMINAME.manifest.xml -region us-east-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
-    ec2-register $S3BUCKET-us-west-1/$AMINAME.manifest.xml -region us-west-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
-    ec2-register $S3BUCKET-us-west-2/$AMINAME.manifest.xml -region us-west-2 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
-    ec2-register $S3BUCKET-eu-west/$AMINAME.manifest.xml -region eu-west-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
-    ec2-register $S3BUCKET-ap-southeast-1/$AMINAME.manifest.xml -region ap-southeast-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
-    ec2-register $S3BUCKET-ap-southeast-2/$AMINAME.manifest.xml -region ap-southeast-2 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
-    ec2-register $S3BUCKET-ap-northeast-1/$AMINAME.manifest.xml -region ap-northeast-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
-    ec2-register $S3BUCKET-sa-east-1/$AMINAME.manifest.xml -region sa-east-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm
+    # Register HVM instances
+    ec2-register $S3BUCKET-us-east-1/$AMINAME.manifest.xml -region us-east-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm --sriov simple
+    ec2-register $S3BUCKET-us-west-1/$AMINAME.manifest.xml -region us-west-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm --sriov simple
+    ec2-register $S3BUCKET-us-west-2/$AMINAME.manifest.xml -region us-west-2 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm --sriov simple
+    ec2-register $S3BUCKET-eu-west/$AMINAME.manifest.xml -region eu-west-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm --sriov simple
+    ec2-register $S3BUCKET-ap-southeast-1/$AMINAME.manifest.xml -region ap-southeast-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm --sriov simple
+    ec2-register $S3BUCKET-ap-southeast-2/$AMINAME.manifest.xml -region ap-southeast-2 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm --sriov simple
+    ec2-register $S3BUCKET-ap-northeast-1/$AMINAME.manifest.xml -region ap-northeast-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm --sriov simple
+    ec2-register $S3BUCKET-sa-east-1/$AMINAME.manifest.xml -region sa-east-1 -n '"$AMITITLE"-hvm' -d $DESCRIPTION --virtualization-type hvm --sriov simple
 
     # Duplicate this line and change to add internal-only permissions
     ec2-modify-image-attribute -l -region us-east-1 -a EMPLOYEEAWSID \$(ec2-describe-images -region us-east-1 | grep '"$AMITITLE"' | cut -f2)
