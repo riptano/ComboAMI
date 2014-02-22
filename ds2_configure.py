@@ -397,8 +397,8 @@ def get_seed_list():
 
     time_in_loop = time.time()
     continue_loop = True
+    logger.info('Reflector loop...')
     while continue_loop:
-        logger.info('Reflector loop...')
         if time.time() - time_in_loop > 10 * 60:
             exit_path('EC2 is experiencing some issues and has not allocated all of the resources in under 10 minutes.', '\n\nAborting the clustering of this reservation. Please try again.')
 
@@ -427,7 +427,7 @@ def get_seed_list():
                             expected_responses,
                             response['seeds']
                       )
-            conf.set_config("AMI", "CurrentStatus", "[INFO] %s" % status)
+            conf.set_config("AMI", "CurrentStatus", status)
             logger.info(status)
 
             if response['number_of_returned_ips'] == expected_responses:
