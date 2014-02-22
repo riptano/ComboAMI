@@ -287,7 +287,7 @@ def setup_repos():
         logger.pipe('echo "deb http://debian.datastax.com/community stable main"', 'sudo tee /etc/apt/sources.list.d/datastax.sources.list')
 
     # Add repokeys
-    logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/DataStax.gpg')
+    logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/DataStax.key')
 
     # Perform the install
     logger.exe('sudo apt-get update')
@@ -941,8 +941,8 @@ def sync_clocks():
 
 def additional_pre_configurations():
     # Get required keys for Ubuntu
-    logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.gpg')
-    logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.gpg')
+    logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.key')
+    logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.key')
 
 
 def additional_post_configurations():
