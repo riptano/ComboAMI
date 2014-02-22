@@ -34,6 +34,8 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
 
     ec2-create-image $EC2_INSTANCE_ID --region $REGION -n '"$AMITITLE"-pv' -d $DESCRIPTION -b /dev/sdb=ephemeral0 -b /dev/sdc=ephemeral1 -b /dev/sdd=ephemeral2 -b /dev/sde=ephemeral3 -b /dev/sdf=ephemeral4 -b /dev/sdg=ephemeral5 -b /dev/sdh=ephemeral6 -b /dev/sdi=ephemeral7  -b /dev/sdj=ephemeral8 -b /dev/sdk=ephemeral9 -b /dev/sdl=ephemeral10 -b /dev/sdm=ephemeral11 -b /dev/sdn=ephemeral12 -b /dev/sdo=ephemeral13 -b /dev/sdp=ephemeral14 -b /dev/sdq=ephemeral15 -b /dev/sdr=ephemeral16 -b /dev/sds=ephemeral17 -b /dev/sdt=ephemeral18 -b /dev/sdu=ephemeral19 -b /dev/sdv=ephemeral20 -b /dev/sdw=ephemeral21 -b /dev/sdx=ephemeral22 -b /dev/sdy=ephemeral23
     """
+    rm -rf ~/.bash_history && history -c
+
 
 # Baking Script (instance-stores)
 
@@ -84,6 +86,7 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
 
     # Bundle HVM instances
     sudo apt-get install -y gdisk kpartx grub
+
     /bin/rm -f /var/cache/apt/archives/*deb
 
     AMINAME=datastax_clustering_ami_${VERSION}_hvm
