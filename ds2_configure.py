@@ -286,7 +286,6 @@ def confirm_authentication():
             # Try reading from the authenticated connection
             try:
                 opener.open(repo_url)
-                config_data['conf_path'] = os.path.expanduser("/etc/dse/cassandra/")
             except Exception as inst:
                 # Print error message if failed
                 if "401" in str(inst):
@@ -356,6 +355,8 @@ def clean_installation():
         logger.exe('sudo service cassandra stop')
 
     elif conf.get_config("AMI", "Type") == "Enterprise":
+        config_data['conf_path'] = os.path.expanduser("/etc/dse/cassandra/")
+
         if options.release:
             install_list = 'sudo apt-get install -y dse-full={0} dse={0} dse-demos={0} dse-hive={0} dse-libcassandra={0} dse-libhadoop={0} dse-libhive={0} dse-libpig={0} dse-pig={0}'
             if options.release.startswith('1'):
