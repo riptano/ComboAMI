@@ -226,15 +226,20 @@ def use_ec2_userdata():
     if (options.analyticsnodes + options.searchnodes) > options.totalnodes:
         exit_path("Total nodes assigned (--analyticsnodes + --searchnodes) > total available nodes (--totalnodes)")
 
-    if options.version:
-        if options.version.lower() == "community":
-            conf.set_config("AMI", "Type", "Community")
-        elif options.version.lower() == "enterprise":
-            conf.set_config("AMI", "Type", "Enterprise")
-        else:
-            exit_path("Invalid --version (-v) argument.")
+    if os.path.isfile('/etc/datastax_ami.conf'):
+        if options.version and options.version.lower() == "community":
+            logger.error("The Dynamic DataStax AMI will automatically install DataStax Enterprise.")
+        conf.set_config("AMI", "Type", "Enterprise")
     else:
-        exit_path("Missing required --version (-v) switch.")
+        if options.version:
+            if options.version.lower() == "community":
+                conf.set_config("AMI", "Type", "Community")
+            elif options.version.lower() == "enterprise":
+                conf.set_config("AMI", "Type", "Enterprise")
+            else:
+                exit_path("Invalid --version (-v) argument.")
+        else:
+            exit_path("Missing required --version (-v) switch.")
 
     if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.analyticsnodes or options.searchnodes):
         exit_path('CFS Replication, Analytics Nodes, and Search Node settings can only be set in DataStax Enterprise installs.')
@@ -258,6 +263,16 @@ def use_ec2_userdata():
         logger.info('Using reflector: {0}'.format(options.reflector))
 
 def confirm_authentication():
+    if os.path.isfile('/etc/datastax_ami.conf'):
+        with open('/etc/datastax_ami.conf') as f:
+
+            # Using this license is strictly prohibited on any AMIs other than
+            # those that come pre-baked with this key.
+
+            options.username = f.readline()
+            options.password = f.readline()
+        return
+
     if conf.get_config("AMI", "Type") == "Enterprise":
         if options.username and options.password:
             repo_url = "http://debian.datastax.com/enterprise"
