@@ -22,7 +22,7 @@ if not conf.get_config("AMI", "CompletedFirstBoot"):
 
     # ensure the latest commit is signed and verified
     while True:
-        logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/DataStax_AMI.7123CDFD.key')
+        logger.exe('gpg --import /home/ubuntu/datastax_ami/repo_keys/DataStax_AMI.7123CDFD.key', expectError=True)
         output = logger.exe('git log --pretty="format:%G?" --show-signature HEAD^..HEAD')
 
         if "Can't check signature" in output[0]:
