@@ -269,8 +269,8 @@ def confirm_authentication():
             # Using this license is strictly prohibited on any AMIs other than
             # those that come pre-baked with this key.
 
-            options.username = f.readline()
-            options.password = f.readline()
+            options.username = f.readline().strip()
+            options.password = f.readline().strip()
         return
 
     if conf.get_config("AMI", "Type") == "Enterprise":
