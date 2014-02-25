@@ -317,7 +317,7 @@ def setup_repos():
 def clean_installation():
     logger.info('Performing deployment install...')
 
-    # TODO: Handle this case better in pre-baking code
+    # Hold onto baked limits conf before installation
     logger.exe('sudo mv /etc/security/limits.d/cassandra.conf /etc/security/limits.d/cassandra.conf.bak')
 
     if conf.get_config("AMI", "Type") == "Community":
@@ -397,6 +397,9 @@ def clean_installation():
     logger.exe('sudo mkdir -p /var/log/cassandra')
     logger.exe('sudo chown -R cassandra:cassandra /var/lib/cassandra')
     logger.exe('sudo chown -R cassandra:cassandra /var/log/cassandra')
+
+    # Replace baked image conf after installation
+    logger.exe('sudo mv /etc/security/limits.d/cassandra.conf.bak /etc/security/limits.d/cassandra.conf')
 
 def opscenter_installation():
     if instance_data['launchindex'] == 0 and options.opscenter != "no":
