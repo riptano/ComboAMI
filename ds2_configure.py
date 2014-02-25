@@ -169,6 +169,8 @@ def parse_ec2_userdata():
     parser.add_option("--clustername", action="store", type="string", dest="clustername")
     # Option that allows for a release version of Enterprise or Community
     parser.add_option("--release", action="store", type="string", dest="release")
+    # Option that forces the rpc binding to the internal IP address of the instance
+    parser.add_option("--rpcbinding", action="store_true", dest="rpcbinding", default=False)
 
     # Option that specifies how the number of Analytics nodes
     parser.add_option("--analyticsnodes", action="store", type="int", dest="analyticsnodes")
@@ -493,7 +495,10 @@ def construct_yaml():
 
     # Set rpc_address
     p = re.compile('rpc_address:.*')
-    yaml = p.sub('rpc_address: {0}'.format(instance_data['internalip']), yaml)
+    if options.rpcbinding:
+        yaml = p.sub('rpc_address: {0}'.format(instance_data['internalip']), yaml)
+    else:
+        yaml = p.sub('rpc_address: 0.0.0.0', yaml)
 
     # Uses the EC2Snitch for Community Editions
     if conf.get_config("AMI", "Type") == "Community":
