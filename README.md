@@ -30,6 +30,11 @@ Options
         DataStax Community Edition
         REQUIRED
 
+    --rpcbinding
+        Binds the rpc_address to the private IP
+        address of the instance
+        Default: false, uses 0.0.0.0
+
 ##DataStax Enterprise Specific:
 
     --username <user>
