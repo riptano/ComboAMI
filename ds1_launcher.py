@@ -26,13 +26,6 @@ def initial_configurations():
             logger.exception('ds1_launcher.py')
 
 
-        # TODO: Confirm that this section isn't needed anymore
-        # Set ulimit hard limits
-        # logger.pipe('echo "* soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
-        # logger.pipe('echo "* hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
-        # logger.pipe('echo "root soft nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
-        # logger.pipe('echo "root hard nofile 32768"', 'sudo tee -a /etc/security/limits.conf')
-
         # Change permission back to being ubuntu's and cassandra's
         logger.exe('sudo chown -hR ubuntu:ubuntu /home/ubuntu')
         logger.exe('sudo chown -hR cassandra:cassandra /raid0/cassandra', False)
