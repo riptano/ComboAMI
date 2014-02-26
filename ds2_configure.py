@@ -411,6 +411,7 @@ def clean_installation():
             conf.set_config('AMI', 'package', 'dse-full')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'False')
+            setup_java_7()
         logger.exe('sudo service dse stop')
 
     # Remove the presaved information from startup
