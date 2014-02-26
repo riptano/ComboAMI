@@ -196,6 +196,12 @@ AMI version {0}
 {1}
 
 ------------------------------------
+DataStax AMI 2.5 released 02.25.2014
+http://goo.gl/g1RRd7
+
+This AMI (version 2.4) will be left
+available, but no longer updated.
+------------------------------------
 
 """.format(version, versionInfo)
 
