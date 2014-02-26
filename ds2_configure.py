@@ -949,7 +949,7 @@ def additional_pre_configurations():
     pass
 
 def additional_post_configurations():
-    logger.exe('sudo apt-get install s3cmd')
+    logger.exe('sudo apt-get -y install s3cmd')
 
     # Setup HADOOP_HOME for ubuntu
     file_to_open = '/home/ubuntu/.profile'
