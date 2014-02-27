@@ -202,8 +202,7 @@ def parse_ec2_userdata():
     parser.add_option("--opscenterinterface", action="store", type="string", dest="opscenterinterface")
     # Option that allows a custom reservation id to be set
     parser.add_option("--customreservation", action="store", type="string", dest="customreservation")
-    # Options that allow custom scripts to be executed
-    parser.add_option("--base64prescript", action="store", type="string", dest="base64prescript")
+    # Option that allows custom scripts to be executed
     parser.add_option("--base64postscript", action="store", type="string", dest="base64postscript")
 
     # Grab provided reflector through provided userdata
@@ -972,9 +971,6 @@ def additional_pre_configurations():
     # Get required keys for Ubuntu
     logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.key')
     logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.key')
-
-    if options.base64prescript:
-        logger.exe(base64.b64decode(options.base64prescript), shell=True)
 
 
 def additional_post_configurations():
