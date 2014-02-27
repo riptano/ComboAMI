@@ -18,9 +18,9 @@ def appendLog(text):
         f.write(text + "\n")
         print text
 
-def exe(command, log=True, expectError=False):
+def exe(command, log=True, expectError=False, shell=False):
     # Helper function to execute commands and print traces of the command and output for debugging/logging purposes
-    process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=shell)
     read = process.communicate()
     
     if log:
