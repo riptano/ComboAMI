@@ -704,7 +704,7 @@ def create_cassandra_directories(mnt_point, device):
 
     if conf.get_config("AMI", "RaidOnly"):
         output = logger.exe('id cassandra')
-        if not output[1] and not 'no such user' in output[0].lower():
+        if output[1] or 'no such user' in output[0].lower():
             logger.pipe('yes','sudo adduser --no-create-home --disabled-password cassandra')
             while True:
                 output = logger.exe('id cassandra')
@@ -713,7 +713,7 @@ def create_cassandra_directories(mnt_point, device):
                 time.sleep(1)
 
         output = logger.exe('id opscenter-agent')
-        if not output[1] and not 'no such user' in output[0].lower():
+        if output[1] or 'no such user' in output[0].lower():
             logger.pipe('yes','sudo adduser --no-create-home --disabled-password opscenter-agent')
             while True:
                 output = logger.exe('id opscenter-agent')
