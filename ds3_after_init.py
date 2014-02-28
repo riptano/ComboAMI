@@ -49,8 +49,14 @@ def get_ec2_data():
     req = urllib2.Request('http://169.254.169.254/latest/meta-data/local-ipv4')
     config_data['internalip'] = urllib2.urlopen(req).read()
 
-    req = urllib2.Request('http://169.254.169.254/latest/meta-data/public-hostname')
-    config_data['publichostname'] = urllib2.urlopen(req).read()
+    # For VPC's and certain setups, this metadata may not be available
+    # In these cases, use the internal IP address
+    try:
+        req = urllib2.Request('http://169.254.169.254/latest/meta-data/public-hostname')
+        config_data['publichostname'] = urllib2.urlopen(req).read()
+    except urllib2.HTTPError as e:
+        config_data['publichostname'] = "no public hostname"
+        logger.warn("publichostname not available as metadata")
 
     req = urllib2.Request('http://169.254.169.254/latest/meta-data/ami-launch-index')
     config_data['launchindex'] = int(urllib2.urlopen(req).read())

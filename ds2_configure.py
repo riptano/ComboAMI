@@ -168,7 +168,7 @@ def parse_ec2_userdata():
     parser.add_option("--totalnodes", action="store", type="int", dest="totalnodes")
     # Option that specifies the cluster's name
     parser.add_option("--clustername", action="store", type="string", dest="clustername")
-    # Option that allows for a release version of Enterprise or Community
+    # Option that allows for a release version of Enterprise or Community e.g. 1.0.2
     parser.add_option("--release", action="store", type="string", dest="release")
     # Option that forces the rpc binding to the internal IP address of the instance
     parser.add_option("--rpcbinding", action="store_true", dest="rpcbinding", default=False)
@@ -192,7 +192,7 @@ def parse_ec2_userdata():
     parser.add_option("--reflector", action="store", type="string", dest="reflector")
 
     # Unsupported dev options
-    # Option that allows for an emailed report of the startup diagnostics
+    # Option that allows for just configuring RAID0 on the attached drives
     parser.add_option("--raidonly", action="store_true", dest="raidonly")
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_option("--email", action="store", type="string", dest="email")
