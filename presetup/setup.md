@@ -160,4 +160,3 @@ Setup these exports in `~/.profile`.
 
 Now run the echo portions of the Baking Script above to register the AMIs.
 Then, just make the images public.
-
