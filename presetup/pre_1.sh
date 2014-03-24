@@ -1,4 +1,4 @@
-# Now using these: http://cloud-images.ubuntu.com/releases/precise/release-20140217.1/
+# Now using these: http://cloud-images.ubuntu.com/releases/precise/release-20140227/
 # Via: http://cloud-images.ubuntu.com/locator/ec2/: "12.04 LTS amd64 ebs|hvm:instance-store"
 # Current as of 2/5/2014
 ### Script provided by DataStax.
@@ -45,7 +45,7 @@ sudo python presetup/pre_2.py
 # Fix booting issues on hs1.8xlarge
 find /lib/modules |grep 'raid[456]' | sudo xargs -i rm -rf {} && sudo depmod -a
 sudo update-initramfs -k all -c
-gunzip -c /boot/initrd.img-3.8.0-36-generic | cpio --list | grep raid
+gunzip -c /boot/initrd.img-*-generic | cpio --list | grep raid
 
 sudo chown -R ubuntu:ubuntu . 
 rm -rf ~/.bash_history 
