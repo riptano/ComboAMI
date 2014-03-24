@@ -7,8 +7,7 @@ import time
 import urllib2
 
 from email.parser import Parser
-from optparse import OptionParser
-
+from argparse import ArgumentParser
 
 def curl_instance_data(url):
     for i in range(20):
@@ -59,15 +58,15 @@ def parse_ec2_userdata():
     instance_data = get_ec2_data()
 
     # Setup parser
-    parser = OptionParser()
+    parser = ArgumentParser()
 
     # Development options
     # Option that specifies the cluster's name
-    parser.add_option("--forcecommit", action="store", type="string", dest="forcecommit")
+    parser.add_argument("--forcecommit", action="store", type="string", dest="forcecommit")
 
     try:
-        (options, args) = parser.parse_args(shlex.split(instance_data['userdata']))
-        return options
+        (args, unknown) = parser.parse_known_args(shlex.split(instance_data['userdata']))
+        return args
     except:
         return None
 

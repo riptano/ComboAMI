@@ -21,7 +21,7 @@ import gzip
 import StringIO
 from email.parser import Parser
 
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 import logger
 import conf
@@ -160,55 +160,55 @@ def get_ec2_data():
 
 def parse_ec2_userdata():
     # Setup parser
-    parser = OptionParser()
+    parser = ArgumentParser()
 
     # Option that requires either: Enterprise or Community
-    parser.add_option("--version", action="store", type="string", dest="version")
+    parser.add_argument("--version", action="store", type="string", dest="version")
     # Option that specifies how the ring will be divided
-    parser.add_option("--totalnodes", action="store", type="int", dest="totalnodes")
+    parser.add_argument("--totalnodes", action="store", type="int", dest="totalnodes")
     # Option that specifies the cluster's name
-    parser.add_option("--clustername", action="store", type="string", dest="clustername")
+    parser.add_argument("--clustername", action="store", type="string", dest="clustername")
     # Option that allows for a release version of Enterprise or Community e.g. 1.0.2
-    parser.add_option("--release", action="store", type="string", dest="release")
+    parser.add_argument("--release", action="store", type="string", dest="release")
     # Option that forces the rpc binding to the internal IP address of the instance
-    parser.add_option("--rpcbinding", action="store_true", dest="rpcbinding", default=False)
+    parser.add_argument("--rpcbinding", action="store_true", dest="rpcbinding", default=False)
 
     # Option that specifies how the number of Analytics nodes
-    parser.add_option("--analyticsnodes", action="store", type="int", dest="analyticsnodes")
+    parser.add_argument("--analyticsnodes", action="store", type="int", dest="analyticsnodes")
     # Option that specifies how the number of Search nodes
-    parser.add_option("--searchnodes", action="store", type="int", dest="searchnodes")
+    parser.add_argument("--searchnodes", action="store", type="int", dest="searchnodes")
 
     # Option that specifies the CassandraFS replication factor
-    parser.add_option("--cfsreplicationfactor", action="store", type="int", dest="cfsreplication")
+    parser.add_argument("--cfsreplicationfactor", action="store", type="int", dest="cfsreplication")
 
     # Option that specifies the username
-    parser.add_option("--username", action="store", type="string", dest="username")
+    parser.add_argument("--username", action="store", type="string", dest="username")
     # Option that specifies the password
-    parser.add_option("--password", action="store", type="string", dest="password")
+    parser.add_argument("--password", action="store", type="string", dest="password")
 
     # Option that specifies the installation of OpsCenter on the first node
-    parser.add_option("--opscenter", action="store", type="string", dest="opscenter")
+    parser.add_argument("--opscenter", action="store", type="string", dest="opscenter")
     # Option that specifies an alternative reflector.php
-    parser.add_option("--reflector", action="store", type="string", dest="reflector")
+    parser.add_argument("--reflector", action="store", type="string", dest="reflector")
 
     # Unsupported dev options
     # Option that allows for just configuring RAID0 on the attached drives
-    parser.add_option("--raidonly", action="store_true", dest="raidonly")
+    parser.add_argument("--raidonly", action="store_true", dest="raidonly")
     # Option that allows for an emailed report of the startup diagnostics
-    parser.add_option("--email", action="store", type="string", dest="email")
+    parser.add_argument("--email", action="store", type="string", dest="email")
     # Option that allows heapsize to be changed
-    parser.add_option("--heapsize", action="store", type="string", dest="heapsize")
+    parser.add_argument("--heapsize", action="store", type="string", dest="heapsize")
     # Option that allows an interface port for OpsCenter to be set
-    parser.add_option("--opscenterinterface", action="store", type="string", dest="opscenterinterface")
+    parser.add_argument("--opscenterinterface", action="store", type="string", dest="opscenterinterface")
     # Option that allows a custom reservation id to be set
-    parser.add_option("--customreservation", action="store", type="string", dest="customreservation")
+    parser.add_argument("--customreservation", action="store", type="string", dest="customreservation")
     # Option that allows custom scripts to be executed
-    parser.add_option("--base64postscript", action="store", type="string", dest="base64postscript")
+    parser.add_argument("--base64postscript", action="store", type="string", dest="base64postscript")
 
     # Grab provided reflector through provided userdata
     global options
     try:
-        (options, args) = parser.parse_args(shlex.split(instance_data['userdata']))
+        (options, unknown) = parser.parse_known_args(shlex.split(instance_data['userdata']))
     except:
         exit_path("One of the options was not set correctly.")
 
