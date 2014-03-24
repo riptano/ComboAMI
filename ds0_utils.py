@@ -62,7 +62,7 @@ def parse_ec2_userdata():
 
     # Development options
     # Option that specifies the cluster's name
-    parser.add_argument("--forcecommit", action="store", type="string", dest="forcecommit")
+    parser.add_argument("--forcecommit", action="store", type=str, dest="forcecommit")
 
     try:
         (args, unknown) = parser.parse_known_args(shlex.split(instance_data['userdata']))

@@ -163,47 +163,47 @@ def parse_ec2_userdata():
     parser = ArgumentParser()
 
     # Option that requires either: Enterprise or Community
-    parser.add_argument("--version", action="store", type="string", dest="version")
+    parser.add_argument("--version", action="store", type=str, dest="version")
     # Option that specifies how the ring will be divided
-    parser.add_argument("--totalnodes", action="store", type="int", dest="totalnodes")
+    parser.add_argument("--totalnodes", action="store", type=int, dest="totalnodes")
     # Option that specifies the cluster's name
-    parser.add_argument("--clustername", action="store", type="string", dest="clustername")
+    parser.add_argument("--clustername", action="store", type=str, dest="clustername")
     # Option that allows for a release version of Enterprise or Community e.g. 1.0.2
-    parser.add_argument("--release", action="store", type="string", dest="release")
+    parser.add_argument("--release", action="store", type=str, dest="release")
     # Option that forces the rpc binding to the internal IP address of the instance
     parser.add_argument("--rpcbinding", action="store_true", dest="rpcbinding", default=False)
 
     # Option that specifies how the number of Analytics nodes
-    parser.add_argument("--analyticsnodes", action="store", type="int", dest="analyticsnodes")
+    parser.add_argument("--analyticsnodes", action="store", type=int, dest="analyticsnodes")
     # Option that specifies how the number of Search nodes
-    parser.add_argument("--searchnodes", action="store", type="int", dest="searchnodes")
+    parser.add_argument("--searchnodes", action="store", type=int, dest="searchnodes")
 
     # Option that specifies the CassandraFS replication factor
-    parser.add_argument("--cfsreplicationfactor", action="store", type="int", dest="cfsreplication")
+    parser.add_argument("--cfsreplicationfactor", action="store", type=int, dest="cfsreplication")
 
     # Option that specifies the username
-    parser.add_argument("--username", action="store", type="string", dest="username")
+    parser.add_argument("--username", action="store", type=str, dest="username")
     # Option that specifies the password
-    parser.add_argument("--password", action="store", type="string", dest="password")
+    parser.add_argument("--password", action="store", type=str, dest="password")
 
     # Option that specifies the installation of OpsCenter on the first node
-    parser.add_argument("--opscenter", action="store", type="string", dest="opscenter")
+    parser.add_argument("--opscenter", action="store", type=str, dest="opscenter")
     # Option that specifies an alternative reflector.php
-    parser.add_argument("--reflector", action="store", type="string", dest="reflector")
+    parser.add_argument("--reflector", action="store", type=str, dest="reflector")
 
     # Unsupported dev options
     # Option that allows for just configuring RAID0 on the attached drives
     parser.add_argument("--raidonly", action="store_true", dest="raidonly")
     # Option that allows for an emailed report of the startup diagnostics
-    parser.add_argument("--email", action="store", type="string", dest="email")
+    parser.add_argument("--email", action="store", type=str, dest="email")
     # Option that allows heapsize to be changed
-    parser.add_argument("--heapsize", action="store", type="string", dest="heapsize")
+    parser.add_argument("--heapsize", action="store", type=str, dest="heapsize")
     # Option that allows an interface port for OpsCenter to be set
-    parser.add_argument("--opscenterinterface", action="store", type="string", dest="opscenterinterface")
+    parser.add_argument("--opscenterinterface", action="store", type=str, dest="opscenterinterface")
     # Option that allows a custom reservation id to be set
-    parser.add_argument("--customreservation", action="store", type="string", dest="customreservation")
+    parser.add_argument("--customreservation", action="store", type=str, dest="customreservation")
     # Option that allows custom scripts to be executed
-    parser.add_argument("--base64postscript", action="store", type="string", dest="base64postscript")
+    parser.add_argument("--base64postscript", action="store", type=str, dest="base64postscript")
 
     # Grab provided reflector through provided userdata
     global options
