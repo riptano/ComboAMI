@@ -217,10 +217,6 @@ def parse_ec2_userdata():
     if not options.searchnodes:
         options.searchnodes = 0
 
-    if not options.raidonly:
-        options.realtimenodes = (options.totalnodes - options.analyticsnodes - options.searchnodes)
-        options.seed_indexes = [0, options.realtimenodes, options.realtimenodes + options.analyticsnodes]
-
 def use_ec2_userdata():
     if not options:
         exit_path("No parsed options found.")
@@ -259,6 +255,9 @@ def use_ec2_userdata():
 
     if options.customreservation:
         instance_data['reservationid'] = options.customreservation
+
+    options.realtimenodes = (options.totalnodes - options.analyticsnodes - options.searchnodes)
+    options.seed_indexes = [0, options.realtimenodes, options.realtimenodes + options.analyticsnodes]
 
     logger.info('Using cluster size: {0}'.format(options.totalnodes))
     conf.set_config("Cassandra", "TotalNodes", options.totalnodes)
