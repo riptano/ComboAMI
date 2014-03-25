@@ -8,11 +8,11 @@ It uses the AWS::StackID for the custom reservation to cause a cluster in multip
 Limitations
 ===========
 
-- This will not work for C* deploys that are not using vnodes.  (DSE 4.0 and earlier does not default to use vnodes)
+- This will not work for C* deployments that are not using vnodes.  (Currently, DSE cannot use vnodes in all datacenters.)
 - The reflector as provided does not remember state beyond N minutes, if AWS replaces a dead node, the new node will come back in the scale group, but will not rejoin the cluster if the new node is started beyond the reflector's memory.  You will need to manually update the seed to put it back into the cluster, and also remove the dead node.
 - Your cluster (VPC) must be able to interact with sites on the internet to bootstrap the cluster.
 - The template does not prompt for all supported parameters. 
-- Deploying the DSE will require modifying the template to enable it.  (It is easy to deploy a broken DSE C* with this template)
+- Deploying with DSE will require modifying the template to enable it.  (This is only recommended when AMI installs of DSE use vnodes by default.)
  
 Pre-Reqs
 ========

@@ -11,9 +11,9 @@
       },
       "instancetype" : {
         "Type" : "String",
-        "Default" : "m1.xlarge",
+        "Default" : "m1.large",
         "AllowedValues" : ["m1.large", "m1.xlarge"],
-        "Description" : "Enter m1.large or m1.xlarge. Default is <m1.xlarge>"
+        "Description" : "Enter m1.large or m1.xlarge. Default is <m1.large>"
       },
       "totalnodes" : {
         "Type" : "Number",
@@ -24,7 +24,7 @@
         "Type" : "String",
         "Default" : "community",
         "AllowedValues" : ["community"],
-        "Description" : "community only. Edit template to enable enterprise."
+        "Description" : "community only. Enterprise support at a later date."
       },
       "reflector" : {
         "Type" : "String",
