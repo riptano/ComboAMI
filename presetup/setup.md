@@ -95,7 +95,9 @@ Copy-paste `presetup/pre_1.sh` in small chunks to confirm everything works.
     rm -rf ~/.bash_history && history -c && ec2-bundle-vol -p $AMINAME -d /mnt -k $PK_PEM -c $CERT_PEM -u $AWSID -r x86_64 -P mbr
 
     # Needed because ec2-ami-tools beta doesn't work across regions
-    curl http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.zip > ec2-ami-tools-stable.zip
+    # TODO: Next time figure out how to use http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.zip
+    #       Since we won't be bound to the dev version above.
+    curl https://s3.amazonaws.com/ec2-downloads/ec2-ami-tools-1.4.0.9.zip > ec2-ami-tools-stable.zip
     unzip ec2-ami-tools-stable.zip
     rm current
     ln -s ec2-ami-tools-1.4.0.9 current
