@@ -192,6 +192,8 @@ def parse_ec2_userdata():
     parser.add_argument("--reflector", action="store", type=str, dest="reflector")
 
     # Unsupported dev options
+    # Option that allows for just configuring opscenter
+    parser.add_argument("--opscenteronly", action="store_true", dest="opscenteronly")
     # Option that allows for just configuring RAID0 on the attached drives
     parser.add_argument("--raidonly", action="store_true", dest="raidonly")
     # Option that allows for an emailed report of the startup diagnostics
@@ -475,6 +477,8 @@ def get_seed_list():
 def checkpoint_info():
     if options.raidonly:
         conf.set_config("AMI", "RaidOnly", "True")
+    elif options.opscenteronly:
+        conf.set_config("AMI", "OpsCenterOnly", "True")
     else:
         logger.info("Seed list: {0}".format(config_data['seed_list']))
         logger.info("OpsCenter: {0}".format(config_data['opscenterseed']))
@@ -1001,19 +1005,22 @@ def run():
 
     parse_ec2_userdata()
 
-    if not options.raidonly:
+    if not options.raidonly and not options.opscenteronly:
         use_ec2_userdata()
 
         confirm_authentication()
         setup_repos()
         clean_installation()
+
+    if not options.raidonly:
         opscenter_installation()
 
+    if not options.raidonly and not options.opscenteronly:
         get_seed_list()
 
     checkpoint_info()
 
-    if not options.raidonly:
+    if not options.raidonly and not options.opscenteronly:
         calculate_tokens()
         construct_yaml()
         construct_opscenter_conf()
@@ -1022,9 +1029,10 @@ def run():
         construct_dse()
         construct_agent()
 
-    prepare_for_raid()
+    if not options.opscenteronly:
+        prepare_for_raid()
 
-    if not options.raidonly:
+    if not options.raidonly and not options.opscenteronly:
         construct_core_site()
         construct_mapred_site()
 
