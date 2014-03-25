@@ -383,6 +383,12 @@ def clean_installation():
                 else:
                     conf.set_config('Cassandra', 'partitioner', 'murmur')
                     conf.set_config('Cassandra', 'vnodes', 'False')
+            elif options.release.startswith('4'):
+                install_list += ' dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0} dse-libmahout={0} dse-libhadoop-native={0}'
+                logger.exe(install_list.format(options.release))
+                conf.set_config('AMI', 'package', 'dse-full')
+                conf.set_config('Cassandra', 'partitioner', 'murmur')
+                conf.set_config('Cassandra', 'vnodes', 'False')
             else:
                 exit_path("--release should be in the format similar to `1.0.2-1` or `2.0`.")
         else:
