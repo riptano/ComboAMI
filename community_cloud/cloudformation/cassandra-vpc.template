@@ -1,0 +1,103 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "This template will launch a Cassandra Cluster in the VPC. AWS::StackId value for reflector custom reservation",
+
+  "Parameters" : {
+      "clustername" : {
+        "Type" : "String",
+        "Default" : "Cassandra Cluster",
+        "Description" : "Enter free form string for cluster name."
+      },
+      "instancetype" : {
+        "Type" : "String",
+        "Default" : "m1.xlarge",
+        "AllowedValues" : ["m1.large", "m1.xlarge"],
+        "Description" : "Enter m1.large or m1.xlarge. Default is <m1.xlarge>"
+      },
+      "totalnodes" : {
+        "Type" : "Number",
+        "Default" : "1",
+        "Description" : "Total number of cassandra nodes to deploy across all AZs."
+      },
+      "version" : {
+        "Type" : "String",
+        "Default" : "community",
+        "AllowedValues" : ["community"],
+        "Description" : "community only. Edit template to enable enterprise."
+      },
+      "reflector" : {
+        "Type" : "String",
+        "Default" : "http://reflector2.datastax.com/reflector2.php",
+        "Description" : "reflector used during install"
+      },
+      "release" : {
+        "Type" : "String",
+        "Description" : "Release number."
+      }
+  },
+
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1"      : { "AMI" : "DEFINE EACH AMI FOR EACH REGION YOU WILL USE" }
+    },
+    "AccountId" : { 
+      "ADD_YOUR_ACCOUNT_ID_HERE" : {
+        "AccountName" : "(COMMENT ONLY USED TO HELP YOU WITH MULTIPLE ACCOUNT SUPPORT",
+
+        "casSubnets" : ["LIST", "EACH", "SUBNET","YOU", "WANT", "TO", "USE", "BY", "subnet-ID"],
+        "casZones" : ["LIST", "EACH", "AVAILABILITY", "ZONE", "YOU", "WANT", "TO", "USE", "LIKE", "us-east-1a"],
+        "casSecGroups" : ["LIST", "EACH", "SECURITY", "GROUP", "YOU", "WANT", "TO", "USE", "LIKE", "sg-ID"]
+      }
+    }
+  },
+
+
+  "Resources" : {
+  
+    "CassandraNode" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "Properties" : {
+        "KeyName" : "vpc-instance",
+        "InstanceType" : { "Ref" : "instancetype" },
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "SecurityGroups" : 
+          { "Fn::FindInMap" : [ "AccountId", { "Ref" : "AWS::AccountId" }, "casSecGroups" ]},
+        "UserData" : { 
+          "Fn::Base64" : {
+            "Fn::Join" : [ 
+              " ",
+              [
+                "--clustername",
+                { "Ref" : "clustername" },
+                "--totalnodes",
+                { "Ref" : "totalnodes" },
+                "--version",
+                { "Ref" : "version" },
+                "--release",
+                { "Ref" : "release" },
+                "--reflector",
+                { "Ref" : "reflector" },
+                "--customreservation",
+                { "Ref" : "AWS::StackId" }
+              ]
+            ]
+          }
+        }
+      }
+    },
+
+    "CassandraPrivate" : {
+     "Type" : "AWS::AutoScaling::AutoScalingGroup",
+     "Properties" : {
+        "LaunchConfigurationName" : { "Ref" : "CassandraNode" },
+        "VPCZoneIdentifier" : { "Fn::FindInMap" : [ "AccountId", { "Ref" : "AWS::AccountId" }, "casSubnets" ]},
+        "AvailabilityZones" : { "Fn::FindInMap" : [ "AccountId", { "Ref" : "AWS::AccountId" }, "casZones" ]},
+        "MinSize" : { "Ref" : "totalnodes" },
+        "MaxSize" : { "Ref" : "totalnodes" }
+     }
+    }
+
+  }
+
+}
