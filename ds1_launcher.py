@@ -215,6 +215,8 @@ def run():
     initial_configurations()
     write_bin_tools()
     restart_tasks()
+    if conf.get_config("AMI", "OpsCenterOnly"):
+        logger.exe('sudo service opscenterd restart')
     if conf.get_config("AMI", "LeadingSeed"):
         wait_for_seed()
         launch_opscenter()
