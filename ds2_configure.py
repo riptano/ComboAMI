@@ -479,6 +479,7 @@ def checkpoint_info():
         conf.set_config("AMI", "RaidOnly", "True")
     elif options.opscenteronly:
         conf.set_config("AMI", "OpsCenterOnly", "True")
+        conf.set_config("OpsCenter", "DNS", instance_data['publichostname'])
     else:
         logger.info("Seed list: {0}".format(config_data['seed_list']))
         logger.info("OpsCenter: {0}".format(config_data['opscenterseed']))
@@ -585,9 +586,6 @@ def construct_opscenter_conf():
         if options.opscenterinterface:
             conf.set_config("OpsCenter", "port", options.opscenterinterface)
             opsc_conf = opsc_conf.replace('port = 8888', 'port = %s' % options.opscenterinterface)
-
-        # Deprecated
-        opsc_conf = opsc_conf.replace('seed_hosts = localhost', 'seed_hosts = {0}'.format(config_data['opscenterseed']))
 
         with open(os.path.join(config_data['opsc_conf_path'], 'opscenterd.conf'), 'w') as f:
             f.write(opsc_conf)
@@ -1023,7 +1021,11 @@ def run():
     if not options.raidonly and not options.opscenteronly:
         calculate_tokens()
         construct_yaml()
+
+    if not options.raidonly:
         construct_opscenter_conf()
+
+    if not options.raidonly and not options.opscenteronly:
         construct_opscenter_cluster_conf()
         construct_env()
         construct_dse()
