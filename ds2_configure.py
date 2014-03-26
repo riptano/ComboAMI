@@ -54,7 +54,7 @@ def exit_path(errorMsg, append_msg=False):
     logger.error(errorMsg)
     conf.set_config("AMI", "Error", errorMsg)
 
-    raise exceptions.AttributeError
+    raise AttributeError(errorMsg)
 
 
 def clear_motd():
@@ -231,7 +231,7 @@ def parse_ec2_userdata():
                 conf.set_config("AMI", "Type", "Enterprise")
             else:
                 exit_path("Invalid --version (-v) argument.")
-        else:
+        elif not options.raidonly and not options.opscenteronly:
             exit_path("Missing required --version (-v) switch.")
 
 def use_ec2_userdata():
