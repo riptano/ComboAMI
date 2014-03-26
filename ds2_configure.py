@@ -219,16 +219,6 @@ def parse_ec2_userdata():
     if not options.searchnodes:
         options.searchnodes = 0
 
-def use_ec2_userdata():
-    if not options:
-        exit_path("No parsed options found.")
-
-    if not options.totalnodes:
-        exit_path("Missing required --totalnodes (-n) switch.")
-
-    if (options.analyticsnodes + options.searchnodes) > options.totalnodes:
-        exit_path("Total nodes assigned (--analyticsnodes + --searchnodes) > total available nodes (--totalnodes)")
-
     if os.path.isfile('/etc/datastax_ami.conf'):
         if options.version and options.version.lower() == "community":
             logger.error("The Dynamic DataStax AMI will automatically install DataStax Enterprise.")
@@ -243,6 +233,16 @@ def use_ec2_userdata():
                 exit_path("Invalid --version (-v) argument.")
         else:
             exit_path("Missing required --version (-v) switch.")
+
+def use_ec2_userdata():
+    if not options:
+        exit_path("No parsed options found.")
+
+    if not options.totalnodes:
+        exit_path("Missing required --totalnodes (-n) switch.")
+
+    if (options.analyticsnodes + options.searchnodes) > options.totalnodes:
+        exit_path("Total nodes assigned (--analyticsnodes + --searchnodes) > total available nodes (--totalnodes)")
 
     if conf.get_config("AMI", "Type") == "Community" and (options.cfsreplication or options.analyticsnodes or options.searchnodes):
         exit_path('CFS Replication, Analytics Nodes, and Search Node settings can only be set in DataStax Enterprise installs.')
@@ -1006,8 +1006,11 @@ def run():
     if not options.raidonly and not options.opscenteronly:
         use_ec2_userdata()
 
+    if not options.raidonly:
         confirm_authentication()
         setup_repos()
+
+    if not options.raidonly and not options.opscenteronly:
         clean_installation()
 
     if not options.raidonly:
