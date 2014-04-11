@@ -161,7 +161,10 @@ def print_opscenter_information():
         packageQuery = subprocess.Popen(shlex.split("dpkg-query -l 'opscenter'"), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
         if packageQuery:
             print "Opscenter: http://{0}:{1}/".format(opscenter_ip, opscenter_port)
-            print "    Please wait 60 seconds if this is the cluster's first start..."
+            if conf.get_config("AMI", "OpsCenterOnly"):
+                print "    Please wait a few seconds if this is the machine's first start..."
+            else:
+                print "    Please wait 60 seconds if this is the cluster's first start..."
             print
             print
     except:
