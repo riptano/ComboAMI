@@ -702,7 +702,8 @@ def construct_agent():
     logger.exe('sudo chown ubuntu:ubuntu /var/lib/datastax-agent/conf')
 
     with open('/var/lib/datastax-agent/conf/address.yaml', 'w') as f:
-        f.write('stomp_interface: %s' % config_data['opscenterseed'])
+        f.write('stomp_interface: %s\n' % config_data['opscenterseed'])
+        f.write('use_ssl: 1')
 
     logger.exe('cat /var/lib/datastax-agent/conf/address.yaml')
     logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax-agent/conf')
