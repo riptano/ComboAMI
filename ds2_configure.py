@@ -196,6 +196,8 @@ def parse_ec2_userdata():
     parser.add_argument("--opscenteronly", action="store_true", dest="opscenteronly")
     # Option that allows for just configuring RAID0 on the attached drives
     parser.add_argument("--raidonly", action="store_true", dest="raidonly")
+    # Option that allows for an OpsCenter to enable the SSL setting
+    parser.add_argument("--opscenterssl", action="store_true", dest="opscenterssl")
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_argument("--email", action="store", type=str, dest="email")
     # Option that allows heapsize to be changed
@@ -416,7 +418,8 @@ def opscenter_installation():
         logger.info('Installing OpsCenter...')
         logger.exe('sudo apt-get install -y opscenter libssl0.9.8')
         logger.exe('sudo service opscenterd stop')
-        logger.exe('sudo /usr/share/opscenter/bin/setup.py')
+        if options.opscenterssl:
+            logger.exe('sudo /usr/share/opscenter/bin/setup.py')
     elif options.opscenter == "no":
         conf.set_config("OpsCenter", "NoOpsCenter", True)
 
@@ -588,8 +591,9 @@ def construct_opscenter_conf():
             conf.set_config("OpsCenter", "port", options.opscenterinterface)
             opsc_conf = opsc_conf.replace('port = 8888', 'port = %s' % options.opscenterinterface)
 
-        opsc_conf += '\n[agents]\n' \
-                     'use_ssl = true'
+        if options.opscenterssl:
+            opsc_conf += '\n[agents]\n' \
+                         'use_ssl = true'
 
         with open(os.path.join(config_data['opsc_conf_path'], 'opscenterd.conf'), 'w') as f:
             f.write(opsc_conf)
@@ -703,7 +707,8 @@ def construct_agent():
 
     with open('/var/lib/datastax-agent/conf/address.yaml', 'w') as f:
         f.write('stomp_interface: %s\n' % config_data['opscenterseed'])
-        f.write('use_ssl: 1')
+        if options.opscenterssl:
+            f.write('use_ssl: 1')
 
     logger.exe('cat /var/lib/datastax-agent/conf/address.yaml')
     logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax-agent/conf')
