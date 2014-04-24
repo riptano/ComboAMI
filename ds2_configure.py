@@ -233,8 +233,6 @@ def parse_ec2_userdata():
                 conf.set_config("AMI", "Type", "Enterprise")
             else:
                 exit_path("Invalid --version (-v) argument.")
-        elif not options.raidonly and not options.opscenteronly:
-            exit_path("Missing required --version (-v) switch.")
 
 def use_ec2_userdata():
     if not options:
