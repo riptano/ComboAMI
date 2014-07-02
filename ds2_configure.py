@@ -177,6 +177,8 @@ def parse_ec2_userdata():
     parser.add_argument("--analyticsnodes", action="store", type=int, dest="analyticsnodes")
     # Option that specifies how the number of Search nodes
     parser.add_argument("--searchnodes", action="store", type=int, dest="searchnodes")
+    # Option that forces Hadoop analytics nodes over Spark analytics nodes
+    parser.add_argument("--hadoop", action="store_true", dest="hadoop")
 
     # Option that specifies the CassandraFS replication factor
     parser.add_argument("--cfsreplicationfactor", action="store", type=int, dest="cfsreplication")
@@ -673,23 +675,26 @@ def construct_dse():
             logger.info('Using cfsreplication factor: {0}'.format(options.cfsreplication))
             dse_default = dse_default.replace("#CFS_REPLICATION_FACTOR=1", "CFS_REPLICATION_FACTOR={0}".format(options.cfsreplication))
 
-        enable_hadoop = True
+        enable_analytics = True
         enable_search = True
 
         if instance_data['launchindex'] < options.seed_indexes[1]:
-            enable_hadoop = False
+            enable_analytics = False
             enable_search = False
 
         if options.seed_indexes[1] <= instance_data['launchindex'] and instance_data['launchindex'] < options.seed_indexes[2]:
-            enable_hadoop = True
+            enable_analytics = True
             enable_search = False
 
         if options.seed_indexes[2] <= instance_data['launchindex']:
-            enable_hadoop = False
+            enable_analytics = False
             enable_search = True
 
-        if enable_hadoop:
-            dse_default = dse_default.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
+        if enable_analytics:
+            if not options.hadoop and 'SPARK_ENABLED' in dse_default:
+                dse_default = dse_default.replace("SPARK_ENABLED=0", "SPARK_ENABLED=1")
+            else:
+                dse_default = dse_default.replace("HADOOP_ENABLED=0", "HADOOP_ENABLED=1")
 
         if enable_search:
             dse_default = dse_default.replace("SOLR_ENABLED=0", "SOLR_ENABLED=1")
