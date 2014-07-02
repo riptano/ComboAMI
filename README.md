@@ -48,7 +48,8 @@ Options
         REQUIRED for a DSE installation
 
     --analyticsnodes <#>
-        Number of analytics nodes that run with Hadoop/Spark
+        Number of analytics nodes that run with Spark
+        Note: Uses Hadoop in versions earlier than DSE 4.5
         Default: 0
 
     --searchnodes <#>
