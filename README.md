@@ -96,7 +96,7 @@ Ports Needed
             8888: OpsCenter website port
     Intranode:
         Cassandra:
-            1024+: JMX reconnections
+            1024+: JMX reconnections (pre-2.0.8: CASSANDRA-7087)
             7000: Cassandra intra-node port
             7199: Cassandra JMX monitoring port
             9160: Cassandra client port
