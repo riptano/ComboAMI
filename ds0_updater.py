@@ -19,6 +19,7 @@ if not conf.get_config("AMI", "CompletedFirstBoot"):
     # force a commit, if requested
     if force_commit:
         logger.exe('git reset --hard %s' % force_commit)
+        reload(logger)
 
     # ensure the latest commit is signed and verified
     while True:
