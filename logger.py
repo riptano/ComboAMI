@@ -36,13 +36,7 @@ def exe(command, log=True, expectError=False, shell=False):
     if not log or (len(read[0]) == 0 and len(read[1]) == 0):
         appendLog('[EXEC] ' + time.strftime("%m/%d/%y-%H:%M:%S", time.localtime()) + ' ' + command)
 
-    # workaround for https://github.com/riptano/ComboAMI/issues/51
-    # seen in some VPC setups
-    print read
-    newstderr = re.sub(r'sudo\: unable to resolve host .+?\n', '', read[1])
-    print (read[0], newstderr)
-
-    return (read[0], newstderr)
+    return read
 
 def pipe(command1, command2, log=True):
     # Helper function to execute piping commands and print traces of the commands and output for debugging/logging purposes

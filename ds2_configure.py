@@ -158,6 +158,15 @@ def get_ec2_data():
 
     instance_data['clustername'] = instance_data['reservationid']
 
+def vpc_workaround():
+    # workaround for https://github.com/riptano/ComboAMI/issues/51
+
+    if logger.exe('sudo ls')[1]:
+        hostname = logger.exe('hostname')[0].strip()
+        logger.pipe('echo -e "\n# Workaround for ComboAMI Issue #51\n%s %s"' % (instance_data['internalip'],
+                                                                                hostname),
+                    'sudo tee -a /etc/hosts')
+
 def parse_ec2_userdata():
     # Setup parser
     parser = ArgumentParser()
@@ -315,8 +324,6 @@ def setup_repos():
     logger.exe('sudo apt-get update')
     while True:
         output = logger.exe('sudo apt-get update')
-        logger.info('Seeing this output:')
-        logger.info(output)
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
@@ -1017,6 +1024,7 @@ def run():
         exit_path("Clusters backed by Spot Instances are not supported.")
 
     parse_ec2_userdata()
+    vpc_workaround()
 
     if not options.raidonly and not options.opscenteronly:
         use_ec2_userdata()
