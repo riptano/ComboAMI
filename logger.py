@@ -38,9 +38,9 @@ def exe(command, log=True, expectError=False, shell=False):
 
     # workaround for https://github.com/riptano/ComboAMI/issues/51
     # seen in some VPC setups
-    appendLog('[DEBUG] read: ' + read)
+    print read
     newstderr = re.sub(r'sudo\: unable to resolve host .+?\n', '', read[1])
-    appendLog('[DEBUG] new_read:' + (read[0], newstderr))
+    print (read[0], newstderr)
 
     return (read[0], newstderr)
 
