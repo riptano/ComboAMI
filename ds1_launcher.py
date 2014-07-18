@@ -12,6 +12,8 @@ import urllib2
 import logger
 import conf
 
+reload(logger)
+
 def initial_configurations():
     # Begin configuration this is only run once in Public Packages
 
