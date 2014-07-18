@@ -315,6 +315,8 @@ def setup_repos():
     logger.exe('sudo apt-get update')
     while True:
         output = logger.exe('sudo apt-get update')
+        logger.info('Seeing this output:')
+        logger.info(output)
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
 
