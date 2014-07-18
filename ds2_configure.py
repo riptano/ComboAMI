@@ -128,6 +128,8 @@ def get_ec2_data():
     req = curl_instance_data('http://169.254.169.254/latest/meta-data/public-hostname')
     try:
         instance_data['publichostname'] = urllib2.urlopen(req).read()
+        if not instance_data['publichostname']:
+            raise
         logger.info("meta-data:public-hostname: %s" % instance_data['publichostname'])
     except:
         # For VPC's and certain setups, this metadata may not be available
