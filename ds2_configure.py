@@ -361,7 +361,10 @@ def clean_installation():
             conf.set_config('Cassandra', 'vnodes', 'True')
         elif options.release and options.release.startswith('2.0'):
             dsc_release = cassandra_release = options.release
-            dsc_release = dsc_release + '-1'
+            if options.release == '2.0.8':
+                dsc_release = dsc_release + '-2'
+            else:
+                dsc_release = dsc_release + '-1'
             logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc20={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
