@@ -110,6 +110,9 @@ def get_ec2_data():
         # Trim leading Rightscale UserData
         instance_data['userdata'] = instance_data['userdata'][instance_data['userdata'].find('--'):]
 
+        if len(instance_data['userdata']) < 2:
+            raise Exception
+
         logger.info("Using user data:")
         logger.info(instance_data['userdata'])
     except Exception, e:
