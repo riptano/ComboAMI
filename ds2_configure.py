@@ -106,6 +106,12 @@ def get_ec2_data():
 
         logger.info("Started with user data set to:")
         logger.info(instance_data['userdata'])
+
+        # Trim leading Rightscale UserData
+        instance_data['userdata'] = instance_data['userdata'][instance_data['userdata'].find('--'):]
+
+        logger.info("Using user data:")
+        logger.info(instance_data['userdata'])
     except Exception, e:
         instance_data['userdata'] = '--totalnodes 1 --version Community --clustername "Test Cluster - No AMI Parameters"'
         logger.info("No userdata found. Starting 1 node clusters, by default.")
