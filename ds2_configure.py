@@ -1024,6 +1024,7 @@ def additional_post_configurations():
         process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         read = process.communicate()
         logger.info('base64postscript response: %s\n%s' % read)
+    logger.exe('sudo apt-get --reinstall install ubuntu-keyring')
 
 
 def run():
