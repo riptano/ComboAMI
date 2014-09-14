@@ -193,6 +193,11 @@ def parse_ec2_userdata():
     # Option that forces the rpc binding to the internal IP address of the instance
     parser.add_argument("--rpcbinding", action="store_true", dest="rpcbinding", default=False)
 
+    # Option for multi-region
+    parser.add_argument("--multiregion", action="store_true", dest="multiregion", default=False)
+    parser.add_argument("--seeds", action="store", dest="seeds")
+    parser.add_argument("--opscenterip", action="store", dest="opscenterip")
+
     # Option that specifies how the number of Analytics nodes
     parser.add_argument("--analyticsnodes", action="store", type=int, dest="analyticsnodes")
     # Option that specifies how the number of Search nodes
@@ -279,6 +284,12 @@ def use_ec2_userdata():
 
     if options.customreservation:
         instance_data['reservationid'] = options.customreservation
+
+    if options.seeds:
+        instance_data['seeds'] = options.seeds
+
+    if options.opscenterip:
+        instance_data['opscenterip'] = options.opscenterip
 
     options.realtimenodes = (options.totalnodes - options.analyticsnodes - options.searchnodes)
     options.seed_indexes = [0, options.realtimenodes, options.realtimenodes + options.analyticsnodes]
@@ -511,7 +522,10 @@ def checkpoint_info():
         conf.set_config("OpsCenter", "DNS", instance_data['publichostname'])
     else:
         logger.info("Seed list: {0}".format(config_data['seed_list']))
-        logger.info("OpsCenter: {0}".format(config_data['opscenterseed']))
+        if options.seeds:
+            logger.info("OpsCenter: {0}".format(options.seeds))
+        else:
+            logger.info("OpsCenter: {0}".format(config_data['opscenterseed']))
         logger.info("Options: {0}".format(options))
         conf.set_config("AMI", "LeadingSeed", config_data['opscenterseed'])
     conf.set_config("AMI", "CurrentStatus", "Installation complete")
@@ -530,6 +544,9 @@ def construct_yaml():
     # Create the seed list
     seeds_yaml = ','.join(config_data['seed_list'])
 
+    if options.seeds:
+        seeds_yaml = seeds_yaml + ',' + options.seeds
+
     # Set seeds for DSE/C
     p = re.compile('seeds:.*')
     yaml = p.sub('seeds: "{0}"'.format(seeds_yaml), yaml)
@@ -544,6 +561,17 @@ def construct_yaml():
         yaml = p.sub('rpc_address: {0}'.format(instance_data['internalip']), yaml)
     else:
         yaml = p.sub('rpc_address: 0.0.0.0', yaml)
+
+    if options.multiregion:
+        # multiregion: --rpcbinding is implicitly true
+        yaml = p.sub('rpc_address: {0}'.format(instance_data['internalip']), yaml)
+        yaml = yaml.replace('endpoint_snitch: org.apache.cassandra.locator.SimpleSnitch', 'endpoint_snitch: org.apache.cassandra.locator.Ec2MultiRegionSnitch')
+        yaml = yaml.replace('endpoint_snitch: SimpleSnitch', 'endpoint_snitch: Ec2MultiRegionSnitch')
+        p = re.compile('# broadcast_address: 1.2.3.4')
+        req = curl_instance_data('http://169.254.169.254/latest/meta-data/public-ipv4')
+        instance_data['externalip'] = urllib2.urlopen(req).read()
+        logger.info("meta-data:external-ipv4: %s" % instance_data['externalip'])
+        yaml = p.sub('broadcast_address: {0}'.format(instance_data['externalip']), yaml)
 
     # Uses the EC2Snitch for Community Editions
     if conf.get_config("AMI", "Type") == "Community":
@@ -650,7 +678,10 @@ password =
 """
 
         # Configure OpsCenter Cluster
-        opsc_cluster_conf = opsc_cluster_conf.format(config_data['opscenterseed'])
+        if options.opscenterip:
+            opsc_cluster_conf = opsc_cluster_conf.format(options.opscenterip)
+        else:
+            opsc_cluster_conf = opsc_cluster_conf.format(config_data['opscenterseed'])
 
         with open(os.path.join(opsc_cluster_path, cluster_conf), 'w') as f:
             f.write(opsc_cluster_conf)
@@ -734,7 +765,11 @@ def construct_agent():
     logger.exe('sudo chown ubuntu:ubuntu /var/lib/datastax-agent/conf')
 
     with open('/var/lib/datastax-agent/conf/address.yaml', 'w') as f:
-        f.write('stomp_interface: %s\n' % config_data['opscenterseed'])
+        if options.opscenterip:
+            f.write('stomp_interface: %s\n' % options.opscenterip)
+        else:
+            f.write('stomp_interface: %s\n' % config_data['opscenterseed'])
+
         if options.opscenterssl:
             f.write('use_ssl: 1')
 
@@ -1017,7 +1052,6 @@ def additional_pre_configurations():
     logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/Launchpad_VLC.C2518248EEA14886.key')
     logger.exe('sudo apt-key add /home/ubuntu/datastax_ami/repo_keys/Ubuntu_Archive.40976EAF437D05B5.key')
 
-
 def additional_post_configurations():
     if options.base64postscript:
         command = base64.b64decode(options.base64postscript)
@@ -1025,7 +1059,6 @@ def additional_post_configurations():
         read = process.communicate()
         logger.info('base64postscript response: %s\n%s' % read)
     logger.exe('sudo apt-get --reinstall install ubuntu-keyring')
-
 
 def run():
     # Remove script files
