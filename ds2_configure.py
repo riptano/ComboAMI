@@ -389,9 +389,18 @@ def clean_installation():
             conf.set_config('AMI', 'package', 'dsc20')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
+        elif options.release and options.release.startswith('2.1'):
+            dsc_release = cassandra_release = options.release
+            dsc_release = dsc_release + '-1'
+            if cassandra_release == '2.1.0':
+                cassandra_release = cassandra_release + '-2'
+            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc21={1}'.format(cassandra_release, dsc_release))
+            conf.set_config('AMI', 'package', 'dsc21')
+            conf.set_config('Cassandra', 'partitioner', 'murmur')
+            conf.set_config('Cassandra', 'vnodes', 'True')
         else:
-            logger.exe('sudo apt-get install -y python-cql datastax-agent dsc20')
-            conf.set_config('AMI', 'package', 'dsc20')
+            logger.exe('sudo apt-get install -y python-cql datastax-agent dsc21')
+            conf.set_config('AMI', 'package', 'dsc21')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
         logger.exe('sudo service cassandra stop')
