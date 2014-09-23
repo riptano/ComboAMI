@@ -571,6 +571,10 @@ def construct_yaml():
     else:
         yaml = p.sub('rpc_address: 0.0.0.0', yaml)
 
+        # needed for 2.1+
+        p = re.compile('broadcast_rpc_address:.*')
+        yaml = p.sub('broadcast_rpc_address: {0}'.format(instance_data['internalip']), yaml)
+
     if options.multiregion:
         # multiregion: --rpcbinding is implicitly true
         yaml = p.sub('rpc_address: {0}'.format(instance_data['internalip']), yaml)
