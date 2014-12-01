@@ -84,28 +84,9 @@ Options
 Ports Needed
 ============
 
-    Public Facing:
-        SSH:
-            22: Default SSH port
-        DataStax Enterprise Specific:
-            8012: Hadoop Job Tracker client port
-            8983: Portfolio Demo and Solr website port
-            50030: Hadoop Job Tracker website port
-            50060: Hadoop Task Tracker website port
-        OpsCenter:
-            8888: OpsCenter website port
-    Intranode:
-        Cassandra:
-            1024+: JMX reconnections (pre-2.0.8: CASSANDRA-7087)
-            7000: Cassandra intra-node port
-            7199: Cassandra JMX monitoring port
-            9160: Cassandra client port
-        DataStax Enterprise Specific:
-            9290: Hadoop thrift port
-        OpsCenter:
-            50031: OpsCenter job tracker proxy
-            61620: OpsCenter intra-node monitoring ports
-            61621: OpsCenter agent port
+See:
+
+    http://www.datastax.com/documentation/datastax_enterprise/4.5/datastax_enterprise/install/installAMIsecurity.html
 
 
 Step-by-step
