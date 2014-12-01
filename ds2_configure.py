@@ -520,6 +520,16 @@ def get_seed_list():
             else:
                 time.sleep(2 + random.randint(0, options.totalnodes / 4 + 1))
         except:
+            if expected_responses == 1:
+                conf.set_config("AMI", "CurrentStatus", "Bypassing reflector for 1 node cluster...")
+
+                conf.set_config("OpsCenter", "DNS", instance_data['publichostname'])
+
+                config_data['seed_list'] = set([instance_data['internalip']])
+                config_data['opscenterseed'] = instance_data['internalip']
+
+                continue_loop = False
+
             traceback.print_exc(file=sys.stdout)
             time.sleep(2 + random.randint(0, 5))
 
