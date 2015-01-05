@@ -808,8 +808,8 @@ def create_cassandra_directories(mnt_point, device):
     if conf.get_config("AMI", "RaidOnly"):
         output = logger.exe('id cassandra', expectError=True)
         if output[1] or 'no such user' in output[0].lower():
-            logger.pipe('yes','sudo adduser --no-create-home --disabled-password cassandra')
             while True:
+                logger.pipe('yes','sudo adduser --no-create-home --disabled-password cassandra')
                 output = logger.exe('id cassandra', expectError=True)
                 if not output[1] and not 'no such user' in output[0].lower():
                     break
