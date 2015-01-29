@@ -344,10 +344,13 @@ def setup_repos():
 
     # Perform the install
     logger.exe('sudo apt-get update')
-    while True:
+    time_in_loop = time.time()
+    logger.info('Update loop...')
+    while time.time() - time_in_loop < 10 * 60:
         output = logger.exe('sudo apt-get update')
         if not output[1] and not 'err' in output[0].lower() and not 'failed' in output[0].lower():
             break
+        time.sleep(2 + random.randint(0, 5))
 
     time.sleep(5)
 
