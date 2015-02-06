@@ -225,6 +225,10 @@ def parse_ec2_userdata():
     parser.add_argument("--raidonly", action="store_true", dest="raidonly")
     # Option that allows for an OpsCenter to enable the SSL setting
     parser.add_argument("--opscenterssl", action="store_true", dest="opscenterssl")
+    # Option that enforces a bootstrapping node
+    parser.add_argument("--bootstrap", action="store_true", dest="bootstrap", default=False)
+    # Option that enforces vnodes
+    parser.add_argument("--vnodes", action="store_true", dest="vnodes", default=False)
     # Option that allows for an emailed report of the startup diagnostics
     parser.add_argument("--email", action="store", type=str, dest="email")
     # Option that allows heapsize to be changed
@@ -567,7 +571,12 @@ def construct_yaml():
     seeds_yaml = ','.join(config_data['seed_list'])
 
     if options.seeds:
-        seeds_yaml = seeds_yaml + ',' + options.seeds
+        if options.bootstrap:
+            # Do not include current node while bootstrapping
+            seeds_yaml = options.seeds
+        else:
+            # Add current node to seed list for multi-region setups
+            seeds_yaml = seeds_yaml + ',' + options.seeds
 
     # Set seeds for DSE/C
     p = re.compile('seeds:.*')
@@ -608,12 +617,19 @@ def construct_yaml():
     instance_data['clustername'] = instance_data['clustername'].strip("'").strip('"')
     yaml = yaml.replace("cluster_name: 'Test Cluster'", "cluster_name: '{0}'".format(instance_data['clustername']))
 
-    # Set auto_bootstrap: false
-    if 'auto_bootstrap' in yaml:
-        p = re.compile('auto_bootstrap:.*')
-        yaml = p.sub('auto_bootstrap: false', yaml)
+    # Set auto_bootstrap
+    if options.bootstrap:
+        if 'auto_bootstrap' in yaml:
+            p = re.compile('auto_bootstrap:.*')
+            yaml = p.sub('auto_bootstrap: true', yaml)
+        else:
+            yaml += "\nauto_bootstrap: true\n"
     else:
-        yaml += "\nauto_bootstrap: false\n"
+        if 'auto_bootstrap' in yaml:
+            p = re.compile('auto_bootstrap:.*')
+            yaml = p.sub('auto_bootstrap: false', yaml)
+        else:
+            yaml += "\nauto_bootstrap: false\n"
 
     if conf.get_config('Cassandra', 'partitioner') == 'random_partitioner':
         # Construct token for an equally split ring
@@ -632,7 +648,7 @@ def construct_yaml():
         yaml = p.sub('initial_token: {0}'.format(token), yaml)
 
     elif conf.get_config('Cassandra', 'partitioner') == 'murmur':
-        if conf.get_config('Cassandra', 'vnodes') == 'True':
+        if conf.get_config('Cassandra', 'vnodes') == 'True' or options.vnodes:
             p = re.compile( '# num_tokens:.*')
             yaml = p.sub('num_tokens: 256', yaml)
         else:
