@@ -1118,6 +1118,17 @@ def run():
     parse_ec2_userdata()
     vpc_workaround()
 
+    if options.raidonly:
+        # This file is marked as a config file by the various cassandra
+        # packages, and breaks unattended installs by throwing apt into
+        # interactive conflict resolution mode unless dangerous flags
+        # are supplied that force config overrides.
+        #
+        # In order to allow OpsCenter to install packages on machines
+        # provisioned with this AMI, the custom limits configs should
+        # be removed when the --raidonly flag is supplied.
+        logger.exe('sudo mv /etc/security/limits.d/cassandra.conf /etc/security/limits.d/cassandra.conf.ami_default')
+
     if not options.raidonly and not options.opscenteronly:
         use_ec2_userdata()
 
