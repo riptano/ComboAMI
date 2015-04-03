@@ -101,8 +101,8 @@ def waiting_for_status():
         dots = (dots + 1) % 4
     print
 
-def waiting_for_seed_node():
-    print "Waiting for seed node..."
+def waiting_for_nodetool():
+    print "Waiting for nodetool..."
     print "The cluster is now in it's finalization phase. This should only take a moment..."
     print
     print "Note: You can also use CTRL+C to view the logs if desired:"
@@ -111,17 +111,48 @@ def waiting_for_seed_node():
     print
     print
 
-    d = dict(os.environ)
-    d["HOST"] = conf.get_config("AMI", "LeadingSeed")
-    wait_script = "python /home/ubuntu/datastax_ami/wait_for_boot.sh"
-    subprocess.Popen(shlex.split(wait_script), stderr=subprocess.PIPE, stdout=subprocess.PIPE, env=d).stdout.read()
+    retcode = 0
+    while True:
+        if conf.get_config('Cassandra', 'partitioner') == 'murmur':
+            config_data['nodetool_statement'] = 'nodetool status'
 
-def print_current_nodetool_status():
-    if conf.get_config('Cassandra', 'partitioner') == 'murmur':
-        config_data['nodetool_statement'] = 'nodetool status'
+        retcode = subprocess.call(shlex.split(config_data['nodetool_statement']), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if (int(retcode) != 3):
+            break
 
-    print 'Current cluster status:'
-    print subprocess.Popen(shlex.split(config_data['nodetool_statement']), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+def check_for_one_up_node():
+    stopped_error_msg = False
+    start_time = time.time()
+    while time.time() - start_time < 60:
+        ami_error_handling()
+        nodetool_out = subprocess.Popen(shlex.split(config_data['nodetool_statement']), stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read()
+
+        # get rid of substring included in new jvm options printout that was causing an infinite loop
+        nodetool_out = nodetool_out.replace('+HeapDumpOnOutOfMemoryError', '')
+
+        if (nodetool_out.lower().find("error") == -1 and nodetool_out.lower().find("up") and len(nodetool_out) > 0):
+            if not stopped_error_msg:
+                if config_data['waiting_for_status']:
+                    time.sleep(15)
+                stopped_error_msg = True
+            else:
+                break
+
+    return nodetool_out
+
+def waiting_for_full_cluster_to_launch(nodetool_out):
+    start_time = time.time()
+    while True:
+        if nodetool_out.count("Up") == int(conf.get_config("Cassandra", "TotalNodes")):
+            break
+        if nodetool_out.count("UN") == int(conf.get_config("Cassandra", "TotalNodes")):
+            break
+        if time.time() - start_time > 60:
+            break
+
+        nodetool_out = subprocess.Popen(shlex.split(config_data['nodetool_statement']), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+
+    print nodetool_out
 
 def print_opscenter_information():
     try:
@@ -199,8 +230,9 @@ def run():
 
     waiting_for_status()
     if not conf.get_config("AMI", "RaidOnly") and not conf.get_config("AMI", "OpsCenterOnly"):
-        waiting_for_seed_node()
-        print_current_nodetool_status()
+        waiting_for_nodetool()
+        nodetool_out = check_for_one_up_node()
+        waiting_for_full_cluster_to_launch(nodetool_out)
 
     print_opscenter_information()
     print_tools()
