@@ -156,7 +156,7 @@ def wait_for_seed():
 
         d = dict(os.environ)
         d["HOST"] = conf.get_config("AMI", "LeadingSeed")
-        wait_script = "python /home/ubuntu/datastax_ami/wait_for_boot.sh"
+        wait_script = "python /home/ubuntu/datastax_ami/wait_for_first_node.sh"
         subprocess.Popen(shlex.split(wait_script), stderr=subprocess.PIPE, stdout=subprocess.PIPE, env=d).stdout.read()
 
 def launch_opscenter():
