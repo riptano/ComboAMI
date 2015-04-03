@@ -153,21 +153,11 @@ def wait_for_seed():
 
     if internalip != conf.get_config("AMI", "LeadingSeed"):
         logger.info("Waiting for seed node to come online...")
-        nodetoolStatement = "nodetool -h " + conf.get_config("AMI", "LeadingSeed") + " ring"
-        logger.info(nodetoolStatement)
 
-        while True:
-            nodetool_out = subprocess.Popen(shlex.split(nodetoolStatement), stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
-
-            # get rid of substring included in new jvm options printout that was causing an infinite loop
-            nodetool_out = nodetool_out.replace('+HeapDumpOnOutOfMemoryError', '')
-
-            if (nodetool_out.lower().find("error") == -1 and nodetool_out.lower().find("up") and len(nodetool_out) > 0):
-                logger.info("Seed node now online!")
-                time.sleep(5)
-                break
-            time.sleep(5)
-            logger.info("Retrying seed node...")
+        d = dict(os.environ)
+        d["HOST"] = conf.get_config("AMI", "LeadingSeed")
+        wait_script = "python /home/ubuntu/datastax_ami/wait_for_boot.sh"
+        subprocess.Popen(shlex.split(wait_script), stderr=subprocess.PIPE, stdout=subprocess.PIPE, env=d).stdout.read()
 
 def launch_opscenter():
     logger.info('Starting a background process to start OpsCenter after a given delay...')
