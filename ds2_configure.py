@@ -816,7 +816,12 @@ def construct_agent():
             f.write('use_ssl: 1')
 
     logger.exe('cat /var/lib/datastax-agent/conf/address.yaml')
-    logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax-agent/conf')
+
+    # post 5.1: OpsCenter relies on the cassandra user. This will be attempted first to chown the user from `root`
+    logger.exe('sudo chown cassandra:cassandra /var/lib/datastax-agent/conf', expectError=True)
+    # pre 5.1: OpsCenter created the opscenter-agent. In post 5.1 clusters, this command will be logged, but will not change ownership.
+    logger.exe('sudo chown opscenter-agent:opscenter-agent /var/lib/datastax-agent/conf', expectError=True)
+
     logger.info('address.yaml configured.')
 
 
@@ -868,12 +873,21 @@ def create_cassandra_directories(mnt_point, device):
     logger.exe('sudo mkdir -p {0}'.format(os.path.join(mnt_point, 'datastax-agent', 'logs')))
     logger.exe('sudo rm -rf /var/log/datastax-agent')
     logger.exe('sudo ln -s {0} /var/log/datastax-agent'.format(os.path.join(mnt_point, 'datastax-agent', 'logs')))
-    logger.exe('sudo chown -R opscenter-agent:opscenter-agent /var/log/datastax-agent')
+
+    # post 5.1: OpsCenter relies on the cassandra user. This will be attempted first to chown the user from `root`
+    logger.exe('sudo chown -R cassandra:cassandra /var/log/datastax-agent', expectError=True)
+    # pre 5.1: OpsCenter created the opscenter-agent. In post 5.1 clusters, this command will be logged, but will not change ownership.
+    logger.exe('sudo chown -R opscenter-agent:opscenter-agent /var/log/datastax-agent', expectError=True)
+
     logger.exe('sudo touch /var/log/datastax-agent/agent.log')
     logger.exe('sudo touch /var/log/datastax-agent/startup.log')
 
     logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'cassandra')))
-    logger.exe('sudo chown -R opscenter-agent:opscenter-agent {0}'.format(os.path.join(mnt_point, 'datastax-agent')))
+
+    # post 5.1: OpsCenter relies on the cassandra user. This will be attempted first to chown the user from `root`
+    logger.exe('sudo chown -R cassandra:cassandra {0}'.format(os.path.join(mnt_point, 'datastax-agent')), expectError=True)
+    # pre 5.1: OpsCenter created the opscenter-agent. In post 5.1 clusters, this command will be logged, but will not change ownership.
+    logger.exe('sudo chown -R opscenter-agent:opscenter-agent {0}'.format(os.path.join(mnt_point, 'datastax-agent')), expectError=True)
 
 
 def mount_raid(devices):
