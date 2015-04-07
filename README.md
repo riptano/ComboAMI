@@ -80,6 +80,14 @@ Options
         Allows you to use your own reflector
         Default: http://reflector2.datastax.com/reflector2.php
 
+    --repository <repository>:<branch>
+        Allows you to set a custom repository to pull configuration files from
+        Default: none, falls back to repository used to create the AMI
+
+    --disable-commit-verification
+        Allows you to disable latest commit verification (useful for custom repositories)
+        Default: false
+
 
 Ports Needed
 ============

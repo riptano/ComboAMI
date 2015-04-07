@@ -63,6 +63,12 @@ def parse_ec2_userdata():
     # Development options
     # Option that specifies the cluster's name
     parser.add_argument("--forcecommit", action="store", type=str, dest="forcecommit")
+    # Option that specifies repository to use for updating
+    parser.add_argument("--repository", action="store", type=str, dest="repository")
+    # Option that specifies if to skip latest commit verification
+    parser.add_argument("--disable-commit-verification", action="store_true", dest="disablecommitverification")
+    # Option that specifies which keys are allowed to sign the latest commit (XXX not implemented)
+    parser.add_argument("--allowed-keys", action="store", nargs="+", dest="allowedkeys")
 
     try:
         (args, unknown) = parser.parse_known_args(shlex.split(instance_data['userdata']))
@@ -75,3 +81,38 @@ def required_commit():
 
     if options and options.forcecommit:
         return options.forcecommit
+
+def repository():
+    options = parse_ec2_userdata()
+
+    if options and options.repository:
+        if ':' in options.repository:
+            (origin, branch) = options.repository.split(':')
+        else:
+            origin = options.repository
+            branch = ''
+        return { 'origin': origin, 'branch': branch }
+    else:
+        return { 'origin': '', 'branch': '' }
+
+def disable_commit_verification():
+    options = parse_ec2_userdata()
+
+    if options and options.disablecommitverification:
+        return options.disablecommitverification
+    else:
+        return False
+
+def allowed_keys():
+    options = parse_ec2_userdata()
+
+    if options and options.allowedkeys:
+        return options.allowedkeys
+    else:
+        default_key = {
+            'id': '7123CDFD',
+            'file': '/home/ubuntu/datastax_ami/repo_keys/DataStax_AMI.7123CDFD.key',
+            'rsa_check': 'using RSA key ID 7123CDFD\n',
+            'signature_check': 'Good signature from "Joaquin Casares (DataStax AMI) <joaquin@datastax.com>"\n'
+        }
+        return [default_key]
