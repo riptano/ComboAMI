@@ -34,8 +34,7 @@ if not conf.get_config("AMI", "CompletedFirstBoot"):
     force_commit = ds0_utils.required_commit()
 
     # update the repo
-    repository = ds0_utils.repository()
-    logger.exe('git pull ' + repository['origin'] + ' ' + repository['branch'])
+    logger.exe('git pull ' + ds0_utils.repository())
 
     # ensure any AWS removed repo keys will be put back, if removed on bake
     logger.exe('git reset --hard')
