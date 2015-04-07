@@ -80,7 +80,7 @@ Options
         Allows you to use your own reflector
         Default: http://reflector2.datastax.com/reflector2.php
 
-    --repository <repository>:<branch>
+    --repository <repository>
         Allows you to set a custom repository to pull configuration files from
         Default: none, falls back to repository used to create the AMI
 
