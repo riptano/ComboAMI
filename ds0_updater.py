@@ -28,25 +28,40 @@ def verify_latest_commit():
             logger.error('    If it was a missed signature, feel free to open a ticket at https://github.com/riptano/ComboAMI.')
         break
 
+# Figure out the argument we should use with git reset.
+def get_git_reset_arg(commitish):
+    if not commitish:
+        return ''
+
+    (commit_id, err) = logger.exe('git rev-parse ' + commitish)
+    if err:
+        return ''
+
+    # If the commit-ish is a valid commit id, use it as-is.
+    # Otherwise, prefix with the remote (always origin).
+    if commit_id.strip() == commitish:
+       return commit_id
+    else:
+        return 'origin/' + commitish
+
 # Update the AMI codebase if it's its first boot
 if not conf.get_config("AMI", "CompletedFirstBoot"):
-    # check if a specific commit was requested
-    force_commit = ds0_utils.required_commit()
+    (repository, commitish) = ds0_utils.repository()
+    if repository or commitish:
+        logger.info('Repository: %s, Commit-ish: %s' % (repository, commitish))
+
+    # Reset the origin if a repository was specified
+    if repository:
+        logger.exe('git remote remove origin')
+        logger.exe('git remote add origin %s' % repository)
 
     # update the repo
-    logger.exe('git pull ' + ds0_utils.repository())
+    logger.exe('git fetch')
 
     # ensure any AWS removed repo keys will be put back, if removed on bake
-    logger.exe('git reset --hard')
+    logger.exe('git reset --hard %s' % get_git_reset_arg(commitish))
 
-    # force a commit, if requested
-    if force_commit:
-        logger.exe('git reset --hard %s' % force_commit)
-
-    if ds0_utils.disable_commit_verification():
-        logger.info('Latest commit verification disabled')
-    else:
-        verify_latest_commit()
+    verify_latest_commit()
 
 # Start AMI start code
 try:

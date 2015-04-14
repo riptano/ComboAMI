@@ -63,12 +63,8 @@ def parse_ec2_userdata():
     # Development options
     # Option that specifies repository to use for updating
     parser.add_argument("--repository", action="store", type=str, dest="repository")
-    # Option that specifies the commit to use for updating (instead of the latest)
+    # Option that specifies the commit to use for updating (instead of the latest) -- kept for backwards compatibility
     parser.add_argument("--forcecommit", action="store", type=str, dest="forcecommit")
-    # Option that specifies if to skip latest commit verification
-    parser.add_argument("--disable-commit-verification", action="store_true", dest="disablecommitverification")
-    # Option that specifies which keys are allowed to sign the latest commit (XXX not implemented)
-    parser.add_argument("--allowed-keys", action="store", nargs="+", dest="allowedkeys")
 
     try:
         (args, unknown) = parser.parse_known_args(shlex.split(instance_data['userdata']))
@@ -76,27 +72,25 @@ def parse_ec2_userdata():
     except:
         return None
 
-def required_commit():
-    options = parse_ec2_userdata()
-
-    if options and options.forcecommit:
-        return options.forcecommit
-
 def repository():
     options = parse_ec2_userdata()
 
-    if options and options.repository:
-        return options.repository
-    else:
-        return ''
+    repository = None
+    commitish = ''
 
-def disable_commit_verification():
-    options = parse_ec2_userdata()
+    if options:
+        # Backwards compatibility: If --forcecommit was used, always use the official repository.
+        if options.forcecommit:
+            commitish = options.forcecommit
+        else:
+            parts = options.repository.split('#')
+            nparts = len(parts)
+            if nparts > 0:
+                repository = parts[0]
+                if nparts > 1:
+                    commitish = parts[1]
 
-    if options and options.disablecommitverification:
-        return options.disablecommitverification
-    else:
-        return False
+    return (repository, commitish)
 
 def allowed_keys():
     options = parse_ec2_userdata()
