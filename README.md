@@ -83,10 +83,8 @@ Options
     --repository <repository>
         Allows you to set a custom repository to pull configuration files from
         Default: none, falls back to repository used to create the AMI
-
-    --disable-commit-verification
-        Allows you to disable latest commit verification (useful for custom repositories)
-        Default: false
+	Examples: https://github.com/riptano/ComboAMI#2.5
+	          https://github.com/riptano/ComboAMI#e5e3d41fb5f12461509aa1b6079413b381930d81
 
 
 Ports Needed
