@@ -52,7 +52,7 @@ if not conf.get_config("AMI", "CompletedFirstBoot"):
 
     # Reset the origin if a repository was specified
     if repository:
-        logger.exe('git remote remove origin')
+        logger.exe('git remote rm origin')
         logger.exe('git remote add origin %s' % repository)
 
     # update the repo
