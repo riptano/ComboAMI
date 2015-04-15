@@ -65,6 +65,8 @@ def parse_ec2_userdata():
     parser.add_argument("--repository", action="store", type=str, dest="repository")
     # Option that specifies the commit to use for updating (instead of the latest) -- kept for backwards compatibility
     parser.add_argument("--forcecommit", action="store", type=str, dest="forcecommit")
+    # Option that disables commit verification (useful when using unofficial repositories)
+    parser.add_argument("--disable-commit-verification", action="store_true", dest="disablecommitverification")
 
     try:
         (args, unknown) = parser.parse_known_args(shlex.split(instance_data['userdata']))
@@ -91,6 +93,14 @@ def repository():
                     commitish = parts[1]
 
     return (repository, commitish)
+
+def disable_commit_verification():
+    options = parse_ec2_userdata()
+
+    if options and options.disablecommitverification:
+        return True
+    else:
+        return False
 
 def allowed_keys():
     options = parse_ec2_userdata()

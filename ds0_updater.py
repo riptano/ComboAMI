@@ -61,7 +61,8 @@ if not conf.get_config("AMI", "CompletedFirstBoot"):
     # ensure any AWS removed repo keys will be put back, if removed on bake
     logger.exe('git reset --hard %s' % get_git_reset_arg(commitish))
 
-    verify_latest_commit()
+    if not ds0_utils.disable_commit_verification():
+        verify_latest_commit()
 
 # Start AMI start code
 try:
