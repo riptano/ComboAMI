@@ -61,7 +61,9 @@ def parse_ec2_userdata():
     parser = ArgumentParser()
 
     # Development options
-    # Option that specifies the cluster's name
+    # Option that specifies repository to use for updating
+    parser.add_argument("--repository", action="store", type=str, dest="repository")
+    # Option that specifies the commit to use for updating (instead of the latest) -- kept for backwards compatibility
     parser.add_argument("--forcecommit", action="store", type=str, dest="forcecommit")
 
     try:
@@ -70,8 +72,33 @@ def parse_ec2_userdata():
     except:
         return None
 
-def required_commit():
+def repository():
     options = parse_ec2_userdata()
 
-    if options and options.forcecommit:
-        return options.forcecommit
+    repository = None
+    commitish = ''
+
+    if options:
+        # Backwards compatibility: If --forcecommit was used, always use the official repository.
+        if options.forcecommit:
+            commitish = options.forcecommit
+        else:
+            parts = options.repository.split('#')
+            nparts = len(parts)
+            if nparts > 0:
+                repository = parts[0]
+                if nparts > 1:
+                    commitish = parts[1]
+
+    return (repository, commitish)
+
+def allowed_keys():
+    options = parse_ec2_userdata()
+
+    default_key = {
+        'id': '7123CDFD',
+        'file': '/home/ubuntu/datastax_ami/repo_keys/DataStax_AMI.7123CDFD.key',
+        'rsa_check': 'using RSA key ID 7123CDFD\n',
+        'signature_check': 'Good signature from "Joaquin Casares (DataStax AMI) <joaquin@datastax.com>"\n'
+    }
+    return [default_key]
