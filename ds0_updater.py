@@ -5,6 +5,16 @@ import ds0_utils
 import logger
 import conf
 
+def is_signed_by(output, key):
+    # there's no way to verify signature other than grepping. for now this will do,
+    # but we can definitely make it stronger if needed.
+    rsa_check = 'using RSA key ID ' + key['id'] + '\n'
+    signature_check = 'Good signature from '
+
+    if rsa_check in output and signature_check in output:
+        return True
+    return False
+
 # keep it super simple for now because we don't really implement --allowed-keys yet.
 def verify_latest_commit():
     allowed_keys = ds0_utils.allowed_keys()
@@ -21,8 +31,9 @@ def verify_latest_commit():
 
         verified = False
         for key in allowed_keys:
-            if key['rsa_check'] in output[0] and key['signature_check'] in output[0]:
-                verified = True
+            verified = is_signed_by(output[0], key)
+            if verified:
+                break
         if not verified:
             logger.error('Scripts using a non-signed commit. Please ensure commit is valid.')
             logger.error('    If it was a missed signature, feel free to open a ticket at https://github.com/riptano/ComboAMI.')

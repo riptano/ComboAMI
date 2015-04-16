@@ -67,6 +67,8 @@ def parse_ec2_userdata():
     parser.add_argument("--forcecommit", action="store", type=str, dest="forcecommit")
     # Option that disables commit verification (useful when using unofficial repositories)
     parser.add_argument("--disable-commit-verification", action="store_true", dest="disablecommitverification")
+    # Option that specifies allowed keys for commit signing
+    parser.add_argument("--allowed-keys", nargs="+", action="store", dest="allowedkeys")
 
     try:
         (args, unknown) = parser.parse_known_args(shlex.split(instance_data['userdata']))
@@ -102,13 +104,33 @@ def disable_commit_verification():
     else:
         return False
 
+KEY_PATH = '/home/ubuntu/datastax_ami/repo_keys/'
+
+def get_key(arg):
+    parts = arg.split('=')
+    key_id = parts[0]
+    if len(parts) > 1:
+        key_file = parts[1]
+    else:
+        key_file = key_id
+
+    key = {
+        'id': key_id,
+        'file': KEY_PATH + key_file + '.key'
+    }
+
+    return key
+
+DEFAULT_KEYS = [
+    '7123CDFD=DataStax_AMI.7123CDFD.key'
+]
+
 def allowed_keys():
     options = parse_ec2_userdata()
 
-    default_key = {
-        'id': '7123CDFD',
-        'file': '/home/ubuntu/datastax_ami/repo_keys/DataStax_AMI.7123CDFD.key',
-        'rsa_check': 'using RSA key ID 7123CDFD\n',
-        'signature_check': 'Good signature from "Joaquin Casares (DataStax AMI) <joaquin@datastax.com>"\n'
-    }
-    return [default_key]
+    if options and options.allowedkeys and len(options.allowedkeys) > 0:
+        allowedkeys = options.allowedkeys
+    else:
+        allowedkeys = DEFAULT_KEYS
+
+    return [get_key(arg) for arg in allowedkeys]
