@@ -86,17 +86,6 @@ Options
         Examples: https://github.com/riptano/ComboAMI#2.5
                   https://github.com/riptano/ComboAMI#e5e3d41fb5f12461509aa1b6079413b381930d81
 
-    --disable-commit-verification
-        Disables commit signature verification
-        Useful when using unofficial repositories
-        Default: false
-
-    --allows-keys <key1, key2, ...keyN>
-        Specifies keys allowed to sign commits
-        Each key must be in a file under `repo_keys/`
-        If the key file is not named as <key_id>.key then you must specify the file name
-        Default: none, falls back to official repository maintainer(s)
-        Example: --allowed-keys <key_1_id> <key_2_id> <key_3_id>=<key_3_file>
 
 Ports Needed
 ============
