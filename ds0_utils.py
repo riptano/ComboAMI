@@ -92,13 +92,3 @@ def repository():
 
     return (repository, commitish)
 
-def allowed_keys():
-    options = parse_ec2_userdata()
-
-    default_key = {
-        'id': '7123CDFD',
-        'file': '/home/ubuntu/datastax_ami/repo_keys/DataStax_AMI.7123CDFD.key',
-        'rsa_check': 'using RSA key ID 7123CDFD\n',
-        'signature_check': 'Good signature from "Joaquin Casares (DataStax AMI) <joaquin@datastax.com>"\n'
-    }
-    return [default_key]

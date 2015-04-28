@@ -5,29 +5,6 @@ import ds0_utils
 import logger
 import conf
 
-# keep it super simple for now because we don't really implement --allowed-keys yet.
-def verify_latest_commit():
-    allowed_keys = ds0_utils.allowed_keys()
-
-    # ensure the latest commit is signed and verified
-    while True:
-        for key in allowed_keys:
-            logger.exe('gpg --import ' + key['file'], expectError=True)
-        output = logger.exe('git log --pretty="format:%G?" --show-signature HEAD^..HEAD')
-
-        if "Can't check signature" in output[0]:
-            logger.info('gpg keys cleared on startup. Trying again...')
-            continue
-
-        verified = False
-        for key in allowed_keys:
-            if key['rsa_check'] in output[0] and key['signature_check'] in output[0]:
-                verified = True
-        if not verified:
-            logger.error('Scripts using a non-signed commit. Please ensure commit is valid.')
-            logger.error('    If it was a missed signature, feel free to open a ticket at https://github.com/riptano/ComboAMI.')
-        break
-
 # Figure out the argument we should use with git reset.
 def get_git_reset_arg(commitish):
     if not commitish:
@@ -57,11 +34,7 @@ if not conf.get_config("AMI", "CompletedFirstBoot"):
 
     # update the repo
     logger.exe('git fetch')
-
-    # ensure any AWS removed repo keys will be put back, if removed on bake
     logger.exe('git reset --hard %s' % get_git_reset_arg(commitish))
-
-    verify_latest_commit()
 
 # Start AMI start code
 try:
