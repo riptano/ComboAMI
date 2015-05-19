@@ -439,7 +439,7 @@ def clean_installation():
                     conf.set_config('Cassandra', 'vnodes', 'False')
             elif options.release.startswith('4'):
                 install_list += ' dse-liblog4j={0} dse-libsolr={0} dse-libsqoop={0} dse-libtomcat={0} dse-libmahout={0} dse-libhadoop-native={0}'
-                if options.release[:3] in ['4.5', '4.6']:
+                if options.release[:3] in ['4.5', '4.6', '4.7']:
                     install_list += ' dse-libspark={0}'
                 logger.exe(install_list.format(options.release))
                 conf.set_config('AMI', 'package', 'dse-full')
