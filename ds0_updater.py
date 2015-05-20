@@ -1,5 +1,12 @@
 #!/usr/bin/env python
-### Script provided by DataStax.
+# Script provided by DataStax.
+
+# Updating this script requires a rebake of the ami.
+#
+# The baked version of this script is launched in order to fetch updated ami
+# startup code for subsequent phases. Python has already read the baked
+# version from disk by the time updates start, with the result that post-bake
+# updates to this file are ignored.
 
 import ds0_utils
 import logger
