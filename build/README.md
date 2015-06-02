@@ -14,7 +14,8 @@ previously used for AMI creation.
 
 # Usage
 ```shell
-packer build -var "aws_access_key=exampleid" -var "aws_secret_key=examplekey" comboami-test.json```
+packer build -var "aws_access_key=exampleid" -var "aws_secret_key=examplekey" comboami-test.json
+```
 
 # Notes
 * When updating base images, refer to this list of official Ubuntu AMI's:
