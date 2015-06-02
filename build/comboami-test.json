@@ -1,0 +1,46 @@
+{
+    "variables": {
+        "aws_account_id": "",
+        "aws_access_key": "",
+        "aws_secret_key": "",
+        "aws_s3_bucket": "",
+        "version": 2.6,
+        "comboami_root_directory": "../",
+        "description": "Provides a way to automatically launch a configurable DataStax Enterprise or DataStax Community cluster by simply starting a group of instances.",
+        "block_dev_mapping": ""
+    },
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "provision.sh"
+        }
+    ],
+    "builders": [
+        {
+            "region": "us-east-1",
+            "type": "amazon-ebs",
+            "name": "us-east-1-pv-1204",
+            "ami_name": "pv-1204-test {{timestamp}}",
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "source_ami": "ami-2aa0ba42",
+            "instance_type": "m3.medium",
+            "ssh_username": "ubuntu"
+        },
+        {
+            "region": "us-east-1",
+            "type": "amazon-ebs",
+            "name": "us-east-1-pv-1404",
+            "ami_name": "pv-1404-test {{timestamp}}",
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "source_ami": "ami-b9c525d2",
+            "instance_type": "m3.medium",
+            "ssh_username": "ubuntu"
+        }
+    ]
+}
