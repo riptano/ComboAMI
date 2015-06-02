@@ -1,3 +1,4 @@
+// Minimal packer config to test AMI builds on Ubuntu 12.04 and 14.04
 {
     "variables": {
         "aws_account_id": "",

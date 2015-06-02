@@ -9,12 +9,28 @@ previously used for AMI creation.
 
 # Prerequisites
 * Packer: https://www.packer.io/intro/getting-started/setup.html
+* json_pp: Which ships with perl and is installed by default in MacOSX and
+  most linuxes.
 * An AWS account: Note the default packer config launches instances in every
   region and saves many ami's, and will resource in AWS usage fees.
 
 # Usage
+
+## Strip JSON Comments
+The JSON files used to configure packer have a lot going on in them. In order
+to improve readability I've included comments that packer cannot process
+directly.  Use json_pp or another javascript pre-processor to strip the comments
+out:
+
 ```shell
-packer build -var "aws_access_key=exampleid" -var "aws_secret_key=examplekey" comboami-test.json
+cat comboami-test.json | json_pp > config.json
+```
+
+## Run the Packer Build
+This will:
+* Spin up several
+```shell
+packer build -var "aws_access_key=exampleid" -var "aws_secret_key=examplekey" config.json
 ```
 
 # Notes
@@ -22,6 +38,5 @@ packer build -var "aws_access_key=exampleid" -var "aws_secret_key=examplekey" co
   http://cloud-images.ubuntu.com/locator/ec2/
 
 # TODO
-* Add comment to packer json and document stripping them with a minifier.
 * Move from ebs to instance storage
 * Set block_device_mappings (I don't think we need launch_block_device_mappings)
