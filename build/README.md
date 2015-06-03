@@ -1,18 +1,21 @@
 # Introduction
-It's periodically necessary to create fresh versions of ComboAMI. This is
-necessary to support new regions, deliver features that require changes to
-the update script, or to ship up-to-date versions of operating system software.
-It can also be useful for folks that want to customize the AMI for any reason.
+It's periodically necessary to create fresh ComboAMI images. This is necessary
+to support new regions, deliver features that require changes to the update
+script, or to ship up-to-date versions of operating system software. It can also
+be useful for folks that want to customize the AMI for any reason.
 
 Packer is used to perform AMI creation, and replaces the "presetup" code
 previously used for AMI creation.
 
 # Prerequisites
-* Packer: https://www.packer.io/intro/getting-started/setup.html
-* json_pp: Which ships with perl and is installed by default in MacOSX and
-  most linuxes.
 * An AWS account: Note the default packer config launches instances in every
   region and saves many ami's, and will resource in AWS usage fees.
+* Install packer on your workstation:
+  https://www.packer.io/intro/getting-started/setup.html
+* Install json_pp on your workstation: It ships with perl and is installed
+  by default in MacOSX and most linuxes. This is used to strip comments from
+  packer's json configs, many other javascript preprocessors can serve the same
+  function.
 
 # Usage
 
