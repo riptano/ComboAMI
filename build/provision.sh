@@ -6,6 +6,10 @@ set -x
 # Exit on error so problems are obvious
 set -e
 
+# Collect system facts
+OS_VERSION=`lsb_release -sr`
+OS_CODENAME=`lsb_release -sc`
+
 # FIXME: Is the hs1.8xlarge boot issue fix in pre_1.sh still needed?
 # FIXME: Why do we need linux-2.8 for 12.04 (from pre_1.sh)
 
@@ -49,6 +53,30 @@ sudo apt-get update
 sudo apt-get install -y oracle-java7-installer oracle-java7-set-default
 sudo update-java-alternatives -s java-7-oracle
 export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+
+### Install ec2-ami-tools
+# Building instance-store backed images requires running the ec2-ami-tools
+# on the instances while it's being built, ensure they're present.
+case ${OS_VERSION} in
+    12.04)
+        # add-apt-repository only gained the ability to understand distribution
+        # components like "multiverse" in Ubuntu 12.10. The sed commands look
+        # for lines similar to these in sources.list to uncomment:
+        # deb http://us-east-1.ec2.archive.ubuntu.com/ubuntu/ precise multiverse
+        # deb-src http://us-east-1.ec2.archive.ubuntu.com/ubuntu/ precise multiverse
+        # deb http://us-east-1.ec2.archive.ubuntu.com/ubuntu/ precise-updates multiverse
+        # deb-src http://us-east-1.ec2.archive.ubuntu.com/ubuntu/ precise-updates multiverse
+        sudo sed -i "s/^# \(deb .* precise multiverse\)/\1/" /etc/apt/sources.list
+        sudo sed -i "s/^# \(deb-src .* precise multiverse\)/\1/" /etc/apt/sources.list
+        sudo sed -i "s/^# \(deb .* precise-updates multiverse\)/\1/" /etc/apt/sources.list
+        sudo sed -i "s/^# \(deb-src .* precise-updates multiverse\)/\1/" /etc/apt/sources.list
+    ;;
+    *)
+        sudo add-apt-repository multiverse
+    ;;
+esac
+sudo apt-get update
+sudo apt-get install -y ec2-ami-tools
 
 ### Configure git ###
 git config --global color.ui auto
