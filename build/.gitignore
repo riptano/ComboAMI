@@ -1,0 +1,5 @@
+# Ignore minified json files
+min-*.json
+
+# Ignore the local.json file, it has secrets that shouldn't be checked in
+local.json

@@ -1,0 +1,7 @@
+{
+    "aws_account_id": "123456789012",
+    "aws_access_key": "ABCDEFG123456EXAMPLE",
+    "aws_secret_key": "ABCDEFGHIJKLNMOPQRSTUVWXYZ1234567EXAMPLE",
+    "aws_signing_cert": "./signing-cert.pem",
+    "aws_signing_key": "./signing-key.pem"
+}

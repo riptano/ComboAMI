@@ -15,42 +15,29 @@ previously used for AMI creation.
   packer's json configs, many other javascript preprocessors can serve the same
   function.
 * An AWS account: Packer will launch instances, provision them, and register
-  images in this AMI account. This will result in AWS usage fees.
-** Official images are published via the AWS account id 056342137115.
-** Inspect the packer json configs before you execute them. The configs used to
-   publish the official images launch instances in every region and save many
-   AMI's.
-** You'll need an access key id and secret access key:
-   http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html
+  images in this AMI account.
+* Copy local-default.json to local.json and customize its contents.
 ** You'll need to know your AWS account id:
    http://docs.aws.amazon.com/IAM/latest/UserGuide/AccountAlias.html
+   Official images are published via the AWS account id 056342137115.
+** You'll need an access key id and secret access key:
+   http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html
 ** You'll need an X.509 certificate to sign the AMI (if you're on the core-team
    you may lack AWS permissions to manage your own certificates, talk to another
    core-team member about getting a signing cert):
    http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ec2-cli-managing-certs.html
 
-
 # Usage
 
-## Strip JSON Comments
-The JSON files used to configure packer have a lot going on in them. In order
-to improve readability I've included comments that packer cannot process
-directly.  Use json_pp or another javascript pre-processor to strip the comments
-out:
+WARNING: Inspect and understand the packer json configs before you execute them.
+The configs used to publish the official images launch instances in every region
+and save many AMI's. You WILL incur AWS usage fees.
 
-```shell
-cat comboami-test.json | json_pp > config.json
-```
-
-## Run the Packer Build
-This will:
-* Spin up several
-```shell
-packer build -var "aws_access_key=exampleid" -var "aws_secret_key=examplekey" config.json
-```
+./gopackgo.sh comboami-test.json
 
 # Notes
-* When updating base images, refer to this list of official Ubuntu AMI's:
+* When updating base images, refer to this list of official Ubuntu AMI's to find
+  the latest upstream AMI's:
   http://cloud-images.ubuntu.com/locator/ec2/
 * Creating images backed by instance-stores is more complicated than creating
   ebs-backed images. See the AWS docs for details:
