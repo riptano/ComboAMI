@@ -26,7 +26,7 @@
             "access_key": "{{user `aws_access_key`}}",
             "secret_key": "{{user `aws_secret_key`}}",
 
-            "ami_name": "pv-1204-ebs test {{timestamp}}",
+            "ami_name": "ComboAMI-{{user `version`}} 12.04 pv-ebs {{timestamp}}",
             "region": "us-east-1",
             "source_ami": "ami-2aa0ba42",
             "instance_type": "m3.medium",
@@ -36,17 +36,46 @@
 
         },
         {
+            "name": "us-east-1-hvm-1204", // name of the packer-builder
+            "type": "amazon-ebs",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+
+            "ami_name": "ComboAMI-{{user `version`}} 12.04 hvm-ebs {{timestamp}}",
+            "region": "us-east-1",
+            "source_ami": "ami-3ea0ba56",
+            "instance_type": "m3.medium",
+            "ssh_username": "ubuntu",
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false
+
+        },
+        {
             "name": "us-east-1-pv-1404", // name of the packer-builder
             "type": "amazon-ebs",
             "access_key": "{{user `aws_access_key`}}",
             "secret_key": "{{user `aws_secret_key`}}",
 
-            "ami_name": "pv-1404-ebs test {{timestamp}}",
+            "ami_name": "ComboAMI-{{user `version`}} 14.04 pv-ebs {{timestamp}}",
             "region": "us-east-1",
             "source_ami": "ami-73709f18",
             "instance_type": "m3.medium",
             "ssh_username": "ubuntu",
             "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false
+        },
+        {
+            "name": "us-east-1-hvm-1404", // name of the packer-builder
+            "type": "amazon-ebs",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+
+            "ami_name": "ComboAMI-{{user `version`}} 12.04 hvm-ebs {{timestamp}}",
+            "region": "us-east-1",
+            "source_ami": "ami-45709f2e",
+            "instance_type": "m3.medium",
+            "ssh_username": "ubuntu",
+            "ami_virtualization_type": "hvm",
             "enhanced_networking": false
         }
     ]
