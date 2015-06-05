@@ -11,7 +11,6 @@ OS_VERSION=`lsb_release -sr`
 OS_CODENAME=`lsb_release -sc`
 
 # FIXME: Is the hs1.8xlarge boot issue fix in pre_1.sh still needed?
-# FIXME: Why do we need linux-2.8 for 12.04 (from pre_1.sh)
 
 ### Install Software ###
 # cloud-init updates /etc/apt/sources.list at startup, and the update tends to
