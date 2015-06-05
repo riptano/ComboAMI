@@ -86,6 +86,8 @@ git config --global color.status auto
 ### Clone ComboAMI ###
 git clone https://github.com/riptano/ComboAMI.git datastax_ami
 cd datastax_ami
+# The COMBOAMI_VERSION environment variable is set by packer
+# and configured in the provisioner config
 git checkout ${COMBOAMI_VERSION}
 
 ### Bash Profile ###

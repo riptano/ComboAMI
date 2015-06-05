@@ -20,7 +20,8 @@
     "provisioners": [
         {
             "type": "shell",
-            "script": "provision.sh"
+            "script": "provision.sh",
+            "environment_vars": [ "COMBOAMI_VERSION={{ user `version`}}" ]
         }
     ],
     "builders": [
