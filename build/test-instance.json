@@ -1,4 +1,11 @@
 // Minimal packer config to test AMI builds on Ubuntu 12.04 and 14.04
+// In order to get the best performance, our official AMI's are instance-store
+// backed. This tests the process of building instance-store AMI's on a couple
+// of images in us-east-1.
+//
+// Note that instance-store AMI's are slower to build than ebs, if you're
+// iterating on some new functionality that isn't instance-store specific,
+// you might want to test using ebs instances first.
 {
     "variables": {
         "aws_account_id": "",   // Defined in local.json

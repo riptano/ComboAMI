@@ -1,0 +1,53 @@
+// Minimal packer config to test AMI builds on Ubuntu 12.04 and 14.04
+// EBS builds are much faster to execute than instance builds, and also
+// have fewer moving parts. If you're trying to test lots of things quickly,
+// iterating with ebs builds is quicker.
+{
+    "variables": {
+        "aws_access_key": "",   // Defined in local.json
+        "aws_secret_key": "",   // Defined in local.json
+        "aws_account_id": "",   // Not used for ebs-builds, but we set...
+        "aws_signing_cert": "", // these in local.json for instance-store...
+        "aws_signing_key": "",  // builds so packer errors without them
+        "version": "dev-2.6",
+        "description": "Launch a DataStax Enterprise or DataStax Community cluster: https://github.com/riptano/ComboAMI"
+    },
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "provision.sh",
+            "environment_vars": [ "COMBOAMI_VERSION={{ user `version`}}" ]
+        }
+    ],
+    "builders": [
+        {
+            "name": "us-east-1-pv-1204", // name of the packer-builder
+            "type": "amazon-ebs",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+
+            "ami_name": "pv-1204-ebs test {{timestamp}}",
+            "region": "us-east-1",
+            "source_ami": "ami-2aa0ba42",
+            "instance_type": "m3.medium",
+            "ssh_username": "ubuntu",
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false
+
+        },
+        {
+            "name": "us-east-1-pv-1404", // name of the packer-builder
+            "type": "amazon-ebs",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+
+            "ami_name": "pv-1404-ebs test {{timestamp}}",
+            "region": "us-east-1",
+            "source_ami": "ami-73709f18",
+            "instance_type": "m3.medium",
+            "ssh_username": "ubuntu",
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false
+        }
+    ]
+}
