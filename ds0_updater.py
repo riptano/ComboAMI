@@ -40,7 +40,7 @@ if not conf.get_config("AMI", "CompletedFirstBoot"):
         logger.exe('git remote add origin %s' % repository)
 
     # update the repo
-    logger.exe('git fetch')
+    logger.exe('git fetch', expectError=True) # git fetch outputs to stderr
     logger.exe('git reset --hard %s' % get_git_reset_arg(commitish))
 
 # Start AMI start code
