@@ -1,0 +1,971 @@
+// The packer config to build the official comboami images. This will launch
+// multiple instances in every aws region and save many publiclly accessible
+// ami's. Run this only when you intend to publish the full suite of official
+// ComboAMI images.
+{
+    "variables": {
+        // Frequently Modified Settings
+        "comboami_version": "dev-2.6", // Updated with every new image-release
+
+        // AWS API Authentication
+        "aws_access_key": "",   // Defined in local.json
+        "aws_secret_key": "",   // Defined in local.json
+
+        // Instance-Store Ami Settings
+        "aws_account_id": "",   // Defined in local.json
+        "aws_signing_cert": "", // Defined in local.json
+        "aws_signing_key": "",  // Defined in local.json
+        "aws_s3_bucket": "comboami-dev",
+
+        // General Settings
+        // Use variables for all builder-settings that aren't unique per-builder
+        // We have lots of builders to keep track of, and it's much easier to
+        // find the fields which are expected to change regularly if the static
+        // stuff is coming from a variable.
+        "ami_basename": "DataStax Auto-Clustering AMI",
+        "ami_basedesc": "Launch a DataStax Enterprise or DataStax Community cluster (https://github.com/riptano/ComboAMI).",
+        "launch_size": "m3.medium",
+        "ssh_user": "ubuntu",
+        // A custom bundle_vol_command is required for 12.04 because
+        // the version of ec2-ami-tools available doesn't support the
+        // --no-filter flag. It's not needed as it just prevents AWS
+        // from filtering out sensitive file-types like ssh keys and
+        // we don't need to include any of those in our AMI.
+        // Can be safely applied to 14.04 ami's as well, though not necessary
+        "bundle_vol_cmd": "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch",
+        // A custom bundle_upload_command is required because the versions
+        // of the ec2-ami-tools available for Ubuntu 12.04 and 14.04 don't
+        // support the --region flag. It's not needed though since we're
+        // always uploading from the region we're trying to publish to.
+        "bundle_upload_cmd": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry"
+    },
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "provision.sh",
+            "environment_vars": [ "COMBOAMI_VERSION={{ user `comboami_version`}}" ]
+        }
+    ],
+    "builders": [
+
+        /******************
+         * ap-northeast-1 *
+         *******************/
+        {
+            "source_ami": "ami-f0f82ff0",
+            "name":       "ap-northeast-1-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "ap-northeast-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-62b86462",
+            "name":       "ap-northeast-1-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "ap-northeast-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-b8e334b8",
+            "name":       "ap-northeast-1-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "ap-northeast-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-eeb66aee",
+            "name":       "ap-northeast-1-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "ap-northeast-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /******************
+         * ap-southeast-1 *
+         *******************/
+        {
+            "source_ami": "ami-7091a822",
+            "name":       "ap-southeast-1-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "ap-southeast-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-a89ba0fa",
+            "name":       "ap-southeast-1-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "ap-southeast-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-c690a994",
+            "name":       "ap-southeast-1-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "ap-southeast-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-9c99a2ce",
+            "name":       "ap-southeast-1-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "ap-southeast-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /******************
+         * ap-southeast-2 *
+         *******************/
+        {
+            "source_ami": "ami-110e772b",
+            "name":       "ap-southeast-2-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "ap-southeast-2",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-c19be3fb",
+            "name":       "ap-southeast-2-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "ap-southeast-2",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-a3017899",
+            "name":       "ap-southeast-2-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "ap-southeast-2",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-259ae21f",
+            "name":       "ap-southeast-2-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "ap-southeast-2",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /**************
+         * cn-north-1 *
+         **************/
+        {
+            "source_ami": "ami-32ef720b",
+            "name":       "cn-north-1-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "cn-north-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-08930e31",
+            "name":       "cn-north-1-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "cn-north-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-14ef722d",
+            "name":       "cn-north-1-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "cn-north-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-7a930e43",
+            "name":       "cn-north-1-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "cn-north-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /***************
+         * eu-central-1 *
+         ***************/
+        {
+            "source_ami": "ami-78b38d65",
+            "name":       "eu-central-1-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "eu-central-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-a4e1d8b9",
+            "name":       "eu-central-1-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "eu-central-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-5cb08e41",
+            "name":       "eu-central-1-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "eu-central-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-b6eed7ab",
+            "name":       "eu-central-1-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "eu-central-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /*************
+         * eu-west-1 *
+         *************/
+        {
+            "source_ami": "ami-7beb9d0c",
+            "name":       "eu-west-1-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "eu-west-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-47e09d30",
+            "name":       "eu-west-1-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "eu-west-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-73d6a004",
+            "name":       "eu-west-1-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "eu-west-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-9bdda0ec",
+            "name":       "eu-west-1-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "eu-west-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /*************
+         * sa-east-1 *
+         *************/
+        {
+            "source_ami": "ami-2bc24336",
+            "name":       "sa-east-1-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "sa-east-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-c99414d4",
+            "name":       "sa-east-1-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "sa-east-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-67c5447a",
+            "name":       "sa-east-1-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "sa-east-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-e99717f4",
+            "name":       "sa-east-1-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "sa-east-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /*************
+         * us-east-1 *
+         *************/
+        {
+            "source_ami": "ami-2aa0ba42",
+            "name":       "us-east-1-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "us-east-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-c51df2ae",
+            "name":       "us-east-1-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "us-east-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-0aa8b262",
+            "name":       "us-east-1-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "us-east-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-eb6b8480",
+            "name":       "us-east-1-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "us-east-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /*************
+         * us-west-1 *
+         *************/
+        {
+            "source_ami": "ami-7d997139",
+            "name":       "us-west-1-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "us-west-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-1559b251",
+            "name":       "us-west-1-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "us-west-1",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-c99b738d",
+            "name":       "us-west-1-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "us-west-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-6f5fb42b",
+            "name":       "us-west-1-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "us-west-1",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+
+        /*************
+         * us-west-2 *
+         *************/
+        {
+            "source_ami": "ami-c36b57f3",
+            "name":       "us-west-2-pv-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-pv",
+            "region":     "us-west-2",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-636a5353",
+            "name":       "us-west-2-pv-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-pv",
+            "region":     "us-west-2",
+
+            "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-5f615d6f",
+            "name":       "us-west-2-hvm-1204", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1204-hvm",
+            "region":     "us-west-2",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        },
+        {
+            "source_ami": "ami-916e57a1",
+            "name":       "us-west-2-hvm-1404", // name of the packer-builder
+            "ami_name":   "{{user `ami_basename`}} {{user `comboami_version`}}-1404-hvm",
+            "region":     "us-west-2",
+
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false,
+
+            "type":                  "amazon-instance",
+            "access_key":            "{{user `aws_access_key`}}",
+            "secret_key":            "{{user `aws_secret_key`}}",
+            "account_id":            "{{user `aws_account_id`}}",
+            "s3_bucket":             "{{user `aws_s3_bucket`}}",
+            "x509_cert_path":        "{{user `aws_signing_cert`}}",
+            "x509_key_path":         "{{user `aws_signing_key`}}",
+            "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
+            "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
+            "ami_description":       "{{user `ami_basedesc`}}",
+            "instance_type":         "{{user `launch_size`}}",
+            "ssh_username":          "{{user `ssh_user`}}"
+        }
+    ]
+}
