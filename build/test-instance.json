@@ -13,7 +13,6 @@
         "aws_secret_key": "",   // Defined in local.json
         "aws_signing_cert": "", // Defined in local.json
         "aws_signing_key": "",  // Defined in local.json
-        "aws_s3_bucket": "comboami-dev",
         "version": "dev-2.6",
         "description": "Launch a DataStax Enterprise or DataStax Community cluster: https://github.com/riptano/ComboAMI"
     },
@@ -31,7 +30,7 @@
             "access_key": "{{user `aws_access_key`}}",
             "secret_key": "{{user `aws_secret_key`}}",
             "account_id": "{{user `aws_account_id`}}",
-            "s3_bucket": "{{user `aws_s3_bucket`}}",
+            "s3_bucket": "us-east-1-pv-1204-{{timestamp}}",
             "x509_cert_path": "{{user `aws_signing_cert`}}",
             "x509_key_path": "{{user `aws_signing_key`}}",
             // A custom bundle_vol_command is required for 12.04 because
@@ -61,7 +60,7 @@
             "access_key": "{{user `aws_access_key`}}",
             "secret_key": "{{user `aws_secret_key`}}",
             "account_id": "{{user `aws_account_id`}}",
-            "s3_bucket": "{{user `aws_s3_bucket`}}",
+            "s3_bucket": "us-east-1-pv-1404-{{timestamp}}",
             "x509_cert_path": "{{user `aws_signing_cert`}}",
             "x509_key_path": "{{user `aws_signing_key`}}",
             "bundle_upload_command": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
