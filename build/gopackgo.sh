@@ -9,7 +9,7 @@ if [ -z ${1} ]; then
     exit 1
 fi
 
-if [${1} -eq "publish-official-images"]; then
+if [ ${1} = "publish-official-images" ]; then
     PACKER_CONF=official-image-config.json
     ./official-image-config.py > official-image-config.json
 else
