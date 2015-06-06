@@ -124,6 +124,7 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         # This is the name for the packer builder, which must be unique
         # within the list of potentially concurrently running builders
         "name": "%s-%s-%s" % (region, os_version, SHORT_VIRT_TYPE),
+        "ami_description": AMI_BASE_DESC,
         "region": region,
         "source_ami": upstream_ami,
         "ami_virtualization_type": virt_type,
@@ -140,7 +141,6 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         "x509_key_path":         "{{user `aws_signing_key`}}",
         "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
         "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
-        "ami_description":       "{{user `ami_basedesc`}}",
         "instance_type":         "{{user `launch_size`}}",
         "ssh_username":          "{{user `ssh_user`}}"
     }
