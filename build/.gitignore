@@ -3,3 +3,6 @@ min-*.json
 
 # Ignore the local.json file, it has secrets that shouldn't be checked in
 local.json
+
+# official-image-config.py builds this as an artifact
+official-image-config.json
