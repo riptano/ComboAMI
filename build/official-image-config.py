@@ -13,7 +13,7 @@ import json
 # It's core is the builder_builder() function which accepts a concise list of
 # params that are tailored to our use-case and outputs a full builder config.
 
-COMBOAMI_VERSION = "dev-2.6"
+COMBOAMI_VERSION = "2.6-beta1"
 AMI_LIST = [
     ### ap-northeast-1 ###
     {"region": "ap-northeast-1", "os_version": "12.04", "upstream_ami": "ami-f0f82ff0", "virt_type": "pv"},
@@ -98,11 +98,13 @@ packer_variables = {
                           "--batch --retry")
     }
 
-packer_provisioners = {
-    "type": "shell",
-    "script": "provision.sh",
-    "environment_vars": ["COMBOAMI_VERSION={{ user `comboami_version`}}"]
-}
+packer_provisioners = [
+    {
+        "type": "shell",
+        "script": "provision.sh",
+        "environment_vars": ["COMBOAMI_VERSION=%s" % COMBOAMI_VERSION]
+    }
+]
 
 
 def builder_builder(region, os_version, upstream_ami, virt_type):
