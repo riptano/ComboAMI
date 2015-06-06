@@ -47,12 +47,32 @@
 
             "ami_name": "pv-1204-test {{timestamp}}",
             "region": "us-east-1",
-            "source_ami": "ami-2aa0ba42",
+            "source_ami": "ami-5ebaa036",
             "instance_type": "m3.medium",
             "ssh_username": "ubuntu",
             "ami_virtualization_type": "paravirtual",
             "enhanced_networking": false
 
+        },
+        {
+            "name": "us-east-1-hvm-1204", // name of the packer-builder
+            "type": "amazon-instance",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "account_id": "{{user `aws_account_id`}}",
+            "s3_bucket": "us-east-1-hvm-1204-{{timestamp}}",
+            "x509_cert_path": "{{user `aws_signing_cert`}}",
+            "x509_key_path": "{{user `aws_signing_key`}}",
+            "bundle_vol_command": "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch",
+            "bundle_upload_command": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+
+            "ami_name": "hvm-1204-test {{timestamp}}",
+            "region": "us-east-1",
+            "source_ami": "ami-0aa8b262",
+            "instance_type": "m3.medium",
+            "ssh_username": "ubuntu",
+            "ami_virtualization_type": "hvm",
+            "enhanced_networking": false
         },
         {
             "name": "us-east-1-pv-1404", // name of the packer-builder
@@ -63,14 +83,34 @@
             "s3_bucket": "us-east-1-pv-1404-{{timestamp}}",
             "x509_cert_path": "{{user `aws_signing_cert`}}",
             "x509_key_path": "{{user `aws_signing_key`}}",
+"bundle_vol_command": "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch",
             "bundle_upload_command": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
 
             "ami_name": "pv-1404-test {{timestamp}}",
             "region": "us-east-1",
-            "source_ami": "ami-b9c525d2",
+            "source_ami": "ami-c51df2ae",
             "instance_type": "m3.medium",
             "ssh_username": "ubuntu",
             "ami_virtualization_type": "paravirtual",
+            "enhanced_networking": false
+        },
+        {
+            "name": "us-east-1-hvm-1404", // name of the packer-builder
+            "type": "amazon-instance",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "account_id": "{{user `aws_account_id`}}",
+            "s3_bucket": "us-east-1-hvm-1404-{{timestamp}}",
+            "x509_cert_path": "{{user `aws_signing_cert`}}",
+            "x509_key_path": "{{user `aws_signing_key`}}",
+            "bundle_upload_command": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+
+            "ami_name": "hvm-1404-test {{timestamp}}",
+            "region": "us-east-1",
+            "source_ami": "ami-eb6b8480",
+            "instance_type": "m3.medium",
+            "ssh_username": "ubuntu",
+            "ami_virtualization_type": "hvm",
             "enhanced_networking": false
         }
     ]
