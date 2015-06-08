@@ -15,58 +15,63 @@ import json
 
 COMBOAMI_VERSION = "2.6-beta1"
 AMI_LIST = [
+    # Don't use periods in the os_version. One of the places it's used is in
+    # constructing s3 bucket names, which are then references via https,
+    # and extra dots invalidate the hostname/certificate-validation scheme
+    # used by S3.
+
     ### ap-northeast-1 ###
-    {"region": "ap-northeast-1", "os_version": "12.04", "upstream_ami": "ami-f0f82ff0", "virt_type": "pv"},
-    {"region": "ap-northeast-1", "os_version": "12.04", "upstream_ami": "ami-b8e334b8", "virt_type": "hvm"},
-    {"region": "ap-northeast-1", "os_version": "14.04", "upstream_ami": "ami-62b86462", "virt_type": "pv"},
-    {"region": "ap-northeast-1", "os_version": "14.04", "upstream_ami": "ami-eeb66aee", "virt_type": "hvm"},
+    {"region": "ap-northeast-1", "os_version": "12_04", "upstream_ami": "ami-f0f82ff0", "virt_type": "pv"},
+    {"region": "ap-northeast-1", "os_version": "12_04", "upstream_ami": "ami-b8e334b8", "virt_type": "hvm"},
+    {"region": "ap-northeast-1", "os_version": "14_04", "upstream_ami": "ami-62b86462", "virt_type": "pv"},
+    {"region": "ap-northeast-1", "os_version": "14_04", "upstream_ami": "ami-eeb66aee", "virt_type": "hvm"},
     ### ap-southeast-1 ###
-    {"region": "ap-southeast-1", "os_version": "12.04", "upstream_ami": "ami-7091a822", "virt_type": "pv"},
-    {"region": "ap-southeast-1", "os_version": "12.04", "upstream_ami": "ami-c690a994", "virt_type": "hvm"},
-    {"region": "ap-southeast-1", "os_version": "14.04", "upstream_ami": "ami-a89ba0fa", "virt_type": "pv"},
-    {"region": "ap-southeast-1", "os_version": "14.04", "upstream_ami": "ami-9c99a2ce", "virt_type": "hvm"},
+    {"region": "ap-southeast-1", "os_version": "12_04", "upstream_ami": "ami-7091a822", "virt_type": "pv"},
+    {"region": "ap-southeast-1", "os_version": "12_04", "upstream_ami": "ami-c690a994", "virt_type": "hvm"},
+    {"region": "ap-southeast-1", "os_version": "14_04", "upstream_ami": "ami-a89ba0fa", "virt_type": "pv"},
+    {"region": "ap-southeast-1", "os_version": "14_04", "upstream_ami": "ami-9c99a2ce", "virt_type": "hvm"},
     ### ap-southeast-2 ###
-    {"region": "ap-southeast-2", "os_version": "12.04", "upstream_ami": "ami-110e772b", "virt_type": "pv"},
-    {"region": "ap-southeast-2", "os_version": "12.04", "upstream_ami": "ami-a3017899", "virt_type": "hvm"},
-    {"region": "ap-southeast-2", "os_version": "14.04", "upstream_ami": "ami-c19be3fb", "virt_type": "pv"},
-    {"region": "ap-southeast-2", "os_version": "14.04", "upstream_ami": "ami-259ae21f", "virt_type": "hvm"},
+    {"region": "ap-southeast-2", "os_version": "12_04", "upstream_ami": "ami-110e772b", "virt_type": "pv"},
+    {"region": "ap-southeast-2", "os_version": "12_04", "upstream_ami": "ami-a3017899", "virt_type": "hvm"},
+    {"region": "ap-southeast-2", "os_version": "14_04", "upstream_ami": "ami-c19be3fb", "virt_type": "pv"},
+    {"region": "ap-southeast-2", "os_version": "14_04", "upstream_ami": "ami-259ae21f", "virt_type": "hvm"},
     # Packer 0.7.5 doesn't support cn-nort-1 or eu-central-1.
     # See for details: https://github.com/riptano/ComboAMI/issues/62
     ### cn-north-1 ###
-    # {"region": "cn-north-1", "os_version": "12.04", "upstream_ami": "ami-32ef720b", "virt_type": "pv"},
-    # {"region": "cn-north-1", "os_version": "12.04", "upstream_ami": "ami-14ef722d", "virt_type": "hvm"},
-    # {"region": "cn-north-1", "os_version": "14.04", "upstream_ami": "ami-08930e31", "virt_type": "pv"},
-    # {"region": "cn-north-1", "os_version": "14.04", "upstream_ami": "ami-7a930e43", "virt_type": "hvm"},
+    # {"region": "cn-north-1", "os_version": "12_04", "upstream_ami": "ami-32ef720b", "virt_type": "pv"},
+    # {"region": "cn-north-1", "os_version": "12_04", "upstream_ami": "ami-14ef722d", "virt_type": "hvm"},
+    # {"region": "cn-north-1", "os_version": "14_04", "upstream_ami": "ami-08930e31", "virt_type": "pv"},
+    # {"region": "cn-north-1", "os_version": "14_04", "upstream_ami": "ami-7a930e43", "virt_type": "hvm"},
     ### eu-central-1 ###
-    # {"region": "eu-central-1", "os_version": "12.04", "upstream_ami": "ami-78b38d65", "virt_type": "pv"},
-    # {"region": "eu-central-1", "os_version": "12.04", "upstream_ami": "ami-5cb08e41", "virt_type": "hvm"},
-    # {"region": "eu-central-1", "os_version": "14.04", "upstream_ami": "ami-a4e1d8b9", "virt_type": "pv"},
-    # {"region": "eu-central-1", "os_version": "14.04", "upstream_ami": "ami-b6eed7ab", "virt_type": "hvm"},
+    # {"region": "eu-central-1", "os_version": "12_04", "upstream_ami": "ami-78b38d65", "virt_type": "pv"},
+    # {"region": "eu-central-1", "os_version": "12_04", "upstream_ami": "ami-5cb08e41", "virt_type": "hvm"},
+    # {"region": "eu-central-1", "os_version": "14_04", "upstream_ami": "ami-a4e1d8b9", "virt_type": "pv"},
+    # {"region": "eu-central-1", "os_version": "14_04", "upstream_ami": "ami-b6eed7ab", "virt_type": "hvm"},
     ### eu-west-1 ###
-    {"region": "eu-west-1", "os_version": "12.04", "upstream_ami": "ami-7beb9d0c", "virt_type": "pv"},
-    {"region": "eu-west-1", "os_version": "12.04", "upstream_ami": "ami-73d6a004", "virt_type": "hvm"},
-    {"region": "eu-west-1", "os_version": "14.04", "upstream_ami": "ami-47e09d30", "virt_type": "pv"},
-    {"region": "eu-west-1", "os_version": "14.04", "upstream_ami": "ami-9bdda0ec", "virt_type": "hvm"},
+    {"region": "eu-west-1", "os_version": "12_04", "upstream_ami": "ami-7beb9d0c", "virt_type": "pv"},
+    {"region": "eu-west-1", "os_version": "12_04", "upstream_ami": "ami-73d6a004", "virt_type": "hvm"},
+    {"region": "eu-west-1", "os_version": "14_04", "upstream_ami": "ami-47e09d30", "virt_type": "pv"},
+    {"region": "eu-west-1", "os_version": "14_04", "upstream_ami": "ami-9bdda0ec", "virt_type": "hvm"},
     ### sa-east-1 ###
-    {"region": "sa-east-1", "os_version": "12.04", "upstream_ami": "ami-2bc24336", "virt_type": "pv"},
-    {"region": "sa-east-1", "os_version": "12.04", "upstream_ami": "ami-67c5447a", "virt_type": "hvm"},
-    {"region": "sa-east-1", "os_version": "14.04", "upstream_ami": "ami-c99414d4", "virt_type": "pv"},
-    {"region": "sa-east-1", "os_version": "14.04", "upstream_ami": "ami-e99717f4", "virt_type": "hvm"},
+    {"region": "sa-east-1", "os_version": "12_04", "upstream_ami": "ami-2bc24336", "virt_type": "pv"},
+    {"region": "sa-east-1", "os_version": "12_04", "upstream_ami": "ami-67c5447a", "virt_type": "hvm"},
+    {"region": "sa-east-1", "os_version": "14_04", "upstream_ami": "ami-c99414d4", "virt_type": "pv"},
+    {"region": "sa-east-1", "os_version": "14_04", "upstream_ami": "ami-e99717f4", "virt_type": "hvm"},
     ### us-east-1 ###
-    {"region": "us-east-1", "os_version": "12.04", "upstream_ami": "ami-2aa0ba42", "virt_type": "pv"},
-    {"region": "us-east-1", "os_version": "12.04", "upstream_ami": "ami-0aa8b262", "virt_type": "hvm"},
-    {"region": "us-east-1", "os_version": "14.04", "upstream_ami": "ami-c51df2ae", "virt_type": "pv"},
-    {"region": "us-east-1", "os_version": "14.04", "upstream_ami": "ami-eb6b8480", "virt_type": "hvm"},
+    {"region": "us-east-1", "os_version": "12_04", "upstream_ami": "ami-2aa0ba42", "virt_type": "pv"},
+    {"region": "us-east-1", "os_version": "12_04", "upstream_ami": "ami-0aa8b262", "virt_type": "hvm"},
+    {"region": "us-east-1", "os_version": "14_04", "upstream_ami": "ami-c51df2ae", "virt_type": "pv"},
+    {"region": "us-east-1", "os_version": "14_04", "upstream_ami": "ami-eb6b8480", "virt_type": "hvm"},
     ### us-west-1 ###
-    {"region": "us-west-1", "os_version": "12.04", "upstream_ami": "ami-7d997139", "virt_type": "pv"},
-    {"region": "us-west-1", "os_version": "12.04", "upstream_ami": "ami-c99b738d", "virt_type": "hvm"},
-    {"region": "us-west-1", "os_version": "14.04", "upstream_ami": "ami-1559b251", "virt_type": "pv"},
-    {"region": "us-west-1", "os_version": "14.04", "upstream_ami": "ami-6f5fb42b", "virt_type": "hvm"},
+    {"region": "us-west-1", "os_version": "12_04", "upstream_ami": "ami-7d997139", "virt_type": "pv"},
+    {"region": "us-west-1", "os_version": "12_04", "upstream_ami": "ami-c99b738d", "virt_type": "hvm"},
+    {"region": "us-west-1", "os_version": "14_04", "upstream_ami": "ami-1559b251", "virt_type": "pv"},
+    {"region": "us-west-1", "os_version": "14_04", "upstream_ami": "ami-6f5fb42b", "virt_type": "hvm"},
     ### us-west-2 ###
-    {"region": "us-west-2", "os_version": "12.04", "upstream_ami": "ami-c36b57f3", "virt_type": "pv"},
-    {"region": "us-west-2", "os_version": "12.04", "upstream_ami": "ami-5f615d6f", "virt_type": "hvm"},
-    {"region": "us-west-2", "os_version": "14.04", "upstream_ami": "ami-636a5353", "virt_type": "pv"},
-    {"region": "us-west-2", "os_version": "14.04", "upstream_ami": "ami-916e57a1", "virt_type": "hvm"}
+    {"region": "us-west-2", "os_version": "12_04", "upstream_ami": "ami-c36b57f3", "virt_type": "pv"},
+    {"region": "us-west-2", "os_version": "12_04", "upstream_ami": "ami-5f615d6f", "virt_type": "hvm"},
+    {"region": "us-west-2", "os_version": "14_04", "upstream_ami": "ami-636a5353", "virt_type": "pv"},
+    {"region": "us-west-2", "os_version": "14_04", "upstream_ami": "ami-916e57a1", "virt_type": "hvm"}
 ]
 
 packer_variables = {
