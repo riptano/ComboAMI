@@ -30,16 +30,18 @@ AMI_LIST = [
     {"region": "ap-southeast-2", "os_version": "12.04", "upstream_ami": "ami-a3017899", "virt_type": "hvm"},
     {"region": "ap-southeast-2", "os_version": "14.04", "upstream_ami": "ami-c19be3fb", "virt_type": "pv"},
     {"region": "ap-southeast-2", "os_version": "14.04", "upstream_ami": "ami-259ae21f", "virt_type": "hvm"},
+    # Packer 0.7.5 doesn't support cn-nort-1 or eu-central-1.
+    # See for details: https://github.com/riptano/ComboAMI/issues/62
     ### cn-north-1 ###
-    {"region": "cn-north-1", "os_version": "12.04", "upstream_ami": "ami-32ef720b", "virt_type": "pv"},
-    {"region": "cn-north-1", "os_version": "12.04", "upstream_ami": "ami-14ef722d", "virt_type": "hvm"},
-    {"region": "cn-north-1", "os_version": "14.04", "upstream_ami": "ami-08930e31", "virt_type": "pv"},
-    {"region": "cn-north-1", "os_version": "14.04", "upstream_ami": "ami-7a930e43", "virt_type": "hvm"},
+    # {"region": "cn-north-1", "os_version": "12.04", "upstream_ami": "ami-32ef720b", "virt_type": "pv"},
+    # {"region": "cn-north-1", "os_version": "12.04", "upstream_ami": "ami-14ef722d", "virt_type": "hvm"},
+    # {"region": "cn-north-1", "os_version": "14.04", "upstream_ami": "ami-08930e31", "virt_type": "pv"},
+    # {"region": "cn-north-1", "os_version": "14.04", "upstream_ami": "ami-7a930e43", "virt_type": "hvm"},
     ### eu-central-1 ###
-    {"region": "eu-central-1", "os_version": "12.04", "upstream_ami": "ami-78b38d65", "virt_type": "pv"},
-    {"region": "eu-central-1", "os_version": "12.04", "upstream_ami": "ami-5cb08e41", "virt_type": "hvm"},
-    {"region": "eu-central-1", "os_version": "14.04", "upstream_ami": "ami-a4e1d8b9", "virt_type": "pv"},
-    {"region": "eu-central-1", "os_version": "14.04", "upstream_ami": "ami-b6eed7ab", "virt_type": "hvm"},
+    # {"region": "eu-central-1", "os_version": "12.04", "upstream_ami": "ami-78b38d65", "virt_type": "pv"},
+    # {"region": "eu-central-1", "os_version": "12.04", "upstream_ami": "ami-5cb08e41", "virt_type": "hvm"},
+    # {"region": "eu-central-1", "os_version": "14.04", "upstream_ami": "ami-a4e1d8b9", "virt_type": "pv"},
+    # {"region": "eu-central-1", "os_version": "14.04", "upstream_ami": "ami-b6eed7ab", "virt_type": "hvm"},
     ### eu-west-1 ###
     {"region": "eu-west-1", "os_version": "12.04", "upstream_ami": "ami-7beb9d0c", "virt_type": "pv"},
     {"region": "eu-west-1", "os_version": "12.04", "upstream_ami": "ami-73d6a004", "virt_type": "hvm"},
