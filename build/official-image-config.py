@@ -77,25 +77,7 @@ packer_variables = {
     "aws_signing_key": "",
 
     "launch_size": "m3.medium",
-    "ssh_user": "ubuntu",
-    # A custom bundle_vol_command is required for 12.04 because the
-    # version of ec2-ami-tools available doesn't support the
-    # --no-filter flag. It's not needed as it just prevents AWS from
-    # filtering out sensitive file-types like ssh keys and we don't
-    # need to include any of those in our AMI.  Can be safely applied
-    # to 14.04 ami's as well, though not necessary
-    "bundle_vol_cmd": ("sudo -n ec2-bundle-vol -k {{.KeyPath}} "
-                       "-u {{.AccountId}} -c {{.CertPath}} "
-                       "-r {{.Architecture}} -e {{.PrivatePath}}/* "
-                       "-d {{.Destination}} -p {{.Prefix}} --batch"),
-    # A custom bundle_upload_command is required because the versions
-    # of the ec2-ami-tools available for Ubuntu 12.04 and 14.04 don't
-    # support the --region flag. It's not needed though since we're
-    # always uploading from the region we're trying to publish to.
-    "bundle_upload_cmd": ("sudo -n ec2-upload-bundle -b {{.BucketName}} "
-                          "-m {{.ManifestPath}} -a {{.AccessKey}} "
-                          "-s {{.SecretKey}} -d {{.BundleDirectory}} "
-                          "--batch --retry")
+    "ssh_user": "ubuntu"
     }
 
 packer_provisioners = [
@@ -136,15 +118,36 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         "enhanced_networking": False,
 
         "type":                  "amazon-instance",
+        "instance_type":         "{{user `launch_size`}}",
+        "ssh_username":          "{{user `ssh_user`}}",
         "access_key":            "{{user `aws_access_key`}}",
         "secret_key":            "{{user `aws_secret_key`}}",
         "account_id":            "{{user `aws_account_id`}}",
         "x509_cert_path":        "{{user `aws_signing_cert`}}",
         "x509_key_path":         "{{user `aws_signing_key`}}",
-        "bundle_vol_command":    "{{user `bundle_vol_cmd`}}",
-        "bundle_upload_command": "{{user `bundle_upload_cmd`}}",
-        "instance_type":         "{{user `launch_size`}}",
-        "ssh_username":          "{{user `ssh_user`}}"
+        # Note that the packer template variables used in the bundle_* commands
+        # Are builder-scoped, so this can't be extracted into a packer
+        # user-variable.
+        #
+        # A custom bundle_vol_command is required for 12.04 because the
+        # version of ec2-ami-tools available doesn't support the
+        # --no-filter flag. We don't need that flag. It prevents the
+        # filtering of sensitive file-types like ssh keys which is a feature
+        # that we don't need since we know our build process doesn't include
+        # sensitive information.  Can be safely applied to 14.04 ami's as well,
+        # though the version of ec2-ami-tools with 14.04 supports the flag.
+        "bundle_vol_command": ("sudo -n ec2-bundle-vol -k {{.KeyPath}} "
+                               "-u {{.AccountId}} -c {{.CertPath}} "
+                               "-r {{.Architecture}} -e {{.PrivatePath}}/* "
+                               "-d {{.Destination}} -p {{.Prefix}} --batch"),
+        # A custom bundle_upload_command is required because the versions
+        # of the ec2-ami-tools available for Ubuntu 12.04 and 14.04 don't
+        # support the --region flag. It's not needed though since we're
+        # always uploading from the region we're trying to publish to.
+        "bundle_upload_command": ("sudo -n ec2-upload-bundle "
+                                  "-b {{.BucketName}} -m {{.ManifestPath}} "
+                                  "-a {{.AccessKey}} -s {{.SecretKey}} "
+                                  "-d {{.BundleDirectory}} --batch --retry")
     }
 
 packer_builders = [builder_builder(**ami) for ami in AMI_LIST]
