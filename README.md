@@ -98,8 +98,7 @@ See:
 Step-by-step
 ============
 
-Visit http://www.datastax.com/ami for
-full installation instructions.
+Visit http://docs.datastax.com/en/latest-dsc-ami for full installation instructions.
 
 
 Post-install
