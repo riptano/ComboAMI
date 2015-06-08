@@ -5,7 +5,7 @@ set -e
 
 # Command line arguments
 if [ -z ${1} ]; then
-    echo "The first argument must be a packer config file or the string 'publish-official-amis'."
+    echo "The first argument must be a packer config file or the string 'publish-official-images'."
     exit 1
 fi
 
