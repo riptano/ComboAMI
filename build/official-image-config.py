@@ -107,6 +107,29 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
     else:
         SHORT_VIRT_TYPE = virt_type
 
+    # A custom bundle_vol_command is required for 12.04 because the
+    # version of ec2-ami-tools available doesn't support the
+    # --no-filter flag. We don't need that flag. It prevents the
+    # filtering of sensitive file-types like ssh keys which is a feature
+    # that we don't need since we know our build process doesn't include
+    # sensitive information.  Can be safely applied to 14.04 ami's as well,
+    # though the version of ec2-ami-tools with 14.04 supports the flag.
+    bundle_vol_cmd = "sudo -n ec2-bundle-vol -k {{.KeyPath}} "
+    bundle_vol_cmd += "-u {{.AccountId}} -c {{.CertPath}} "
+    bundle_vol_cmd += "-r {{.Architecture}} -e {{.PrivatePath}}/* "
+    bundle_vol_cmd += "-d {{.Destination}} -p {{.Prefix}} --batch"
+
+    # A custom bundle_upload_command is required because the versions
+    # of the ec2-ami-tools available for Ubuntu 12.04 and 14.04 don't
+    # support the --region flag. Instead we use the --url flag to specify
+    # which region the bundle should be uploaded to.
+    bundle_upload_cmd = "sudo -n ec2-upload-bundle "
+    bundle_upload_cmd += "--url 'https://s3-%s.amazonaws.com' " % region
+    bundle_upload_cmd += "--location %s " % region
+    bundle_upload_cmd += "-b {{.BucketName}} -m {{.ManifestPath}} "
+    bundle_upload_cmd += "-a {{.AccessKey}} -s {{.SecretKey}} "
+    bundle_upload_cmd += "-d {{.BundleDirectory}} --batch --retry"
+
     # UTC seconds since the epoch
     now = calendar.timegm(time.gmtime())
     return {
@@ -135,26 +158,8 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         # Note that the packer template variables used in the bundle_* commands
         # Are builder-scoped, so this can't be extracted into a packer
         # user-variable.
-        #
-        # A custom bundle_vol_command is required for 12.04 because the
-        # version of ec2-ami-tools available doesn't support the
-        # --no-filter flag. We don't need that flag. It prevents the
-        # filtering of sensitive file-types like ssh keys which is a feature
-        # that we don't need since we know our build process doesn't include
-        # sensitive information.  Can be safely applied to 14.04 ami's as well,
-        # though the version of ec2-ami-tools with 14.04 supports the flag.
-        "bundle_vol_command": ("sudo -n ec2-bundle-vol -k {{.KeyPath}} "
-                               "-u {{.AccountId}} -c {{.CertPath}} "
-                               "-r {{.Architecture}} -e {{.PrivatePath}}/* "
-                               "-d {{.Destination}} -p {{.Prefix}} --batch"),
-        # A custom bundle_upload_command is required because the versions
-        # of the ec2-ami-tools available for Ubuntu 12.04 and 14.04 don't
-        # support the --region flag. It's not needed though since we're
-        # always uploading from the region we're trying to publish to.
-        "bundle_upload_command": ("sudo -n ec2-upload-bundle "
-                                  "-b {{.BucketName}} -m {{.ManifestPath}} "
-                                  "-a {{.AccessKey}} -s {{.SecretKey}} "
-                                  "-d {{.BundleDirectory}} --batch --retry")
+        "bundle_vol_command": bundle_vol_cmd,
+        "bundle_upload_command": bundle_upload_cmd
     }
 
 packer_builders = [builder_builder(**ami) for ami in AMI_LIST]
