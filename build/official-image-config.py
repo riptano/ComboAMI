@@ -100,6 +100,15 @@ packer_provisioners = [
 ]
 
 
+def s3_endpoint(region):
+    """Returns the s3-endpoint for a given region based on the mapping from:
+    http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region"""
+    if region == "us-east-1":
+        return "https://s3-external-1.amazonaws.com"
+    else:
+        return "https://s3-%s.amazonaws.com" % region
+
+
 def builder_builder(region, os_version, upstream_ami, virt_type):
     """Returns a dictionary representing a packer builder config for an ami"""
     AMI_BASE_NAME = "DataStax Auto-Clustering AMI"
@@ -128,7 +137,7 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
     # support the --region flag. Instead we use the --url flag to specify
     # which region the bundle should be uploaded to.
     bundle_upload_cmd = "sudo -n ec2-upload-bundle "
-    bundle_upload_cmd += "--url 'https://s3-%s.amazonaws.com' " % region
+    bundle_upload_cmd += "--url '%s' " % s3_endpoint(region)
     bundle_upload_cmd += "--location %s " % region
     bundle_upload_cmd += "-b {{.BucketName}} -m {{.ManifestPath}} "
     bundle_upload_cmd += "-a {{.AccessKey}} -s {{.SecretKey}} "
