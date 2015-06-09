@@ -22,6 +22,13 @@ while [ ! -f /var/lib/cloud/instance/boot-finished ]; do
     sleep 1;
 done
 
+# This may or may not fix a rarely encountered issue where provisioning
+# hangs with a message about a config file being replaced and goes into
+# interactive mode asking what to do about it.
+DEBIAN_FRONTEND=noninteractive
+UCF_FORCE_CONFFNEW=true
+export UCF_FORCE_CONFFNEW DEBIAN_FRONTEND
+
 sudo apt-get update
 sudo apt-get -y upgrade
 sudo apt-get -y --no-install-recommends install mdadm # ComboAMI dependency
