@@ -13,7 +13,7 @@ import json
 # It's core is the builder_builder() function which accepts a concise list of
 # params that are tailored to our use-case and outputs a full builder config.
 
-COMBOAMI_VERSION = "2.6-beta1"
+COMBOAMI_VERSION = "2.6-beta2"
 AMI_LIST = [
     # Both region and os_version and used in the s3 bucket name that the rootfs
     # is uploaded to. S3 buckets have some unusual naming constraints that
