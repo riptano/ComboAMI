@@ -93,3 +93,13 @@ to keep.
 * Creating images backed by instance-stores is more complicated than creating
   ebs-backed images. See the AWS docs for details:
   http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-instance-store.html
+
+# Official AMI Checklist
+
+When publishing the official AMI's follow this checklist:
+1. Create a git tag 2.6-beta1 or 2.6.0 and push it to Github: `git tag 2.6-beta1; git push --tags`
+2. Update official-image-config.py:
+   1. Set COMBOAMI_VERSION to the newly created tag.
+   2. Set AMI_PERMISSIONS FIXME
+3. ./gopackgo.sh public-official-images
+4. Update ../ami_ids.json
