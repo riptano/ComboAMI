@@ -8,6 +8,7 @@ if [ -z ${1} ]; then
     echo "The first argument must be a packer config file "
     echo "or the string 'publish-official-images'."
     echo "Additional arguments are passed directly to the packer build command."
+    echo "Detailed logs available in packer.log, which is overwritten on each run."
     exit 1
 fi
 
@@ -24,5 +25,7 @@ PACKER_CONF_MINIFIED=min-${PACKER_CONF}
 cat $PACKER_CONF | json_pp > ${PACKER_CONF_MINIFIED}
 
 # Packer Run
+export PACKER_LOG=1
+export PACKER_LOG_PATH=packer.log
 packer validate -var-file=local.json ${PACKER_CONF_MINIFIED}
 packer build -var-file=local.json $@ ${PACKER_CONF_MINIFIED}
