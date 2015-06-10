@@ -30,7 +30,8 @@ UCF_FORCE_CONFFNEW=true
 export UCF_FORCE_CONFFNEW DEBIAN_FRONTEND
 
 sudo apt-get update
-sudo apt-get -y upgrade
+sudo apt-get -y -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confnew" dist-upgrade
 sudo apt-get -y --no-install-recommends install mdadm # ComboAMI dependency
 # FIXME: libopenssl-ruby is missing or has changed names, do we need it?
 # FIXME: Emacs24? Or just emacs?
