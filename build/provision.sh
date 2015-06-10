@@ -22,17 +22,13 @@ while [ ! -f /var/lib/cloud/instance/boot-finished ]; do
     sleep 1;
 done
 
-# This may or may not fix a rarely encountered issue where provisioning
-# hangs with a message about a config file being replaced and goes into
-# interactive mode asking what to do about it.
+# Force both debconf and ucf to be non-interactive so apt doesn't prompt
 DEBIAN_FRONTEND=noninteractive
 UCF_FORCE_CONFFNEW=true
-export UCF_FORCE_CONFFNEW DEBIAN_FRONTEND
+APT_GET="apt-get -y -o 'Dpkg::Options::=--force-confdef' -o 'Dpkg::Options::=--force-confnew'"
 
-sudo apt-get update
-sudo apt-get -y -o Dpkg::Options::="--force-confdef" \
-                -o Dpkg::Options::="--force-confnew" dist-upgrade
-sudo apt-get -y --no-install-recommends install mdadm # ComboAMI dependency
+sudo ${APT_GET} dist-upgrade
+sudo ${APT_GET} --no-install-recommends install mdadm # ComboAMI dependency
 # FIXME: libopenssl-ruby is missing or has changed names, do we need it?
 # FIXME: Emacs24? Or just emacs?
 PACKAGES=(
@@ -46,7 +42,7 @@ PACKAGES=(
     openssl
     liblzo2-dev
 )
-sudo apt-get -y install --fix-missing ${PACKAGES[@]}
+sudo ${APT_GET} install --fix-missing ${PACKAGES[@]}
 
 ### Install Java ###
 # Need to do this in a separate apt-get run in order to ensure
@@ -57,7 +53,7 @@ sudo apt-get -y install --fix-missing ${PACKAGES[@]}
 sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 sudo add-apt-repository -y ppa:webupd8team/java
 sudo apt-get update
-sudo apt-get install -y oracle-java7-installer oracle-java7-set-default
+sudo ${APT_GET} install oracle-java7-installer oracle-java7-set-default
 sudo update-java-alternatives -s java-7-oracle
 export JAVA_HOME=/usr/lib/jvm/java-7-oracle
 
@@ -83,7 +79,7 @@ case ${OS_VERSION} in
     ;;
 esac
 sudo apt-get update
-sudo apt-get install -y ec2-ami-tools
+sudo ${APT_GET} install ec2-ami-tools
 
 ### Configure git ###
 git config --global color.ui auto
