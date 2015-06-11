@@ -132,13 +132,21 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
     bundle_vol_cmd += "-r {{.Architecture}} -e {{.PrivatePath}}/* "
     bundle_vol_cmd += "-d {{.Destination}} -p {{.Prefix}} --batch"
 
-    # A custom bundle_upload_command is required because the versions
-    # of the ec2-ami-tools available for Ubuntu 12.04 and 14.04 don't
-    # support the --region flag. Instead we use the --url flag to specify
-    # which region the bundle should be uploaded to.
+    # Specifying the region to which a bundle should be uploaded is weird and
+    # flaky. Packer has changed how they handle this no less than 5 times.
+    # For sufficiently new versions of ec2-ami-tools, --region is supposed to
+    # be always correct.
+    #
+    # However, new versions of ec2-ami-tools have compatibility issues when
+    # building Ubuntu AMI's. While these can be successfully worked around,
+    # it's not simple or super-well documented. Let's try to make region-flags
+    # work for now and hope compatibility improves.
     bundle_upload_cmd = "sudo -n ec2-upload-bundle "
+    # Most regions seem to want --url and --location both set
+    # but us-east-1 fails if --location is set
     bundle_upload_cmd += "--url '%s' " % s3_endpoint(region)
-    bundle_upload_cmd += "--location %s " % region
+    if region != "us-east-1":
+        bundle_upload_cmd += "--location %s " % region
     bundle_upload_cmd += "-b {{.BucketName}} -m {{.ManifestPath}} "
     bundle_upload_cmd += "-a {{.AccessKey}} -s {{.SecretKey}} "
     bundle_upload_cmd += "-d {{.BundleDirectory}} --batch --retry"
