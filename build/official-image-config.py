@@ -39,7 +39,7 @@ AMI_LIST = [
     {"region": "ap-southeast-2", "os_version": "1204", "upstream_ami": "ami-a3017899", "virt_type": "hvm"},
     {"region": "ap-southeast-2", "os_version": "1404", "upstream_ami": "ami-c19be3fb", "virt_type": "paravirtual"},
     {"region": "ap-southeast-2", "os_version": "1404", "upstream_ami": "ami-259ae21f", "virt_type": "hvm"},
-    # Packer 0.7.5 doesn't support cn-nort-1 or eu-central-1.
+    # Packer 0.7.5 doesn't support cn-north-1 or eu-central-1.
     # See for details: https://github.com/riptano/ComboAMI/issues/62
     ### cn-north-1 ###
     # {"region": "cn-north-1", "os_version": "1204", "upstream_ami": "ami-32ef720b", "virt_type": "paravirtual"},
