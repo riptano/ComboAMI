@@ -14,6 +14,10 @@ import json
 # params that are tailored to our use-case and outputs a full builder config.
 
 COMBOAMI_VERSION = "2.6-beta2"
+# All for publicly accessible builds, empty array for private beta builds
+# AMI_PERMISSIONS = []
+AMI_PERMISSIONS = ["all"]
+
 AMI_LIST = [
     # Both region and os_version and used in the s3 bucket name that the rootfs
     # is uploaded to. S3 buckets have some unusual naming constraints that
@@ -160,6 +164,7 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         # within the list of potentially concurrently running builders
         "name": "%s-%s-%s" % (region, os_version, SHORT_VIRT_TYPE),
         "ami_description": AMI_BASE_DESC,
+        "ami_groups": AMI_PERMISSIONS,
         "region": region,
         "source_ami": upstream_ami,
         "ami_virtualization_type": virt_type,
