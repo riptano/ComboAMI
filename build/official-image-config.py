@@ -13,7 +13,10 @@ import json
 # It's core is the builder_builder() function which accepts a concise list of
 # params that are tailored to our use-case and outputs a full builder config.
 
-COMBOAMI_VERSION = "2.6-beta2"
+# The tag, branch or other commit-ref that will be checked out and baked
+# into the AMI
+COMBOAMI_VERSION = "2.6-beta3"
+
 # All for publicly accessible builds, empty array for private beta builds
 # AMI_PERMISSIONS = []
 AMI_PERMISSIONS = ["all"]
