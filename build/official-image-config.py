@@ -171,7 +171,7 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         "region": region,
         "source_ami": upstream_ami,
         "ami_virtualization_type": virt_type,
-        "s3_bucket": "%s-%s-%s-%s" % (now, region, os_version,
+        "s3_bucket": "%s-comboami-%s-%s-%s" % (now, region, os_version,
                                       SHORT_VIRT_TYPE),
 
         "enhanced_networking": False,
