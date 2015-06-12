@@ -13,12 +13,12 @@ if [ -z ${1} ]; then
 fi
 
 if [ ${1} = "publish-official-images" ]; then
-    shift
     PACKER_CONF=official-image-config.json
     ./official-image-config.py > ${PACKER_CONF}
 else
     PACKER_CONF=${1}
 fi
+shift
 
 # Strip json comments, which packer cannot process
 PACKER_CONF_MINIFIED=min-${PACKER_CONF}
