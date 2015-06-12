@@ -14,6 +14,8 @@
         "aws_signing_cert": "", // Defined in local.json
         "aws_signing_key": "",  // Defined in local.json
         "version": "dev-2.6",
+        "launch_size" : "m3.medium",
+        "ssh_user": "ubuntu",
         "description": "Launch a DataStax Enterprise or DataStax Community cluster: https://github.com/riptano/ComboAMI"
     },
     "provisioners": [
@@ -25,93 +27,102 @@
     ],
     "builders": [
         {
-            "name": "us-east-1-pv-1204", // name of the packer-builder
-            "type": "amazon-instance",
-            "access_key": "{{user `aws_access_key`}}",
-            "secret_key": "{{user `aws_secret_key`}}",
-            "account_id": "{{user `aws_account_id`}}",
-            "s3_bucket": "us-east-1-pv-1204-{{timestamp}}",
-            "x509_cert_path": "{{user `aws_signing_cert`}}",
-            "x509_key_path": "{{user `aws_signing_key`}}",
-            // A custom bundle_vol_command is required for 12.04 because
-            // the version of ec2-ami-tools available doesn't support the
-            // --no-filter flag. It's not needed as it just prevents AWS
-            // from filtering out sensitive file-types like ssh keys and
-            // we don't need to include any of those in our AMI.
-            "bundle_vol_command": "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch",
-            // A custom bundle_upload_command is required because the versions
-            // of the ec2-ami-tools available for Ubuntu 12.04 and 14.04 don't
-            // support the --region flag. It's not needed though since we're
-            // always uploading from the region we're trying to publish to.
-            "bundle_upload_command": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+         "name" : "us-east-1-1204-pv",
+         "ami_name" : "DataStax Auto-Clustering AMI 2.6-beta3-1204-pv",
+         "ami_name": "{{timestamp}}-1204-instance-pv-test",
+         "s3_bucket" : "{{timestamp}}-1204-instance-pv-test",
 
-            "ami_name": "pv-1204-test {{timestamp}}",
-            "region": "us-east-1",
-            "source_ami": "ami-5ebaa036",
-            "instance_type": "m3.medium",
-            "ssh_username": "ubuntu",
-            "ami_virtualization_type": "paravirtual",
-            "enhanced_networking": false
+         "type" : "amazon-instance",
+         "ami_virtualization_type" : "paravirtual",
+         "source_ami" : "ami-2aa0ba42",
+         "ami_groups" : [],
 
+         "region" : "us-east-1",
+         "account_id" : "{{user `aws_account_id`}}",
+         "access_key" : "{{user `aws_access_key`}}",
+         "secret_key" : "{{user `aws_secret_key`}}",
+         "x509_cert_path" : "{{user `aws_signing_cert`}}",
+         "x509_key_path" : "{{user `aws_signing_key`}}",
+         "ssh_username" : "{{user `ssh_user`}}",
+         "ami_description" : "{{user `description`}}",
+         "instance_type" : "{{user `launch_size`}}",
+         "enhanced_networking" : false,
+         "bundle_upload_command" : "sudo -n ec2-upload-bundle --url 'https://s3-external-1.amazonaws.com' -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+         "bundle_vol_command" : "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch"
+        },
+
+        {
+         "name" : "us-east-1-1204-hvm",
+         "ami_name" : "DataStax Auto-Clustering AMI 2.6-beta3-1204-hvm",
+         "ami_name": "{{timestamp}}-1204-instance-hvm-test",
+         "s3_bucket" : "{{timestamp}}-1204-instance-hvm-test",
+
+         "type" : "amazon-instance",
+         "ami_virtualization_type" : "hvm",
+         "source_ami" : "ami-0aa8b262",
+         "ami_groups" : [],
+
+         "region" : "us-east-1",
+         "account_id" : "{{user `aws_account_id`}}",
+         "access_key" : "{{user `aws_access_key`}}",
+         "secret_key" : "{{user `aws_secret_key`}}",
+         "x509_cert_path" : "{{user `aws_signing_cert`}}",
+         "x509_key_path" : "{{user `aws_signing_key`}}",
+         "ssh_username" : "{{user `ssh_user`}}",
+         "ami_description" : "{{user `description`}}",
+         "instance_type" : "{{user `launch_size`}}",
+         "enhanced_networking" : false,
+         "bundle_upload_command" : "sudo -n ec2-upload-bundle --url 'https://s3-external-1.amazonaws.com' -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+         "bundle_vol_command" : "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch"
         },
         {
-            "name": "us-east-1-hvm-1204", // name of the packer-builder
-            "type": "amazon-instance",
-            "access_key": "{{user `aws_access_key`}}",
-            "secret_key": "{{user `aws_secret_key`}}",
-            "account_id": "{{user `aws_account_id`}}",
-            "s3_bucket": "us-east-1-hvm-1204-{{timestamp}}",
-            "x509_cert_path": "{{user `aws_signing_cert`}}",
-            "x509_key_path": "{{user `aws_signing_key`}}",
-            "bundle_vol_command": "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch",
-            "bundle_upload_command": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+         "name" : "us-east-1-1404-pv",
+         "ami_name" : "DataStax Auto-Clustering AMI 2.6-beta3-1404-pv",
+         "ami_name": "{{timestamp}}-1404-instance-pv-test",
+         "s3_bucket" : "{{timestamp}}-1404-instance-pv-test",
 
-            "ami_name": "hvm-1204-test {{timestamp}}",
-            "region": "us-east-1",
-            "source_ami": "ami-0aa8b262",
-            "instance_type": "m3.medium",
-            "ssh_username": "ubuntu",
-            "ami_virtualization_type": "hvm",
-            "enhanced_networking": false
+         "type" : "amazon-instance",
+         "ami_virtualization_type" : "paravirtual",
+         "source_ami" : "ami-c51df2ae",
+         "ami_groups" : [],
+
+         "region" : "us-east-1",
+         "account_id" : "{{user `aws_account_id`}}",
+         "access_key" : "{{user `aws_access_key`}}",
+         "secret_key" : "{{user `aws_secret_key`}}",
+         "x509_cert_path" : "{{user `aws_signing_cert`}}",
+         "x509_key_path" : "{{user `aws_signing_key`}}",
+         "ssh_username" : "{{user `ssh_user`}}",
+         "ami_description" : "{{user `description`}}",
+         "instance_type" : "{{user `launch_size`}}",
+         "enhanced_networking" : false,
+         "bundle_upload_command" : "sudo -n ec2-upload-bundle --url 'https://s3-external-1.amazonaws.com' -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+         "bundle_vol_command" : "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch"
         },
-        {
-            "name": "us-east-1-pv-1404", // name of the packer-builder
-            "type": "amazon-instance",
-            "access_key": "{{user `aws_access_key`}}",
-            "secret_key": "{{user `aws_secret_key`}}",
-            "account_id": "{{user `aws_account_id`}}",
-            "s3_bucket": "us-east-1-pv-1404-{{timestamp}}",
-            "x509_cert_path": "{{user `aws_signing_cert`}}",
-            "x509_key_path": "{{user `aws_signing_key`}}",
-"bundle_vol_command": "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch",
-            "bundle_upload_command": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
 
-            "ami_name": "pv-1404-test {{timestamp}}",
-            "region": "us-east-1",
-            "source_ami": "ami-c51df2ae",
-            "instance_type": "m3.medium",
-            "ssh_username": "ubuntu",
-            "ami_virtualization_type": "paravirtual",
-            "enhanced_networking": false
-        },
         {
-            "name": "us-east-1-hvm-1404", // name of the packer-builder
-            "type": "amazon-instance",
-            "access_key": "{{user `aws_access_key`}}",
-            "secret_key": "{{user `aws_secret_key`}}",
-            "account_id": "{{user `aws_account_id`}}",
-            "s3_bucket": "us-east-1-hvm-1404-{{timestamp}}",
-            "x509_cert_path": "{{user `aws_signing_cert`}}",
-            "x509_key_path": "{{user `aws_signing_key`}}",
-            "bundle_upload_command": "sudo -n ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+         "name" : "us-east-1-1404-hvm",
+         "ami_name" : "DataStax Auto-Clustering AMI 2.6-beta3-1404-hvm",
+         "ami_name": "{{timestamp}}-1404-instance-hvm-test",
+         "s3_bucket" : "{{timestamp}}-1404-instance-hvm-test",
 
-            "ami_name": "hvm-1404-test {{timestamp}}",
-            "region": "us-east-1",
-            "source_ami": "ami-eb6b8480",
-            "instance_type": "m3.medium",
-            "ssh_username": "ubuntu",
-            "ami_virtualization_type": "hvm",
-            "enhanced_networking": false
+         "type" : "amazon-instance",
+         "ami_virtualization_type" : "hvm",
+         "source_ami" : "ami-eb6b8480",
+         "ami_groups" : [],
+
+         "region" : "us-east-1",
+         "account_id" : "{{user `aws_account_id`}}",
+         "access_key" : "{{user `aws_access_key`}}",
+         "secret_key" : "{{user `aws_secret_key`}}",
+         "x509_cert_path" : "{{user `aws_signing_cert`}}",
+         "x509_key_path" : "{{user `aws_signing_key`}}",
+         "ssh_username" : "{{user `ssh_user`}}",
+         "ami_description" : "{{user `description`}}",
+         "instance_type" : "{{user `launch_size`}}",
+         "enhanced_networking" : false,
+         "bundle_upload_command" : "sudo -n ec2-upload-bundle --url 'https://s3-external-1.amazonaws.com' -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
+         "bundle_vol_command" : "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch"
         }
     ]
 }
