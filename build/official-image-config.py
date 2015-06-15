@@ -17,6 +17,11 @@ import json
 # into the AMI
 COMBOAMI_VERSION = "2.6-beta4"
 
+# The versions of Amazon AMI and API tools to download and install, used
+# for building the instance-store backed AMI's
+EC2_AMI_TOOLS_VERSION = "1.5.3"
+EC2_API_TOOLS_VERSION= "1.7.4.0"
+
 # All for publicly accessible builds, empty array for private beta builds
 # AMI_PERMISSIONS = []
 AMI_PERMISSIONS = ["all"]
@@ -102,7 +107,11 @@ packer_provisioners = [
     {
         "type": "shell",
         "script": "provision.sh",
-        "environment_vars": ["COMBOAMI_VERSION=%s" % COMBOAMI_VERSION]
+        "environment_vars": [
+            "COMBOAMI_VERSION=%s" % COMBOAMI_VERSION,
+            "EC2_AMI_TOOLS_VERSION=%s" % EC2_AMI_TOOLS_VERSION,
+            "EC2_API_TOOLS_VERSION=%s" % EC2_API_TOOLS_VERSION
+        ]
     }
 ]
 
