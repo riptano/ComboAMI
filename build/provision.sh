@@ -31,6 +31,7 @@ export DEBIAN_FRONTEND=noninteractive
 export UCF_FORCE_CONFFNEW=true
 APT_GET="apt-get -y -q -q -o 'Dpkg::Options::=--force-confdef' -o 'Dpkg::Options::=--force-confnew'"
 
+sudo apt-get -q -q update
 sudo ${APT_GET} dist-upgrade
 sudo ${APT_GET} --no-install-recommends install mdadm # ComboAMI dependency
 # FIXME: libopenssl-ruby is missing or has changed names, do we need it?
@@ -92,7 +93,7 @@ esac
 # http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
 sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 sudo add-apt-repository -y ppa:webupd8team/java
-sudo apt-get update
+sudo apt-get -q -q update
 sudo ${APT_GET} install oracle-java7-installer oracle-java7-set-default
 sudo update-java-alternatives -s java-7-oracle
 export JAVA_HOME=/usr/lib/jvm/java-7-oracle
