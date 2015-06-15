@@ -27,9 +27,9 @@ while [ ! -f /var/lib/cloud/instance/boot-finished ]; do
 done
 
 # Force both debconf and ucf to be non-interactive so apt doesn't prompt
-DEBIAN_FRONTEND=noninteractive
-UCF_FORCE_CONFFNEW=true
 APT_GET="apt-get -y -o 'Dpkg::Options::=--force-confdef' -o 'Dpkg::Options::=--force-confnew'"
+export DEBIAN_FRONTEND=noninteractive
+export UCF_FORCE_CONFFNEW=true
 
 sudo ${APT_GET} dist-upgrade
 sudo ${APT_GET} --no-install-recommends install mdadm # ComboAMI dependency
