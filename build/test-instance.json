@@ -14,6 +14,8 @@
         "aws_signing_cert": "", // Defined in local.json
         "aws_signing_key": "",  // Defined in local.json
         "version": "dev-2.6",
+        "ami_tools_version": "1.5.3",
+        "api_tools_version": "1.7.4.0",
         "launch_size" : "m3.medium",
         "ssh_user": "ubuntu",
         "description": "Launch a DataStax Enterprise or DataStax Community cluster: https://github.com/riptano/ComboAMI"
@@ -22,7 +24,11 @@
         {
             "type": "shell",
             "script": "provision.sh",
-            "environment_vars": [ "COMBOAMI_VERSION={{ user `version`}}" ]
+            "environment_vars": [
+                "COMBOAMI_VERSION={{ user `version`}}",
+                "EC2_AMI_TOOLS_VERSION={{ user `ami_tools_version`}}",
+                "EC2_API_TOOLS_VERSION={{ user `api_tools_version`}}"
+            ]
         }
     ],
     "builders": [
@@ -47,8 +53,8 @@
          "ami_description" : "{{user `description`}}",
          "instance_type" : "{{user `launch_size`}}",
          "enhanced_networking" : false,
-         "bundle_upload_command" : "sudo -n ec2-upload-bundle --url 'https://s3-external-1.amazonaws.com' -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
-         "bundle_vol_command" : "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch"
+         "bundle_vol_command" : "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin PATH=${PATH}:${EC2_HOME} ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch --no-filter'",
+         "bundle_upload_command" : "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin PATH=${PATH}:${EC2_HOME} ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --region {{.Region}} --retry'"
         },
 
         {
@@ -72,8 +78,8 @@
          "ami_description" : "{{user `description`}}",
          "instance_type" : "{{user `launch_size`}}",
          "enhanced_networking" : false,
-         "bundle_upload_command" : "sudo -n ec2-upload-bundle --url 'https://s3-external-1.amazonaws.com' -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
-         "bundle_vol_command" : "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch"
+         "bundle_vol_command" : "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin PATH=${PATH}:${EC2_HOME} ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch --no-filter'",
+         "bundle_upload_command" : "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin PATH=${PATH}:${EC2_HOME} ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --region {{.Region}} --retry'"
         },
         {
          "name" : "us-east-1-1404-pv",
@@ -96,8 +102,8 @@
          "ami_description" : "{{user `description`}}",
          "instance_type" : "{{user `launch_size`}}",
          "enhanced_networking" : false,
-         "bundle_upload_command" : "sudo -n ec2-upload-bundle --url 'https://s3-external-1.amazonaws.com' -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
-         "bundle_vol_command" : "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch"
+         "bundle_vol_command" : "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin PATH=${PATH}:${EC2_HOME} ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch --no-filter'",
+         "bundle_upload_command" : "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin PATH=${PATH}:${EC2_HOME} ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --region {{.Region}} --retry'"
         },
 
         {
@@ -121,8 +127,8 @@
          "ami_description" : "{{user `description`}}",
          "instance_type" : "{{user `launch_size`}}",
          "enhanced_networking" : false,
-         "bundle_upload_command" : "sudo -n ec2-upload-bundle --url 'https://s3-external-1.amazonaws.com' -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --retry",
-         "bundle_vol_command" : "sudo -n ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch"
+         "bundle_vol_command" : "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin PATH=${PATH}:${EC2_HOME} ec2-bundle-vol -k {{.KeyPath}} -u {{.AccountId}} -c {{.CertPath}} -r {{.Architecture}} -e {{.PrivatePath}}/* -d {{.Destination}} -p {{.Prefix}} --batch --no-filter'",
+         "bundle_upload_command" : "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin PATH=${PATH}:${EC2_HOME} ec2-upload-bundle -b {{.BucketName}} -m {{.ManifestPath}} -a {{.AccessKey}} -s {{.SecretKey}} -d {{.BundleDirectory}} --batch --region {{.Region}} --retry'"
         }
     ]
 }

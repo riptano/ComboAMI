@@ -97,30 +97,6 @@ sudo ${APT_GET} install oracle-java7-installer oracle-java7-set-default
 sudo update-java-alternatives -s java-7-oracle
 export JAVA_HOME=/usr/lib/jvm/java-7-oracle
 
-### Install ec2-ami-tools
-# Building instance-store backed images requires running the ec2-ami-tools
-# on the instances while it's being built, ensure they're present.
-case ${OS_VERSION} in
-    12.04)
-        # add-apt-repository only gained the ability to understand distribution
-        # components like "multiverse" in Ubuntu 12.10. The sed commands look
-        # for lines similar to these in sources.list to uncomment:
-        # deb http://us-east-1.ec2.archive.ubuntu.com/ubuntu/ precise multiverse
-        # deb-src http://us-east-1.ec2.archive.ubuntu.com/ubuntu/ precise multiverse
-        # deb http://us-east-1.ec2.archive.ubuntu.com/ubuntu/ precise-updates multiverse
-        # deb-src http://us-east-1.ec2.archive.ubuntu.com/ubuntu/ precise-updates multiverse
-        sudo sed -i "s/^# \(deb .* precise multiverse\)/\1/" /etc/apt/sources.list
-        sudo sed -i "s/^# \(deb-src .* precise multiverse\)/\1/" /etc/apt/sources.list
-        sudo sed -i "s/^# \(deb .* precise-updates multiverse\)/\1/" /etc/apt/sources.list
-        sudo sed -i "s/^# \(deb-src .* precise-updates multiverse\)/\1/" /etc/apt/sources.list
-    ;;
-    *)
-        sudo add-apt-repository multiverse
-    ;;
-esac
-sudo apt-get update
-sudo ${APT_GET} install ec2-ami-tools
-
 ### Configure git ###
 git config --global color.ui auto
 git config --global color.diff auto
@@ -205,9 +181,51 @@ sudo rm -f /etc/ssh/ssh_host_dsa_key*
 sudo rm -f /etc/ssh/ssh_host_key*
 sudo rm -f /etc/ssh/ssh_host_rsa_key*
 sudo rm -rf /tmp/*
-sudo sudo apt-get clean
 sudo su -c 'history -c'
 history -c
+
+### Install ec2-ami-tools
+# There are copies of the ami-tools in the Ubuntu repos, but they're old and
+# may not support hvm AMI's properly. Download the latest tools from Amazon
+# EC2_AMI_TOOLS VERSION and EC2_API_TOOLS_VERSION are set in the packer template
+#
+# We need these to build the AMI, but don't need them in the final image so
+# installing into /tmp is fine. However, if we do that, we have to install after
+# cleanup so we don't delete them at the end of provisioning, but before packer
+# image-creation.
+
+# Install dependencies
+sudo ${APT_GET} install gdisk kpartx
+
+# Download the ami-tools
+EC2_AMI_TOOLS_ARCHIVE=ec2-ami-tools-${EC2_AMI_TOOLS_VERSION}.zip
+EC2_AMI_TOOLS_DIR=/tmp/ec2-ami-tools-${EC2_AMI_TOOLS_VERSION}
+curl http://s3.amazonaws.com/ec2-downloads/${EC2_AMI_TOOLS_ARCHIVE} \
+    -o /tmp/${EC2_AMI_TOOLS_ARCHIVE}
+unzip -q /tmp/${EC2_AMI_TOOLS_ARCHIVE} -d /tmp/
+
+# Download the api-tools
+EC2_API_TOOLS_ARCHIVE=ec2-api-tools-${EC2_API_TOOLS_VERSION}.zip
+EC2_API_TOOLS_DIR=/tmp/ec2-api-tools-${EC2_API_TOOLS_VERSION}
+curl http://s3.amazonaws.com/ec2-downloads/${EC2_API_TOOLS_ARCHIVE} \
+    -o /tmp/${EC2_API_TOOLS_ARCHIVE}
+unzip -q /tmp/${EC2_API_TOOLS_ARCHIVE} -d /tmp/
+
+# Install the ami and api tools
+mkdir -p /tmp/ec2/bin
+mkdir /tmp/ec2/etc
+mkdir /tmp/ec2/lib
+mv ${EC2_AMI_TOOLS_DIR}/bin/* /tmp/ec2/bin/
+mv ${EC2_AMI_TOOLS_DIR}/etc/* /tmp/ec2/etc/
+mv ${EC2_AMI_TOOLS_DIR}/lib/* /tmp/ec2/lib/
+mv ${EC2_API_TOOLS_DIR}/bin/* /tmp/ec2/bin/
+# No etc dir for api-tools
+mv ${EC2_API_TOOLS_DIR}/lib/* /tmp/ec2/lib/
+export EC2_HOME=/tmp/ec2/bin
+export PATH=${PATH}:${EC2_HOME}
+
+# Clean the apt-cache
+sudo sudo apt-get clean
 
 ### Finished ###
 # Print a completion line. Due to 'set -e' at the top of this script, this is

@@ -106,7 +106,6 @@ packer_provisioners = [
     }
 ]
 
-
 def s3_endpoint(region):
     """Returns the s3-endpoint for a given region based on the mapping from:
     http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region"""
@@ -127,39 +126,41 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
     else:
         SHORT_VIRT_TYPE = virt_type
 
-    # A custom bundle_vol_command is required for 12.04 because the
-    # version of ec2-ami-tools available doesn't support the
-    # --no-filter flag. We don't need that flag. It prevents the
-    # filtering of sensitive file-types like ssh keys which is a feature
-    # that we don't need since we know our build process doesn't include
-    # sensitive information.  Can be safely applied to 14.04 ami's as well,
-    # though the version of ec2-ami-tools with 14.04 supports the flag.
-    bundle_vol_cmd = "sudo -n ec2-bundle-vol -k {{.KeyPath}} "
-    bundle_vol_cmd += "-u {{.AccountId}} -c {{.CertPath}} "
-    bundle_vol_cmd += "-r {{.Architecture}} -e {{.PrivatePath}}/* "
-    bundle_vol_cmd += "-d {{.Destination}} -p {{.Prefix}} --batch"
-
-    # Specifying the region to which a bundle should be uploaded is weird and
-    # flaky. Packer has changed how they handle this no less than 5 times.
-    # For sufficiently new versions of ec2-ami-tools, --region is supposed to
-    # be always correct.
-    #
-    # However, new versions of ec2-ami-tools have compatibility issues when
-    # building Ubuntu AMI's. While these can be successfully worked around,
-    # it's not simple or super-well documented. Let's try to make region-flags
-    # work for now and hope compatibility improves.
-    bundle_upload_cmd = "sudo -n ec2-upload-bundle "
-    # Most regions seem to want --url and --location both set
-    # but us-east-1 fails if --location is set
-    bundle_upload_cmd += "--url '%s' " % s3_endpoint(region)
-    if region != "us-east-1":
-        bundle_upload_cmd += "--location %s " % region
-    bundle_upload_cmd += "-b {{.BucketName}} -m {{.ManifestPath}} "
-    bundle_upload_cmd += "-a {{.AccessKey}} -s {{.SecretKey}} "
-    bundle_upload_cmd += "-d {{.BundleDirectory}} --batch --retry"
-
     # UTC seconds since the epoch
     now = calendar.timegm(time.gmtime())
+
+    # Need custom bundle and upload commands in order to set the path,
+    # these are otherwise defaults as of Packer 0.7.5
+    ec2_cmd_prefix = "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin "
+    ec2_cmd_prefix += "PATH=${EC2_HOME}:${PATH} "
+    # Closes the single-quote used to wrap the bash -c command
+    ec2_cmd_postfix = "'"
+
+    ec2_bundle_vol_cmd = ec2_cmd_prefix
+    ec2_bundle_vol_cmd += "ec2-bundle-vol "
+    ec2_bundle_vol_cmd += "-k {{.KeyPath}} "
+    ec2_bundle_vol_cmd += "-u {{.AccountId}} "
+    ec2_bundle_vol_cmd += "-c {{.CertPath}} "
+    ec2_bundle_vol_cmd += "-r {{.Architecture}} "
+    ec2_bundle_vol_cmd += "-e {{.PrivatePath}}/* "
+    ec2_bundle_vol_cmd += "-d {{.Destination}} "
+    ec2_bundle_vol_cmd += "-p {{.Prefix}} "
+    ec2_bundle_vol_cmd += "--batch "
+    ec2_bundle_vol_cmd += "--no-filter"
+    ec2_bundle_vol_cmd += ec2_cmd_postfix
+
+    ec2_bundle_upload_cmd = ec2_cmd_prefix
+    ec2_bundle_upload_cmd += "sudo -n ec2-upload-bundle "
+    ec2_bundle_upload_cmd += "-b {{.BucketName}} "
+    ec2_bundle_upload_cmd += "-m {{.ManifestPath}} "
+    ec2_bundle_upload_cmd += "-a {{.AccessKey}} "
+    ec2_bundle_upload_cmd += "-s {{.SecretKey}} "
+    ec2_bundle_upload_cmd += "-d {{.BundleDirectory}} "
+    ec2_bundle_upload_cmd += "--batch "
+    ec2_bundle_upload_cmd += "--region {{.Region}} "
+    ec2_bundle_upload_cmd += "--retry"
+    ec2_bundle_upload_cmd += ec2_cmd_postfix
+
     return {
         "ami_name": "%s %s-%s-%s" % (AMI_BASE_NAME, COMBOAMI_VERSION,
                                      os_version, SHORT_VIRT_TYPE),
@@ -175,6 +176,8 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         "ami_virtualization_type": virt_type,
         "s3_bucket": "%s-comboami-%s-%s-%s" % (now, region, os_version,
                                       SHORT_VIRT_TYPE),
+        "bundle_vol_command": ec2_bundle_vol_cmd,
+        "bundle_upload_command": ec2_bundle_upload_cmd,
 
         "enhanced_networking": False,
 
@@ -185,12 +188,7 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         "secret_key":            "{{user `aws_secret_key`}}",
         "account_id":            "{{user `aws_account_id`}}",
         "x509_cert_path":        "{{user `aws_signing_cert`}}",
-        "x509_key_path":         "{{user `aws_signing_key`}}",
-        # Note that the packer template variables used in the bundle_* commands
-        # Are builder-scoped, so this can't be extracted into a packer
-        # user-variable.
-        "bundle_vol_command": bundle_vol_cmd,
-        "bundle_upload_command": bundle_upload_cmd
+        "x509_key_path":         "{{user `aws_signing_key`}}"
     }
 
 packer_builders = [builder_builder(**ami) for ami in AMI_LIST]
