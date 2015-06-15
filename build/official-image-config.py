@@ -159,7 +159,7 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
     ec2_bundle_vol_cmd += ec2_cmd_postfix
 
     ec2_bundle_upload_cmd = ec2_cmd_prefix
-    ec2_bundle_upload_cmd += "sudo -n ec2-upload-bundle "
+    ec2_bundle_upload_cmd += "ec2-upload-bundle "
     ec2_bundle_upload_cmd += "-b {{.BucketName}} "
     ec2_bundle_upload_cmd += "-m {{.ManifestPath}} "
     ec2_bundle_upload_cmd += "-a {{.AccessKey}} "
