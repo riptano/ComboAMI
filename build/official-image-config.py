@@ -15,7 +15,7 @@ import json
 
 # The tag, branch or other commit-ref that will be checked out and baked
 # into the AMI
-COMBOAMI_VERSION = "2.6-beta3"
+COMBOAMI_VERSION = "2.6-beta4"
 
 # All for publicly accessible builds, empty array for private beta builds
 # AMI_PERMISSIONS = []
