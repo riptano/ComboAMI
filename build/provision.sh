@@ -10,6 +10,10 @@ set -e
 OS_VERSION=`lsb_release -sr`
 OS_CODENAME=`lsb_release -sc`
 
+# Display environment variables, helpful to discover what variables packer
+# defines automatically.
+env
+
 # FIXME: Is the hs1.8xlarge boot issue fix in pre_1.sh still needed?
 
 ### Install Software ###
