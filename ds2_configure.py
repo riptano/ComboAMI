@@ -896,7 +896,10 @@ def mount_raid(devices):
     formatCommands = "echo 'n\np\n1\n\n\nt\nfd\nw'"
     for device in devices:
         logger.info('Confirming devices are not mounted:')
+        # Try unmounting both /dev/xvdb and /dev/xvdb1 in case it is partitioned
+        # by default
         logger.exe('sudo umount {0}'.format(device), expectError=True)
+        logger.exe('sudo umount {0}1'.format(device), expectError=True)
         logger.pipe("echo 'w'", 'sudo fdisk -c -u {0}'.format(device))
         logger.pipe(formatCommands, 'sudo fdisk -c -u {0}'.format(device))
 
@@ -1008,9 +1011,8 @@ def prepare_for_raid():
     logger.exe('sudo chmod 644 {0}'.format(file_to_open))
 
     # Create a list of devices
-    devices = glob.glob('/dev/xvd*')
-    if '/dev/xvda1' in devices:
-        devices.remove('/dev/xvda1')
+    # skip /dev/xvda, which is the root-device
+    devices = glob.glob('/dev/xvd[b-z]')
     devices.sort()
     logger.info('Unformatted devices: {0}'.format(devices))
 
