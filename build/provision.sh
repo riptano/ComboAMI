@@ -48,6 +48,42 @@ PACKAGES=(
 )
 sudo ${APT_GET} install --fix-missing ${PACKAGES[@]}
 
+### Fix HVM Booting Process ###
+# Prepare the HVM instance per the AWS documentation at:
+# http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-instance-store.html
+#
+# More context from other packerers:
+# https://github.com/Lumida/packer/wiki/Building-Ubuntu-12.04-and-14.04-HVM-Instance-Store-AMIs
+# https://gist.github.com/darron/ed7b2587a3415773f26a
+
+# Are we an hvm build?
+# Packer automatically exposes the name of the builder via the
+# $PACKER_BUILD_NAME environment variable. ComboAMI packer configs should
+# follow the convention of ending builder-names with their virt-type (-pv or
+# -hvm). So we're in an hvm build if our builder looks like: us-east-1-1404-hvm
+case ${PACKER_BUILD_NAME} in
+    *-hvm)
+        # HVM AMI's need to use legacy-grub, not grub2
+        sudo ${APT_GET} install grub
+
+        # Again, docs on this are pretty poor but /proc/cmdline on the booted
+        # instance used to create the AMI suggests ttyS0 is the right console,
+        # not hvc0 which is in menu.lst
+        sudo sed -i 's/ro console=hvc0/ro console=ttyS0/' /boot/grub/menu.lst
+
+        # The EFI system partition isn't part of the rootfs, remove it from
+        # fstab. Only necessary for 14.04, but this sed command is a noop
+        # if the offending line isn't present so can be run on both platforms
+        sudo sed -i 's/LABEL=UEFI.*//' /etc/fstab
+
+        # Output some potentially useful debugging information
+        sudo lsblk
+        sudo file -s /dev/xvda
+        cat /proc/cmdline
+        grep ^kernel /boot/grub/menu.lst
+        cat /etc/fstab
+esac
+
 ### Install Java ###
 # Need to do this in a separate apt-get run in order to ensure
 # software-properties-common is installed which provides add-apt-repository

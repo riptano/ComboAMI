@@ -165,6 +165,8 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
                                      os_version, SHORT_VIRT_TYPE),
         # This is the name for the packer builder, which must be unique
         # within the list of potentially concurrently running builders
+        # It should end with the virt-type (-pv or -hvm) because
+        # provisioning.sh keys off this string when prepping hvm images
         "name": "%s-%s-%s" % (region, os_version, SHORT_VIRT_TYPE),
         "ami_description": AMI_BASE_DESC,
         "ami_groups": AMI_PERMISSIONS,
