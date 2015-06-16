@@ -27,9 +27,7 @@ while [ ! -f /var/lib/cloud/instance/boot-finished ]; do
 done
 
 # Force both debconf and ucf to be non-interactive so apt doesn't prompt
-export DEBIAN_FRONTEND=noninteractive
-export UCF_FORCE_CONFFNEW=true
-APT_GET="apt-get -y -q -q -o 'Dpkg::Options::=--force-confdef' -o 'Dpkg::Options::=--force-confnew'"
+APT_GET="DEBIAN_FRONTEND=noninteractive apt-get -y -q -q -o 'Dpkg::Options::=--force-confdef' -o 'Dpkg::Options::=--force-confnew'"
 
 sudo apt-get -q -q update
 sudo ${APT_GET} dist-upgrade
