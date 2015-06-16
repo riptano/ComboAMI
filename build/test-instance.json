@@ -36,7 +36,7 @@
          "name" : "us-east-1-1204-pv",
          "ami_name" : "DataStax Auto-Clustering AMI 2.6-beta3-1204-pv",
          "ami_name": "{{timestamp}}-1204-instance-pv-test",
-         "s3_bucket" : "{{timestamp}}-1204-instance-pv-test",
+         "s3_bucket" : "comboami-test/{{timestamp}}-1204-instance-pv-test",
 
          "type" : "amazon-instance",
          "ami_virtualization_type" : "paravirtual",
@@ -61,7 +61,7 @@
          "name" : "us-east-1-1204-hvm",
          "ami_name" : "DataStax Auto-Clustering AMI 2.6-beta3-1204-hvm",
          "ami_name": "{{timestamp}}-1204-instance-hvm-test",
-         "s3_bucket" : "{{timestamp}}-1204-instance-hvm-test",
+         "s3_bucket" : "comboami-test/{{timestamp}}-1204-instance-hvm-test",
 
          "type" : "amazon-instance",
          "ami_virtualization_type" : "hvm",
@@ -85,7 +85,7 @@
          "name" : "us-east-1-1404-pv",
          "ami_name" : "DataStax Auto-Clustering AMI 2.6-beta3-1404-pv",
          "ami_name": "{{timestamp}}-1404-instance-pv-test",
-         "s3_bucket" : "{{timestamp}}-1404-instance-pv-test",
+         "s3_bucket" : "comboami-test/{{timestamp}}-1404-instance-pv-test",
 
          "type" : "amazon-instance",
          "ami_virtualization_type" : "paravirtual",
@@ -110,7 +110,7 @@
          "name" : "us-east-1-1404-hvm",
          "ami_name" : "DataStax Auto-Clustering AMI 2.6-beta3-1404-hvm",
          "ami_name": "{{timestamp}}-1404-instance-hvm-test",
-         "s3_bucket" : "{{timestamp}}-1404-instance-hvm-test",
+         "s3_bucket" : "comboami-test/{{timestamp}}-1404-instance-hvm-test",
 
          "type" : "amazon-instance",
          "ami_virtualization_type" : "hvm",
