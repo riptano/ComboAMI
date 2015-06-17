@@ -130,8 +130,7 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
     # UTC seconds since the epoch
     now = calendar.timegm(time.gmtime())
 
-    # Need custom bundle and upload commands in order to set the path,
-    # these are otherwise defaults as of Packer 0.7.5
+    # Need custom bundle and upload commands in order to set the path
     ec2_cmd_prefix = "sudo -n bash -c 'EC2_HOME=/tmp/ec2/bin "
     ec2_cmd_prefix += "PATH=${EC2_HOME}:${PATH} "
     # Closes the single-quote used to wrap the bash -c command
@@ -146,6 +145,10 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
     ec2_bundle_vol_cmd += "-e {{.PrivatePath}}/* "
     ec2_bundle_vol_cmd += "-d {{.Destination}} "
     ec2_bundle_vol_cmd += "-p {{.Prefix}} "
+    # Ubuntu 14.04+ hvm ami's need to be switched from gpt to mbr partitions
+    # per: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-instance-store.html
+    if virt_type == "hvm" and os_version != '1204':
+        ec2_bundle_vol_cmd += "--partition mbr "
     ec2_bundle_vol_cmd += "--batch "
     ec2_bundle_vol_cmd += "--no-filter"
     ec2_bundle_vol_cmd += ec2_cmd_postfix
