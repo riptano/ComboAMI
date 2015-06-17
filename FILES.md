@@ -3,21 +3,6 @@ are installed on the AMI.  You only need to care about this if you're
 going to hack on the AMI configuration scripts.
 
 
-## .presetup/pre_1.sh
-
-There is no need to execute this file, this just shows what was
-installed and in what order.  This file is the precursor for pre_2.sh
-since it installs git and pulls down the scripts for everything else.
-
-
-## .presetup/pre_2.sh
-There is no need to execute this file, this just shows what was
-installed and in what order.  To sum up the actions: sun-java6-sdk,
-libjna, and DSE/C were installed, the init.d script was written to
-disk, the git repository holding this code was cloned, and the
-history was cleaned before cloning the machine.
-
-
 ## ds0_updater.py
 Updates the AMI scripts before continuing.
 
