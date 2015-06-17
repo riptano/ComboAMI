@@ -9,6 +9,15 @@ import urllib2
 from email.parser import Parser
 from argparse import ArgumentParser
 
+
+def comboami_version():
+    try:
+        with open('/home/ubuntu/datastax_ami/VERSION', 'r') as f:
+            return f.readline().strip()
+    except:
+        return "<< $HOME/datastax_ami/VERSION missing >>"
+
+
 def curl_instance_data(url):
     for i in range(20):
         try:
@@ -82,13 +91,14 @@ def repository():
         # Backwards compatibility: If --forcecommit was used, always use the official repository.
         if options.forcecommit:
             commitish = options.forcecommit
-        else:
+        elif options.repository:
             parts = options.repository.split('#')
             nparts = len(parts)
             if nparts > 0:
                 repository = parts[0]
                 if nparts > 1:
                     commitish = parts[1]
+        else:
+            repository = 'https://github.com/riptano/ComboAMI#%s' % comboami_version()
 
     return (repository, commitish)
-

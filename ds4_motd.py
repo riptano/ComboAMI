@@ -15,6 +15,8 @@ import gzip
 import StringIO
 from email.parser import Parser
 
+from ds0_utils import comboami_version
+
 config_data = {}
 config_data['nodetool_statement'] = 'nodetool -h localhost ring'
 
@@ -179,11 +181,7 @@ def print_tools():
     print "    Run: datastax_support"
 
 def print_trailing_info():
-    try:
-        with open('/home/ubuntu/datastax_ami/VERSION', 'r') as f:
-            version = f.readline().strip()
-    except:
-        version = "<< $HOME/datastax_ami/VERSION missing >>"
+    version = comboami_version()
 
     substring = "Version: "
     versionInfo = subprocess.Popen(shlex.split("dpkg -s %s" % conf.get_config("AMI", "package")), stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read()
