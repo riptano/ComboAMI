@@ -180,10 +180,10 @@ def print_tools():
 
 def print_trailing_info():
     try:
-        with open('/home/ubuntu/datastax_ami/presetup/VERSION', 'r') as f:
+        with open('/home/ubuntu/datastax_ami/VERSION', 'r') as f:
             version = f.readline().strip()
     except:
-        version = "<< $HOME/datastax_ami/presetup/VERSION missing >>"
+        version = "<< $HOME/datastax_ami/VERSION missing >>"
 
     substring = "Version: "
     versionInfo = subprocess.Popen(shlex.split("dpkg -s %s" % conf.get_config("AMI", "package")), stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read()
