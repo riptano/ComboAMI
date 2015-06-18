@@ -182,6 +182,13 @@ sudo rm -f /etc/ssh/ssh_host_rsa_key*
 sudo rm -rf /tmp/*
 sudo su -c 'history -c'
 history -c
+# Clean up cloud-init boot files, especially the "lock" in
+# /var/lib/cloud/instance/boot-finished that we use to check if
+# cloud-init is finished on startup.
+# I wasn't able to find any documentation on this cleanup process,
+# so it's possible I'm missing things or doing things incorrectly.
+sudo rm -f /var/lib/cloud/instance
+sudo rm -rf /var/lib/cloud/instances/*
 
 ### Install ec2-ami-tools
 # There are copies of the ami-tools in the Ubuntu repos, but they're old and
