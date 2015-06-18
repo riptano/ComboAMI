@@ -8,6 +8,8 @@
 # version from disk by the time updates start, with the result that post-bake
 # updates to this file are ignored.
 
+import os
+import time
 import ds0_utils
 import logger
 import conf
@@ -27,6 +29,14 @@ def get_git_reset_arg(commitish):
        return commit_id
     else:
         return 'origin/' + commitish
+
+# Wait for cloud-init to finish, it does changes all sorts of fundamental
+# things on startup (including apt-repo mirrors, but lots of other stuff too)
+# and is known to continue doing work after ssh is up and running, and can
+# cause all sorts of operations to fail in unexpected ways if it's not finished
+while not os.path.exists("/var/lib/cloud/instance/boot-finished"):
+    logger.info("Waiting for cloud-init to finish...")
+    time.sleep(1)
 
 # Update the AMI codebase if it's its first boot
 if not conf.get_config("AMI", "CompletedFirstBoot"):
