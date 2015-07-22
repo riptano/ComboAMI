@@ -423,7 +423,10 @@ def clean_installation():
         config_data['conf_path'] = os.path.expanduser("/etc/dse/cassandra/")
 
         if options.release:
-            install_list = 'sudo apt-get install -y dse-full={0} dse={0} dse-demos={0} dse-hive={0} dse-libcassandra={0} dse-libhadoop={0} dse-libhive={0} dse-libpig={0} dse-pig={0}'
+            install_list = 'sudo apt-get install -y dse-full={0} dse={0}'
+            install_list += ' dse-demos={0} dse-hive={0} dse-libcassandra={0}'
+            install_list += ' dse-libhadoop={0} dse-libhive={0} dse-libpig={0}'
+            install_list += ' dse-pig={0}'
             if options.release.startswith('1'):
                 logger.exe(install_list.format(options.release))
                 conf.set_config('AMI', 'package', 'dse-full')
