@@ -80,12 +80,6 @@ Options
         Allows you to use your own reflector
         Default: http://reflector2.datastax.com/reflector2.php
 
-    --repository <repository>
-        Allows you to set a custom repository to pull configuration files from
-        Default: none, falls back to repository used to create the AMI
-        Examples: https://github.com/riptano/ComboAMI#2.5
-                  https://github.com/riptano/ComboAMI#e5e3d41fb5f12461509aa1b6079413b381930d81
-
 
 Ports Needed
 ============

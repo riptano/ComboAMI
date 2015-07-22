@@ -61,9 +61,7 @@ def parse_ec2_userdata():
     parser = ArgumentParser()
 
     # Development options
-    # Option that specifies repository to use for updating
-    parser.add_argument("--repository", action="store", type=str, dest="repository")
-    # Option that specifies the commit to use for updating (instead of the latest) -- kept for backwards compatibility
+    # Option that specifies the cluster's name
     parser.add_argument("--forcecommit", action="store", type=str, dest="forcecommit")
 
     try:
@@ -72,23 +70,8 @@ def parse_ec2_userdata():
     except:
         return None
 
-def repository():
+def required_commit():
     options = parse_ec2_userdata()
 
-    repository = None
-    commitish = ''
-
-    if options:
-        # Backwards compatibility: If --forcecommit was used, always use the official repository.
-        if options.forcecommit:
-            commitish = options.forcecommit
-        else:
-            parts = options.repository.split('#')
-            nparts = len(parts)
-            if nparts > 0:
-                repository = parts[0]
-                if nparts > 1:
-                    commitish = parts[1]
-
-    return (repository, commitish)
-
+    if options and options.forcecommit:
+        return options.forcecommit

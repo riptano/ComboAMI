@@ -217,6 +217,8 @@ def print_errors():
     knownErrors.append("Exceptions             : 0\n".lower())
     for line in open('/home/ubuntu/datastax_ami/ami.log'):
         if ('error' in line.lower() or '[warn]' in line.lower() or 'exception' in line.lower()) and not (line.lower() in knownErrors or line.startswith('xss =  ')):
+            if "gpg --import /home/ubuntu/datastax_ami/repo_keys/DataStax_AMI.7123CDFD.key:\n".lower() in line.lower():
+                continue
             notices += line
 
     if len(notices) > 0:
