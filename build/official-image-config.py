@@ -178,8 +178,10 @@ def builder_builder(region, os_version, upstream_ami, virt_type):
         "region": region,
         "source_ami": upstream_ami,
         "ami_virtualization_type": virt_type,
-        "s3_bucket": "comboami-%s/%s-%s-%s-%s" % (COMBOAMI_VERSION, now,
-                                                  region, os_version,
+        # Bucket creations fail unless we have a bucket per region
+        # Having a bucket per version makes deletions easier and cleaner
+        "s3_bucket": "comboami-%s-%s/%s-%s-%s" % (COMBOAMI_VERSION, region,
+                                                  now, os_version,
                                                   SHORT_VIRT_TYPE),
         "bundle_vol_command": ec2_bundle_vol_cmd,
         "bundle_upload_command": ec2_bundle_upload_cmd,
