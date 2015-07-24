@@ -15,7 +15,10 @@ import json
 
 # The tag, branch or other commit-ref that will be checked out and baked
 # into the AMI
-COMBOAMI_VERSION = "2.6.0"
+f = open('../VERSION', 'r')
+COMBOAMI_VERSION = f.readline().strip()
+f.close
+
 
 # The versions of Amazon AMI and API tools to download and install, used
 # for building the instance-store backed AMI's
