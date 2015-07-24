@@ -15,7 +15,7 @@ import json
 
 # The tag, branch or other commit-ref that will be checked out and baked
 # into the AMI
-COMBOAMI_VERSION = "2.6-beta8"
+COMBOAMI_VERSION = "2.6.0"
 
 # The versions of Amazon AMI and API tools to download and install, used
 # for building the instance-store backed AMI's
