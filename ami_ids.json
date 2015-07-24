@@ -1,22 +1,204 @@
 {
-    "hvm": {
-        "us-east-1": "ami-ada2b6c4",
-        "us-west-1": "ami-3cf7c979",
-        "us-west-2": "ami-1cff962c",
-        "eu-west-1": "ami-7f33cd08",
-        "ap-southeast-1": "ami-b47828e6",
-        "ap-southeast-2": "ami-55d54d6f",
-        "ap-northeast-1": "ami-714a3770",
-        "sa-east-1": "ami-1dda7800"
-    },
-    "pv": {
-        "us-east-1": "ami-f9a2b690",
-        "us-west-1": "ami-32f7c977",
-        "us-west-2": "ami-16ff9626",
-        "eu-west-1": "ami-8932ccfe",
-        "ap-southeast-1": "ami-8c7828de",
-        "ap-southeast-2": "ami-57d54d6d",
-        "ap-northeast-1": "ami-6b4a376a",
-        "sa-east-1": "ami-15da7808"
-    }
+    "us-east-1": [
+        {
+            "id": "ami-d5ac72be",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-93af71f8",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "hvm"
+        },
+        {
+            "id": "ami-cbac72a0",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-35ac725e",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "hvm"
+        }
+    ],
+    "us-west-1": [
+        {
+            "id": "ami-99d32edd",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-01d02d45",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "hvm"
+        },
+        {
+            "id": "ami-31d02d75",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-17d02d53",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "hvm"
+        }
+    ],
+
+    "us-west-2": [
+        {
+            "id": "ami-6d98945d",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-0b98943b",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "hvm"
+        },
+        {
+            "id": "ami-8b9b97bb",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-73989443",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "hvm"
+        }
+    ],
+
+    "eu-west-1": [
+        {
+            "id": "ami-904208e7",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-bc4208cb",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "hvm"
+        },
+        {
+            "id": "ami-1c470d6b",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-aa4208dd",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "hvm"
+        }
+    ],
+
+    "ap-southeast-1": [
+        {
+            "id": "ami-209d9f72",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-049d9f56",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "hvm"
+        },
+        {
+            "id": "ami-2c9d9f7e",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-349d9f66",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "hvm"
+        }
+    ],
+
+    "ap-southeast-2": [
+        {
+            "id": "ami-5f1c5d65",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-5b1c5d61",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "hvm"
+        },
+        {
+            "id": "ami-bb1c5d81",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-4b1c5d71",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "hvm"
+        }
+    ],
+
+    "ap-northeast-1": [
+        {
+            "id": "ami-a0f445a0",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-6af5446a",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "hvm"
+        },
+        {
+            "id": "ami-ecf445ec",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "paravirtual"
+        },
+        {
+            "id": "ami-00f44500",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "hvm"
+        }
+    ],
+
+    "sa-east-1": [
+        {
+            "id": "ami-1936b904",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "hvm"
+        },
+        {
+            "id": "ami-1536b908",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "hvm"
+        }
+    ]
 }
