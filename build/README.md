@@ -43,14 +43,19 @@ to keep.
   have snapshots and/or volumes associated with them. Delete them in the
   AWS control panel in the EC2 section.
 * S3 buckets: If you're building instance-backed AMI's (including the official
-  images), they'll have snapshots associated with them. Snapshots should all
-  be prefixed with a unix epoch timestamp, so identifying the ones you've
-  created shouldn't be difficult. Deleting these from the console is tedious
-  use s3cmd: http://s3tools.org/kb/item5.htm (s3cmd --configure will walk you
-  through one-time setup of s3cmd)
+  images), they'll have S3 buckets associated with them. The buckets are named
+  for the ComboAMI version they contain, and have many folders inside that are
+  prefixed with a unix epoch timestamp and a variety of identifying information
+  including the region. Deleting these from the AWS web console can be tedious,
+  but s3cmd makes it relatively easy.
+    * Download from http://s3tools.org/kb/item5.htm 
+    * Run `s3cmd --configure` to go through one-time setup.
+    * To delete empty a bucket: `s3cmd -v del --force --recursive bucketname`
+    * To remove a bucket entirely: `s3cmd rb bucketname`
+
 
 # Prerequisites
-* Install packer on your workstation:
+* Install packer on your workstation (v0.7.5 was the version used in 2015-07):
   https://www.packer.io/intro/getting-started/setup.html
 * Install json_pp on your workstation: It ships with perl and is installed
   by default in MacOSX and most linuxes. This is used to strip comments from
@@ -79,7 +84,8 @@ to keep.
     them handy for testing.
   * test-instance.json - A test-config that builds 2 instance-store backed AMI's
     in us-east-1. The process of building an instance store has many moving
-    parts, and requires running
+    parts, including build steps that on the instance being imaged.  This is
+    useful for testing those issues at small scale.
   * official-image-config.py - The packer templating language is great, but it's
     very verbose and not quite flexible enough for our build. This is a
     script contains config-data and a few helper functions that output a plain
@@ -97,9 +103,14 @@ to keep.
 # Official AMI Checklist
 
 When publishing the official AMI's follow this checklist:
-1. Create a git tag 2.6-beta1 or 2.6.0 and push it to Github: `git tag 2.6-beta1; git push --tags`
-2. Update official-image-config.py:
-   1. Set COMBOAMI_VERSION to the newly created tag.
-   2. Set AMI_PERMISSIONS FIXME
-3. ./gopackgo.sh public-official-images
-4. Update ../ami_ids.json
+
+1. Update build/official-image-config.py:
+    1. Set COMBOAMI_VERSION to the newly created tag. This constant will also be
+       included in the AMI names.
+    2. Set AMI_PERMISSIONS to `all` in order to make the images public
+2. Update VERSION to be the name of the branch that should checkout out on
+   on AMI launch in order to get updates.
+3. Create a git tag for the build like `2.6-beta1` or `2.6.0` and push it to
+   Github: `git tag 2.6-beta1; git push --tags`
+3. Build and publish the images ./gopackgo.sh public-official-images
+4. Update ami_ids.json to list the id's for the newly build amis
