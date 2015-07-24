@@ -105,12 +105,11 @@ to keep.
 When publishing the official AMI's follow this checklist:
 
 1. Update build/official-image-config.py:
-    1. Set COMBOAMI_VERSION to the newly created tag. This constant will also be
-       included in the AMI names.
-    2. Set AMI_PERMISSIONS to `all` in order to make the images public
-2. Update VERSION to be the name of the branch that should checkout out on
-   on AMI launch in order to get updates.
-3. Create a git tag for the build like `2.6-beta1` or `2.6.0` and push it to
-   Github: `git tag 2.6-beta1; git push --tags`
+    1. Set AMI_PERMISSIONS to `all` in order to make the images public
+2. Update the VERSION file. This is the version number that will be included in
+   the AMI names, and also the branch that will be checked out on AMI build and
+   when AMIs are launched in order to get updates.
 3. Build and publish the images ./gopackgo.sh public-official-images
-4. Update ami_ids.json to list the id's for the newly build amis
+4. Create a git tag for the build like `2.6-beta1` or `2.6.0` and push it to
+   Github: `git tag 2.6-beta1; git push --tags`
+5. Update ami_ids.json to list the id's for the newly build amis
