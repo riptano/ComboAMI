@@ -110,6 +110,6 @@ When publishing the official AMI's follow this checklist:
    the AMI names, and also the branch that will be checked out on AMI build and
    when AMIs are launched in order to get updates.
 3. Build and publish the images ./gopackgo.sh public-official-images
-4. Create a git tag for the build like `2.6-beta1` or `2.6.0` and push it to
+4. Update ami_ids.json to list the id's for the newly build amis
+5. Create a git tag for the build like `2.6-beta1` or `2.6.0` and push it to
    Github: `git tag 2.6-beta1; git push --tags`
-5. Update ami_ids.json to list the id's for the newly build amis
