@@ -14,6 +14,7 @@ import ds0_utils
 import logger
 import conf
 
+
 # Figure out the argument we should use with git reset.
 def get_git_reset_arg(commitish):
     if not commitish:
@@ -26,7 +27,7 @@ def get_git_reset_arg(commitish):
     # If the commit-ish is a valid commit id, use it as-is.
     # Otherwise, prefix with the remote (always origin).
     if commit_id.strip() == commitish:
-       return commit_id
+        return commit_id
     else:
         return 'origin/' + commitish
 
