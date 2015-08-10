@@ -8,7 +8,6 @@
 # version from disk by the time updates start, with the result that post-bake
 # updates to this file are ignored.
 
-import os
 import time
 import ds0_utils
 import logger
@@ -31,13 +30,21 @@ def get_git_reset_arg(commitish):
     else:
         return 'origin/' + commitish
 
-# Wait for cloud-init to finish, it does changes all sorts of fundamental
+# Wait for cloud-init to finish, it changes all sorts of fundamental
 # things on startup (including apt-repo mirrors, but lots of other stuff too)
 # and is known to continue doing work after ssh is up and running, and can
 # cause all sorts of operations to fail in unexpected ways if it's not finished
-while not os.path.exists("/var/lib/cloud/instance/boot-finished"):
-    logger.info("Waiting for cloud-init to finish...")
-    time.sleep(1)
+logger.info("Waiting for cloud-init to finish...")
+# Sleeping a fixed time of 10 seconds is a terrible hack. It would be much
+# better to wait for cloud-init to signal that it's finished, which it does
+# through the creation of /var/lib/cloud/instance/boot-finished. Unfortunately,
+# in Upstart environments, the upstart job for cloud-init also waits for all
+# the rc scripts at runlevel 2 to finish... which this file is one of.
+# I'm sure it's possible to resolve this circular dependency if we take on
+# maintaining upstart scripts, but I'm not ready for that at this point (though
+# would welcome a clean pull-request)
+time.sleep(10)
+
 
 # Update the AMI codebase if it's its first boot
 if not conf.get_config("AMI", "CompletedFirstBoot"):
