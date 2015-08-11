@@ -15,7 +15,7 @@ def comboami_version():
 
 
 def comboami_defaultbranch():
-    return "dev-2.6"
+    return "2.6"
 
 
 def curl_instance_data(url):
