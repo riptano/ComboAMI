@@ -1,7 +1,8 @@
 Summary
 =======
-DataStax's Amazon Machine Image is the quickest way to get a DataStax
-Community or DataStax Enterprise cluster up and running on EC2.
+
+DataStax's Amazon Machine Image a quick way to test a DataStax Community or 
+DataStax Enterprise cluster on EC2.
 
 
 Quickstart
@@ -99,47 +100,16 @@ Options
                   https://github.com/riptano/ComboAMI#e5e3d41fb5f12461509aa1b6079413b381930d81
 
 
-Ports Needed
-============
+Security Groups
+===============
 
-See:
-
-    http://www.datastax.com/documentation/datastax_enterprise/4.5/datastax_enterprise/install/installAMIsecurity.html
-
-
-Step-by-step
-============
-
-Visit http://docs.datastax.com/en/latest-dsc-ami for full installation instructions.
+For information on setting up security groups, see the 
+[Datastax Documentation](http://www.datastax.com/documentation/datastax_enterprise/4.7/datastax_enterprise/install/installAMIsecurity.html)
 
 
-Post-install
-============
-
-To stop the service, simply run
-
-    sudo service <cassandra | dse> stop
-
-To start the service again, simply run
-
-    sudo service <cassandra | dse> start
-
-
-Implementation details
-======================
-
-See [FILES.txt](FILES.txt) for a description of how the scripts here configure the
-AMI.
-
-
-
-
-Branching details
+Contributing
 =================
 
-Feel free to fork off this project and offer any suggestions that you
-find along the way.
-
-Also, if you're interested in the whole process: read up on the saving
-process here:
-http://www.datastax.com/dev/blog/personalizing-your-own-brisk-ami
+Pull requests are welcome. Consider creating an issue to discus the feature
+before doing the development work, or just fork and create a PR based off the 
+dev-2.6 branch.
