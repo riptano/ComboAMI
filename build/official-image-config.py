@@ -3,6 +3,13 @@ import time
 import calendar
 import json
 
+# Hacky way to import some version constants from ../ds0_utils using relative
+# paths
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+import ds0_utils
+
 # The packer config templating language is nice, but when dealing with
 # many ami-builders like we have there's a lot of repetition. The
 # format is so verbose that it can be hard to follow, and there's lots
@@ -15,10 +22,17 @@ import json
 
 # The tag, branch or other commit-ref that will be checked out and baked
 # into the AMI
-f = open('../VERSION', 'r')
-COMBOAMI_VERSION = f.readline().strip()
-f.close
+COMBOAMI_BRANCH = ds0_utils.comboami_defaultbranch()
 
+# The version of the baked ami. For example '2.6.1'. Note that this number
+# is different from the branch name in order to allow bugfix ami bakes that
+# update from the same branch. For example:
+#   - COMBOAMI_VERSION 2.6.0 is released which pulls from COMBOAMI_BRANCH 2.6
+#   - A bug is discoverd in COMBOAMI_VERSION 2.6.0 that can only be fixed by
+#     a rebake. COMBOAMI_VERSION 2.6.1 is released, which continues to pull
+#     from COMBOAMI_BRANCH 2.6
+# This distinction reduces branch maintenance overhead during release.
+COMBOAMI_VERSION = ds0_utils.comboami_version()
 
 # The versions of Amazon AMI and API tools to download and install, used
 # for building the instance-store backed AMI's
@@ -112,6 +126,10 @@ packer_provisioners = [
         "script": "provision.sh",
         "environment_vars": [
             "COMBOAMI_VERSION=%s" % COMBOAMI_VERSION,
+            # COMBOAMI_BRANCH isn't used in the JSON template, but packer
+            # passes it into provisioning.sh as an environment variable, where
+            # it is used for the git checkout.
+            "COMBOAMI_BRANCH=%s" % COMBOAMI_BRANCH,
             "EC2_AMI_TOOLS_VERSION=%s" % EC2_AMI_TOOLS_VERSION,
             "EC2_API_TOOLS_VERSION=%s" % EC2_API_TOOLS_VERSION
         ]

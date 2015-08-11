@@ -11,11 +11,11 @@ from argparse import ArgumentParser
 
 
 def comboami_version():
-    try:
-        with open('/home/ubuntu/datastax_ami/VERSION', 'r') as f:
-            return f.readline().strip()
-    except:
-        return "<< $HOME/datastax_ami/VERSION missing >>"
+    return "2.6.1"
+
+
+def comboami_defaultbranch():
+    return "dev-2.6"
 
 
 def curl_instance_data(url):
@@ -108,6 +108,6 @@ def repository():
                 if nparts > 1:
                     commitish = parts[1]
         else:
-            repository = 'https://github.com/riptano/ComboAMI#%s' % comboami_version()
+            repository = 'https://github.com/riptano/ComboAMI#%s' % comboami_defaultbranch()
 
     return (repository, commitish)
