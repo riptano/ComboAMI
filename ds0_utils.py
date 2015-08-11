@@ -27,6 +27,7 @@ def curl_instance_data(url):
             time.sleep(5)
     sys.exit('Couldn\'t curl instance data after 60 seconds')
 
+
 def read_instance_data(req):
     data = urllib2.urlopen(req).read()
     try:
@@ -37,9 +38,12 @@ def read_instance_data(req):
         stream = StringIO.StringIO(data)
         return stream.read()
 
+
 def is_multipart_mime(data):
     match = re.search('Content-Type: multipart', data)
-    if match: return True
+    if match:
+        return True
+
 
 def get_user_data(req):
     data = read_instance_data(req)
@@ -48,9 +52,11 @@ def get_user_data(req):
         for part in message.walk():
             if (part.get_content_type() == 'text/plaintext'):
                 match = re.search('totalnodes', part.get_payload())
-                if (match): return part.get_payload()
+                if (match):
+                    return part.get_payload()
     else:
         return data
+
 
 def get_ec2_data():
     instance_data = {}
@@ -62,6 +68,7 @@ def get_ec2_data():
         instance_data['userdata'] = ''
 
     return instance_data
+
 
 def parse_ec2_userdata():
     instance_data = get_ec2_data()
@@ -81,6 +88,7 @@ def parse_ec2_userdata():
     except:
         return None
 
+
 def repository():
     options = parse_ec2_userdata()
 
@@ -88,7 +96,8 @@ def repository():
     commitish = ''
 
     if options:
-        # Backwards compatibility: If --forcecommit was used, always use the official repository.
+        # Backwards compatibility: If --forcecommit was used, always use the
+        # official repository.
         if options.forcecommit:
             commitish = options.forcecommit
         elif options.repository:
