@@ -1,8 +1,7 @@
-# Ignore minified json files
-min-*.json
-
 # Ignore the local.json file, it has secrets that shouldn't be checked in
 local.json
 
-# official-image-config.py builds this as an artifact
+# Ignore artifacts created by the build process
 official-image-config.json
+min-*.json
+packer.log
