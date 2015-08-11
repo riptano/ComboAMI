@@ -1,25 +1,25 @@
 {
     "us-east-1": [
         {
-            "id": "ami-d5ac72be",
+            "id": "ami-6564cd0e",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-93af71f8",
+            "id": "ami-4d63ca26",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "hvm"
         },
         {
-            "id": "ami-cbac72a0",
+            "id": "ami-6f64cd04",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-35ac725e",
+            "id": "ami-7365cc18",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "hvm"
@@ -27,25 +27,25 @@
     ],
     "us-west-1": [
         {
-            "id": "ami-99d32edd",
+            "id": "ami-e5a15fa1",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-01d02d45",
+            "id": "ami-d3a15f97",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "hvm"
         },
         {
-            "id": "ami-31d02d75",
+            "id": "ami-a7a15fe3",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-17d02d53",
+            "id": "ami-dba15f9f",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "hvm"
@@ -54,25 +54,25 @@
 
     "us-west-2": [
         {
-            "id": "ami-6d98945d",
+            "id": "ami-e94c46d9",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-0b98943b",
+            "id": "ami-9d4c46ad",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "hvm"
         },
         {
-            "id": "ami-8b9b97bb",
+            "id": "ami-ff4d47cf",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-73989443",
+            "id": "ami-e34c46d3",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "hvm"
@@ -81,25 +81,25 @@
 
     "eu-west-1": [
         {
-            "id": "ami-904208e7",
+            "id": "ami-ce2674b9",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-bc4208cb",
+            "id": "ami-e0207297",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "hvm"
         },
         {
-            "id": "ami-1c470d6b",
+            "id": "ami-0c26747b",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-aa4208dd",
+            "id": "ami-e0277597",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "hvm"
@@ -108,25 +108,25 @@
 
     "ap-southeast-1": [
         {
-            "id": "ami-209d9f72",
+            "id": "ami-84858ad6",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-049d9f56",
+            "id": "ami-e8858aba",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "hvm"
         },
         {
-            "id": "ami-2c9d9f7e",
+            "id": "ami-48848b1a",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-349d9f66",
+            "id": "ami-82858ad0",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "hvm"
@@ -135,25 +135,25 @@
 
     "ap-southeast-2": [
         {
-            "id": "ami-5f1c5d65",
+            "id": "ami-f77132cd",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-5b1c5d61",
+            "id": "ami-fd7132c7",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "hvm"
         },
         {
-            "id": "ami-bb1c5d81",
+            "id": "ami-5b703361",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-4b1c5d71",
+            "id": "ami-f37132c9",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "hvm"
@@ -162,25 +162,25 @@
 
     "ap-northeast-1": [
         {
-            "id": "ami-a0f445a0",
+            "id": "ami-4655ed46",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-6af5446a",
+            "id": "ami-3a55ed3a",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "hvm"
         },
         {
-            "id": "ami-ecf445ec",
+            "id": "ami-7c55ed7c",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "paravirtual"
         },
         {
-            "id": "ami-00f44500",
+            "id": "ami-4255ed42",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "hvm"
@@ -189,13 +189,25 @@
 
     "sa-east-1": [
         {
-            "id": "ami-1936b904",
+            "id": "ami-db2aa3c6",
+            "Distributor ID": "Ubuntu",
+            "Release": "12.04",
+            "virtualization type": "pv"
+        },
+        {
+            "id": "ami-b12aa3ac",
             "Distributor ID": "Ubuntu",
             "Release": "12.04",
             "virtualization type": "hvm"
         },
         {
-            "id": "ami-1536b908",
+            "id": "ami-d52aa3c8",
+            "Distributor ID": "Ubuntu",
+            "Release": "14.04",
+            "virtualization type": "pv"
+        },
+        {
+            "id": "ami-a92aa3b4",
             "Distributor ID": "Ubuntu",
             "Release": "14.04",
             "virtualization type": "hvm"
