@@ -1,16 +1,29 @@
 Summary
 =======
-DataStax's Amazon Machine Image is the quickest way to get a DataStax
-Community or DataStax Enterprise cluster up and running on EC2.
+
+DataStax's Amazon Machine Image a quick way to test a DataStax Community or 
+DataStax Enterprise cluster on EC2.
 
 
 Quickstart
 ==========
 
-Use `cassandralauncher` as found and documented here:
-https://github.com/joaquincasares/cassandralauncher
+1. Log into the AWS console with your web browser
+2. Select the EC2 service
+3. Find the [ami-id's](ami_ids.json) for your region.
+4. "Launch Instance" -> Community AMI's -> Search for your ami-id -> "Select"
+5. Select an instance type (m3.medium is good for low-throughput testing)
+6. "Next: Configure Instance Details" -> "Advanced Details" -> add "User Data"
+   of "--clustername test-cluster --totalnodes 1 --version community"
+7. "Review and Launch" -> "Launch" -> Select keypair
+8. SSH to your new cassandra cluster and run `nodetool status`
 
-This will ensure all options are processed correctly and easily.
+If you frequently launch scratch clusters, you may be interested in 
+[cassandralauncher](https://github.com/joaquincasares/cassandralauncher)
+
+For detailed instructions on launching, visit 
+http://docs.datastax.com/en/latest-dsc-ami
+
 
 Options
 =======
@@ -87,61 +100,16 @@ Options
                   https://github.com/riptano/ComboAMI#e5e3d41fb5f12461509aa1b6079413b381930d81
 
 
-Ports Needed
-============
+Security Groups
+===============
 
-See:
-
-    http://www.datastax.com/documentation/datastax_enterprise/4.5/datastax_enterprise/install/installAMIsecurity.html
-
-
-Step-by-step
-============
-
-Visit http://docs.datastax.com/en/latest-dsc-ami for full installation instructions.
+For information on setting up security groups, see the 
+[Datastax Documentation](http://www.datastax.com/documentation/datastax_enterprise/4.7/datastax_enterprise/install/installAMIsecurity.html)
 
 
-Post-install
-============
-
-To stop the service, simply run
-
-    sudo service <cassandra | dse> stop
-
-To start the service again, simply run
-
-    sudo service <cassandra | dse> start
-
-
-Implementation details
-======================
-
-See [FILES.txt](FILES.txt) for a description of how the scripts here configure the
-AMI.
-
-
-Upgrading
-=========
-
-1. Backup all the data on all your nodes using the snapshot utility. This provides you with the easiest way to revert any unwanted changes or incompatibilities that may arise. See the [DataStax documentation](http://www.datastax.com/docs/1.0/operations/backup_restore) for more information.
-2. On each of your Cassandra nodes, run `sudo apt-get install [ cassandra | apache-cassandra1 | dse-full ]`, depending on which version you were currently on and want to upgrade to.
-    * `cassandra` upgrades to the latest in 0.8.x release.
-    * `apache-cassandra` upgrades to the latest in the 1.0.x release.
-    * `dse-full` upgrades to the latest DataStax Enterprise release.
-    * If you are trying to upgrade across major versions, make sure to read NEWS.txt on the newer packages and consult [DataStax documentation](http://www.datastax.com/docs/datastax_enterprise2.0/upgrading_dse) for full details for upgrading packaged releases. Typically a new repository must be added followed by a `sudo apt-get update`.
-3. Account for New and Changed Parameters in cassandra.yaml. If the default Cassandra configuration file has changed, you will find backups of it in the conf directory. You can use that to compare the two configurations and make appropriate changes.
-4. Make sure any client drivers – such as Hector or Pycassa clients – are compatible with your current version.
-5. Run nodetool drain to flush the commit log and then restart each Cassandra node, one at a time, monitoring the log files for any issues.
-6. After upgrading and restarting all Cassandra nodes, restart client applications.
-7. [Upgrading from 0.8 to 1.0] After upgrading, run nodetool scrub against each node before running repair, moving nodes, or adding new ones.
-
-
-Branching details
+Contributing
 =================
 
-Feel free to fork off this project and offer any suggestions that you
-find along the way.
-
-Also, if you're interested in the whole process: read up on the saving
-process here:
-http://www.datastax.com/dev/blog/personalizing-your-own-brisk-ami
+Pull requests are welcome. Consider creating an issue to discus the feature
+before doing the development work, or just fork and create a PR based off the 
+dev-2.6 branch.
