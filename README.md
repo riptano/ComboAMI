@@ -7,10 +7,22 @@ Community or DataStax Enterprise cluster up and running on EC2.
 Quickstart
 ==========
 
-Use `cassandralauncher` as found and documented here:
-https://github.com/joaquincasares/cassandralauncher
+1. Log into the AWS console with your web browser
+2. Select the EC2 service
+3. Find the [ami-id's](ami_ids.json) for your region.
+4. "Launch Instance" -> Community AMI's -> Search for your ami-id -> "Select"
+5. Select an instance type (m3.medium is good for low-throughput testing)
+6. "Next: Configure Instance Details" -> "Advanced Details" -> add "User Data"
+   of "--clustername test-cluster --totalnodes 1 --version community"
+7. "Review and Launch" -> "Launch" -> Select keypair
+8. SSH to your new cassandra cluster and run `nodetool status`
 
-This will ensure all options are processed correctly and easily.
+If you frequently launch scratch clusters, you may be interested in 
+[cassandralauncher](https://github.com/joaquincasares/cassandralauncher)
+
+For detailed instructions on launching, visit 
+http://docs.datastax.com/en/latest-dsc-ami
+
 
 Options
 =======
