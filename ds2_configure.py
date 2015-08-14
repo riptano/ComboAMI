@@ -1130,7 +1130,7 @@ def additional_post_configurations():
 
 def run():
     # Remove script files
-    logger.exe('sudo rm ds2_configure.py')
+    logger.exe('sudo rm ds2_configure.py*')
     logger.info('Deleting ds2_configure.py now. This AMI will never change any configs after this first run.')
 
     additional_pre_configurations()
