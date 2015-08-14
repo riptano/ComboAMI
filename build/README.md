@@ -79,12 +79,12 @@ to keep.
   https://www.packer.io/docs
 * Multiple packer json config files are checked into the repository
   * test-ebs.json - A test-config that builds 2 ebs AMI's in us-east-1. Although
-    ship instance-store backed AMI's in order to provide the best performance,
-    ebs AMI's build more quickly and the build process is much simpler, making
-    them handy for testing.
+    we ship instance-store backed AMI's in order to provide the best 
+    performance, ebs AMI's build more quickly and the build process is much 
+    simpler, making them handy for testing.
   * test-instance.json - A test-config that builds 2 instance-store backed AMI's
     in us-east-1. The process of building an instance store has many moving
-    parts, including build steps that on the instance being imaged.  This is
+    parts, including build steps that run on the instance being imaged.  This is
     useful for testing those issues at small scale.
   * official-image-config.py - The packer templating language is great, but it's
     very verbose and not quite flexible enough for our build. This is a
@@ -111,7 +111,7 @@ When publishing the official AMI's follow this checklist:
        baked ami.
 2. Update build/official-image-config.py:
     1. Set AMI_PERMISSIONS to `all` in order to make the images public
-3. Build and publish the images ./gopackgo.sh publish-official-images
+3. Build and publish the images `./gopackgo.sh publish-official-images`
 4. Update ami_ids.json to list the id's for the newly build amis
 5. Create a git tag for the build like `candidate/2.6.0-beta1` or `release/2.6.0` and push it to
    Github: `git tag release/2.6.1; git push --tags`
