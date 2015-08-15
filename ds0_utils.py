@@ -12,11 +12,11 @@ from argparse import ArgumentParser
 
 
 def comboami_version():
-    return "2.6.2-beta1"
+    return "2.6.2"
 
 
 def comboami_defaultbranch():
-    return "dev-2.6"
+    return "2.6"
 
 
 def curl_instance_data(url):

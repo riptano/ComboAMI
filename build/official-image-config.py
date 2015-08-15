@@ -40,8 +40,8 @@ EC2_AMI_TOOLS_VERSION = "1.5.3"
 EC2_API_TOOLS_VERSION = "1.7.4.0"
 
 # All for publicly accessible builds, empty array for private beta builds
-AMI_PERMISSIONS = []
-# AMI_PERMISSIONS = ["all"]
+# AMI_PERMISSIONS = []
+AMI_PERMISSIONS = ["all"]
 
 AMI_LIST = [
     # Both region and os_version are used in the s3 bucket name that the rootfs
