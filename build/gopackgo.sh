@@ -31,4 +31,4 @@ cat $PACKER_CONF | json_pp > ${PACKER_CONF_MINIFIED}
 export PACKER_LOG=1
 export PACKER_LOG_PATH=packer.log
 packer validate -var-file=local.json ${PACKER_CONF_MINIFIED}
-packer build -var-file=local.json $@ ${PACKER_CONF_MINIFIED}
+packer build -var-file=local.json -machine-readable $@ ${PACKER_CONF_MINIFIED}
