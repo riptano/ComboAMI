@@ -18,6 +18,9 @@ if [ ${1} = "publish-official-images" ]; then
 else
     PACKER_CONF=${1}
 fi
+
+# Now that we've processed the first arg, pop it off the $@ list of args so we
+# can pass the rest through to packer
 shift
 
 # Strip json comments, which packer cannot process
@@ -28,4 +31,4 @@ cat $PACKER_CONF | json_pp > ${PACKER_CONF_MINIFIED}
 export PACKER_LOG=1
 export PACKER_LOG_PATH=packer.log
 packer validate -var-file=local.json ${PACKER_CONF_MINIFIED}
-packer build -var-file=local.json $@ ${PACKER_CONF_MINIFIED}
+packer build -var-file=local.json -machine-readable $@ ${PACKER_CONF_MINIFIED}

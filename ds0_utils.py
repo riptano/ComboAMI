@@ -5,13 +5,14 @@ import StringIO
 import sys
 import time
 import urllib2
+import logger
 
 from email.parser import Parser
 from argparse import ArgumentParser
 
 
 def comboami_version():
-    return "2.6.1"
+    return "2.6.2"
 
 
 def comboami_defaultbranch():
@@ -88,7 +89,16 @@ def parse_ec2_userdata():
     except:
         return None
 
-
+# Parse userdata options and return a git repository and commitish
+# (a commitish is a string that represents a commit, it could be a branch,
+# a tag, a short commit-hash, a long-hash, or anything that git rev-parse
+# can handle)
+#
+# We'll use this to update the git-checkout baked into the AMI to deliver
+# dynamic updates on boot
+#
+# This function is called from ds0_updater.py, and so if it is updated, the
+# AMI must be rebaked. See the warning at the top of ds0_updater.py for details
 def repository():
     options = parse_ec2_userdata()
 
@@ -96,18 +106,46 @@ def repository():
     commitish = ''
 
     if options:
-        # Backwards compatibility: If --forcecommit was used, always use the
-        # official repository.
-        if options.forcecommit:
-            commitish = options.forcecommit
-        elif options.repository:
+        # User specified a --repository parameter, pull the repo and commitish
+        # out of it
+        if options.repository:
             parts = options.repository.split('#')
             nparts = len(parts)
             if nparts > 0:
                 repository = parts[0]
                 if nparts > 1:
                     commitish = parts[1]
+        # For backwards compatibility, --forcecommit should allow specifying
+        # a commit from the default repository
+        elif options.forcecommit:
+            # Repository remains set to None in order to use the origin repo of
+            # the git-checkout baked into the repo
+            commitish = options.forcecommit
+        # No special repository or commit parameters were passed, use default
         else:
-            repository = 'https://github.com/riptano/ComboAMI#%s' % comboami_defaultbranch()
+            # Repository = None, use the baked-in repo
+            commitish = comboami_defaultbranch()
 
     return (repository, commitish)
+
+
+# Returns a commit-hash that can be passed to git reset
+#
+# This function is called from ds0_updater.py, and so if it is updated, the
+# AMI must be rebaked. See the warning at the top of ds0_updater.py for details
+def get_git_reset_arg(commitish):
+    if not commitish:
+        return ''
+
+    # This will work if the commitish is a remote branch name
+    (commit_id, err) = logger.exe('git rev-parse origin/' + commitish)
+    if err:
+        # This will work if the commitish is a short-hash or long-hash
+        (commit_id, err) = logger.exe('git rev-parse ' + commitish)
+        if err:
+            # Can't figure out what commit is being referenced, return no
+            # commit-id and git reset will simply hard reset the workspace
+            # using the current commit in the git checkout baked into the AMI
+            return ''
+
+    return commit_id
