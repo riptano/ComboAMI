@@ -18,6 +18,9 @@ if [ ${1} = "publish-official-images" ]; then
 else
     PACKER_CONF=${1}
 fi
+
+# Now that we've processed the first arg, pop it off the $@ list of args so we
+# can pass the rest through to packer
 shift
 
 # Strip json comments, which packer cannot process
