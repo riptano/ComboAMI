@@ -12,7 +12,7 @@ from argparse import ArgumentParser
 
 
 def comboami_version():
-    return "2.6.2"
+    return "2.6.3"
 
 
 def comboami_defaultbranch():
