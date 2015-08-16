@@ -239,6 +239,8 @@ def parse_ec2_userdata():
     parser.add_argument("--customreservation", action="store", type=str, dest="customreservation")
     # Option that allows custom scripts to be executed
     parser.add_argument("--base64postscript", action="store", type=str, dest="base64postscript")
+    # Option that allows to download and execute a custom script
+    parser.add_argument("--postscript_url", action="store", type=str, dest="postscript_url")
 
     # Grab provided reflector through provided userdata
     global options
@@ -1126,6 +1128,16 @@ def additional_post_configurations():
         process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         read = process.communicate()
         logger.info('base64postscript response: %s\n%s' % read)
+    if options.postscript_url:
+        try:
+            response = urllib.urlopen(options.postscript_url)
+            process = subprocess.Popen(response.read(), stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+            read = process.communicate()
+            logger.info('postscript_url response: %s\n%s' % read)
+        except urllib.error.URLError, e:
+            logger.exception('URLError = ' + str(e.reason))
+        except urllib.error.HTTPError, e:
+            logger.exception('HTTPError = ' + str(e.code))
     logger.exe('sudo apt-get --reinstall install ubuntu-keyring')
 
 def run():
