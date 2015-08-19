@@ -1129,11 +1129,12 @@ def additional_post_configurations():
         read = process.communicate()
         logger.info('base64postscript response: %s\n%s' % read)
     if options.postscript_url:
+        logger.info("downloading postscript_url %s" % options.postscript_url)
         try:
             response = urllib.urlopen(options.postscript_url)
             process = subprocess.Popen(response.read(), stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
             read = process.communicate()
-            logger.info('postscript_url response: %s\n%s' % read)
+            logger.debug('postscript_url output:\n%s\n%s' % read)
         except urllib.error.URLError, e:
             logger.exception('URLError = ' + str(e.reason))
         except urllib.error.HTTPError, e:
