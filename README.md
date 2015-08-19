@@ -99,6 +99,9 @@ Options
         Examples: https://github.com/riptano/ComboAMI#2.5
                   https://github.com/riptano/ComboAMI#e5e3d41fb5f12461509aa1b6079413b381930d81
 
+    --postscript_url <url>
+        Allows you to download and execute a post install custom script
+        Default: none
 
 Security Groups
 ===============
