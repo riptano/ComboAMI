@@ -1131,13 +1131,13 @@ def additional_post_configurations():
     if options.postscript_url:
         logger.info("downloading postscript_url %s" % options.postscript_url)
         try:
-            response = urllib.urlopen(options.postscript_url)
+            response = urllib2.urlopen(options.postscript_url)
             process = subprocess.Popen(response.read(), stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
             read = process.communicate()
             logger.debug('postscript_url output:\n%s\n%s' % read)
-        except urllib.error.URLError, e:
+        except urllib2.URLError, e:
             logger.exception('URLError = ' + str(e.reason))
-        except urllib.error.HTTPError, e:
+        except urllib2.HTTPError, e:
             logger.exception('HTTPError = ' + str(e.code))
     logger.exe('sudo apt-get --reinstall install ubuntu-keyring')
 
