@@ -656,7 +656,14 @@ def construct_yaml():
         if options.seed_indexes[2] <= instance_data['launchindex']:
             token = config_data['tokens'][2][instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes]
 
-        p = re.compile( 'initial_token:.*')
+        '''
+        replace "initial_token" value in yaml string, handling cases where it may already be commented-out
+        this regex should match any of these examples:
+            # initial_token: 
+            # initial_token: 12345
+            initial_token: 54321
+        '''
+        p = re.compile(ur'^#?\s?initial_token:.*$', re.MULTILINE)
         yaml = p.sub('initial_token: {0}'.format(token), yaml)
 
     elif conf.get_config('Cassandra', 'partitioner') == 'murmur':
@@ -676,7 +683,8 @@ def construct_yaml():
                 tokens = [((2**64 / options.searchnodes) * i) - 2**63 for i in range(options.searchnodes)]
                 token = str(tokens[instance_data['launchindex'] - options.realtimenodes - options.analyticsnodes] + 20000)
 
-            p = re.compile( 'initial_token:.*')
+            # replace "initial_token" value in yaml string; see explanation above
+            p = re.compile(ur'^#?\s?initial_token:.*$', re.MULTILINE)
             yaml = p.sub('initial_token: {0}'.format(token), yaml)
 
     with open(os.path.join(config_data['conf_path'], 'cassandra.yaml'), 'w') as f:
