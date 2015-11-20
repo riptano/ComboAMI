@@ -414,6 +414,13 @@ def clean_installation():
             conf.set_config('AMI', 'package', 'dsc22')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
+        elif options.release and options.release.startswith('3.0'):
+            dsc_release = cassandra_release = options.release
+            dsc_release = dsc_release + '-1'
+            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc30={1}'.format(cassandra_release, dsc_release))
+            conf.set_config('AMI', 'package', 'dsc30')
+            conf.set_config('Cassandra', 'partitioner', 'murmur')
+            conf.set_config('Cassandra', 'vnodes', 'True')
         else:
             # Determine the most recent version of 2.2 available.
             # We want to install 2.2 by default because it's stable, but with
