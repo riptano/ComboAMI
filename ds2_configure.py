@@ -415,7 +415,16 @@ def clean_installation():
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
         else:
-            logger.exe('sudo apt-get install -y python-cql datastax-agent dsc22')
+            # Determine the most recent version of 2.2 available.
+            # We want to install 2.2 by default because it's stable, but with
+            # 3.x out it's no longer the most recent cassandra package
+            # available, so apt requires us to specify a version number.
+            # candidate_output looks like "Candidate: 2.2.3-1"
+            candidate_output = logger.exe('apt-cache policy dsc22 | grep Candidate')
+            candidate_array = candidate_output.split(":")
+            dsc_release_string = candidate_array[1]
+            dsc_release = dsc_release_string.strip()
+            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc22={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc22')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
