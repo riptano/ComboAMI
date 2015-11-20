@@ -414,8 +414,31 @@ def clean_installation():
             conf.set_config('AMI', 'package', 'dsc22')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
+        elif options.release and options.release.startswith('3.0'):
+            dsc_release = cassandra_release = options.release
+            dsc_release = dsc_release + '-1'
+            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc30={1}'.format(cassandra_release, dsc_release))
+            conf.set_config('AMI', 'package', 'dsc30')
+            conf.set_config('Cassandra', 'partitioner', 'murmur')
+            conf.set_config('Cassandra', 'vnodes', 'True')
         else:
-            logger.exe('sudo apt-get install -y python-cql datastax-agent dsc22')
+            # Determine the most recent version of 2.2 available.
+            # We want to install 2.2 by default because it's stable, but with
+            # 3.x out it's no longer the most recent cassandra package
+            # available, so apt requires us to specify a version number.
+            policy_communicate = logger.exe('apt-cache policy dsc22')
+            policy_stdout = policy_communicate[0]
+            policy_lines = policy_stdout.split("\n")
+            # candidate_string looks like "Candidate: 2.2.3-1"
+            candidate_string = [line for line in policy_lines
+                                if "Candidate" in line][0]
+            candidate_array = candidate_string.split(":")
+            dsc_release_string = candidate_array[1]
+            dsc_release = dsc_release_string.strip()
+            # Cassandra doesn't (usually) include a package-rev in their
+            # package version number to remove the -z from 2.x.y.-z
+            cassandra_release = dsc_release[:-2]
+            logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc22={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc22')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
             conf.set_config('Cassandra', 'vnodes', 'True')
@@ -659,7 +682,7 @@ def construct_yaml():
         '''
         replace "initial_token" value in yaml string, handling cases where it may already be commented-out
         this regex should match any of these examples:
-            # initial_token: 
+            # initial_token:
             # initial_token: 12345
             initial_token: 54321
         '''
