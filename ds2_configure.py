@@ -435,6 +435,9 @@ def clean_installation():
             candidate_array = candidate_string.split(":")
             dsc_release_string = candidate_array[1]
             dsc_release = dsc_release_string.strip()
+            # Cassandra doesn't (usually) include a package-rev in their
+            # package version number to remove the -z from 2.x.y.-z
+            cassandra_release = dsc_release[:-2]
             logger.exe('sudo apt-get install -y python-cql datastax-agent cassandra={0} dsc22={1}'.format(cassandra_release, dsc_release))
             conf.set_config('AMI', 'package', 'dsc22')
             conf.set_config('Cassandra', 'partitioner', 'murmur')
