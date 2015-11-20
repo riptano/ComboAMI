@@ -659,7 +659,7 @@ def construct_yaml():
         '''
         replace "initial_token" value in yaml string, handling cases where it may already be commented-out
         this regex should match any of these examples:
-            # initial_token: 
+            # initial_token:
             # initial_token: 12345
             initial_token: 54321
         '''
