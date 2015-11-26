@@ -1156,7 +1156,7 @@ def additional_pre_configurations():
 def additional_post_configurations():
     if options.base64postscript:
         command = base64.b64decode(options.base64postscript)
-        process = subprocess.Popen(shlex.split(command), stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+        process = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         read = process.communicate()
         logger.info('base64postscript response: %s\n%s' % read)
     if options.postscript_url:
