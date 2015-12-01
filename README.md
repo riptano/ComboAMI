@@ -103,6 +103,12 @@ Options
         Allows you to download and execute a post install custom script
         Default: none
 
+    --base64postscript <base64_encoded_commands>
+        Allows you to specify a list of base64 encoded semi-colon/newline separated commands to be executed post installation
+        Default: none
+        Example: ZWNobyAtbiAiY2FzcyI7IGVjaG8gLW4gImFuZHJhIg== (echo -n "cass"; echo -n "andra")
+                 c3VkbyBhcHQtZ2V0IGluc3RhbGwgY29sbGVjdGQ= (sudo apt-get install collectd)
+
 Security Groups
 ===============
 
