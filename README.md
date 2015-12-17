@@ -1,7 +1,7 @@
 Summary
 =======
 
-DataStax's Amazon Machine Image a quick way to test a DataStax Community or 
+DataStax's Amazon Machine Image a quick way to test a DataStax Community or
 DataStax Enterprise cluster on EC2.
 
 
@@ -10,7 +10,10 @@ Quickstart
 
 1. Log into the AWS console with your web browser
 2. Select the EC2 service
-3. Find the [ami-id's](ami_ids.json) for your region.
+3. Find the [ami-id's](ami_ids.json) for your region. Note that the AMI with
+   the name of "DataStax Auto-Clustering AMI" that has no version number
+   specified is from the 2.4 series and is deprecated. Select an ami-id from
+   from the list in this repo to ensure you're getting the latest fixes.
 4. "Launch Instance" -> Community AMI's -> Search for your ami-id -> "Select"
 5. Select an instance type (m3.medium is good for low-throughput testing)
 6. "Next: Configure Instance Details" -> "Advanced Details" -> add "User Data"
@@ -18,10 +21,10 @@ Quickstart
 7. "Review and Launch" -> "Launch" -> Select keypair
 8. SSH to your new cassandra cluster and run `nodetool status`
 
-If you frequently launch scratch clusters, you may be interested in 
+If you frequently launch scratch clusters, you may be interested in
 [cassandralauncher](https://github.com/joaquincasares/cassandralauncher)
 
-For detailed instructions on launching, visit 
+For detailed instructions on launching, visit
 http://docs.datastax.com/en/latest-dsc-ami
 
 
@@ -106,7 +109,7 @@ Options
 Security Groups
 ===============
 
-For information on setting up security groups, see the 
+For information on setting up security groups, see the
 [Datastax Documentation](http://www.datastax.com/documentation/datastax_enterprise/4.7/datastax_enterprise/install/installAMIsecurity.html)
 
 
@@ -114,5 +117,5 @@ Contributing
 =================
 
 Pull requests are welcome. Consider creating an issue to discus the feature
-before doing the development work, or just fork and create a PR based off the 
+before doing the development work, or just fork and create a PR based off the
 dev-2.6 branch.
