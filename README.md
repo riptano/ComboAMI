@@ -3,6 +3,8 @@ Notice (June 24, 2016)
 
 This project is currently in a maintenance mode until December 2016. During this timeframe, DataStax will no longer provide updates for DataStax ComboAMI. Beyond this timeframe, we will stop hosting the central service and delete this repository. Users who wish to use this service are encouraged to fork this project and host the reflector service themselves. If you are using a paid version of DataStax Enterprise, you can leverage OpsCenter 6.0 Lifecycle Manager to provision clusters.
 
+If you have any questions or concerns, please email opscenter-feedback at datastax.com.
+
 Summary
 =======
 
